@@ -1,0 +1,62 @@
+=====================================
+If statements
+=====================================
+
+if true then
+fi;
+
+if true then
+else
+fi;
+
+if false then
+elif true;
+fi;
+
+---
+
+(source_file )
+
+
+=====================================
+For loops
+=====================================
+
+for i in [1..10] do
+od;
+
+for i in [1..10] do
+  for j in [1..10] do
+    x := x + i*j;
+  od;
+od;
+
+---
+
+(source_file )
+
+=====================================
+While loops
+=====================================
+
+while false do
+  continue;
+od;
+
+---
+
+(source_file )
+
+
+=====================================
+While loops
+=====================================
+
+repeat
+  break;
+until false;
+
+---
+
+(source_file )
+

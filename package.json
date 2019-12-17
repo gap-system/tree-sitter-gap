@@ -1,0 +1,41 @@
+{
+  "name": "tree-sitter-gap",
+  "version": "0.0.1",
+  "description": "GAP grammar for tree-sitter",
+  "keywords": [
+    "tree-sitter",
+    "parser",
+    "GAP"
+  ],
+  "author": "Max Horn",
+  "license": "MIT",
+  "homepage": "https://github.com/fingolfin/tree-sitter-gap#readme",
+  "bugs": {
+    "url": "https://github.com/fingolfin/tree-sitter-gap/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fingolfin/tree-sitter-gap.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build --debug",
+    "test": "tree-sitter test && tree-sitter parse examples/* --quiet --time"
+  },
+  "dependencies": {
+    "nan": "^2.14.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.16.1"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.gap",
+      "file-types": [
+        "gi",
+        "gd",
+        "g"
+      ]
+    }
+  ]
+}

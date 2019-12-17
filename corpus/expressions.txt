@@ -1,0 +1,59 @@
+=====================================
+Integers
+=====================================
+
+-1;
+1;
+-12345678901234567890;
+12345678901234567890;
+
+---
+
+(source_file
+  (unary_expression (integer))
+  (integer)
+  (unary_expression (integer))
+  (integer)
+  )
+
+=====================================
+Lists
+=====================================
+
+[   ];
+[ 1 ];
+[ 1, 2 ];
+[  ,   ];
+[  , 2 ];
+[ 0, [ 1, 2 ], 3, 4 ];
+[ 0, [  , 2 ],  , 4 ];
+
+---
+
+(source_file
+  (list_expression)
+  (list_expression (integer))
+  (list_expression (integer) (integer))
+  (list_expression)
+  (list_expression (integer))
+  (list_expression (integer) (list_expression (integer) (integer)) (integer) (integer))
+  (list_expression (integer) (list_expression (integer)) (integer))
+  )
+
+=====================================
+Records
+=====================================
+
+rec();
+rec(a:=1);
+rec(1:=2);
+rec(a:=1, b:=2);
+
+---
+
+(source_file
+  (record_expression)
+  (record_expression (identifier) (integer))
+  (record_expression (integer) (integer))
+  (record_expression (identifier) (integer) (identifier) (integer))
+  )
