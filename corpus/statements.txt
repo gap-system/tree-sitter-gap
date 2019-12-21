@@ -3,26 +3,60 @@ If statements
 =====================================
 
 if true then
+  x:=1;
 fi;
 
 if true then
+  x:=1;
 else
+  x:=2;
 fi;
 
 if false then
-elif true;
+  x:=1;
+elif true then
+  x:=2;
+fi;
+
+if false then
+  x:=1;
+elif true then
+  x:=2;
+else
+  x:=3;
 fi;
 
 ---
 
-(source_file )
+(source_file
+    (if_statement (true)
+        (assignment_statement (identifier) (integer)))
+    (if_statement (true)
+        (assignment_statement (identifier) (integer))
+        (else_clause
+            (assignment_statement (identifier) (integer))))
+    (if_statement (false)
+        (assignment_statement (identifier) (integer))
+        (elif_clause (true) (assignment_statement (identifier) (integer))))
+    (if_statement (false)
+        (assignment_statement (identifier) (integer))
+        (elif_clause (true)
+            (assignment_statement (identifier) (integer)))
+        (else_clause
+            (assignment_statement (identifier) (integer))))
+    )
 
 
 =====================================
 For loops
 =====================================
 
+for i in [1, 2, 3] do
+    x := x + 1;
+od;
+
 for i in [1..10] do
+    y := y * 2;
 od;
 
 for i in [1..10] do
@@ -33,7 +67,14 @@ od;
 
 ---
 
-(source_file )
+(source_file
+    (for_statement (identifier) (list_expression (integer) (integer) (integer))
+        (assignment_statement (identifier) (binary_expression (identifier) (integer))))
+    (for_statement (identifier) (range_expression (integer) (integer))
+        (assignment_statement (identifier) (binary_expression (identifier) (integer))))
+    (for_statement (identifier) (range_expression (integer) (integer))
+        (for_statement (identifier) (range_expression (integer) (integer)) (assignment_statement (identifier) (binary_expression (identifier) (binary_expression (identifier) (identifier))))))
+    )
 
 =====================================
 While loops
@@ -45,7 +86,8 @@ od;
 
 ---
 
-(source_file )
+(source_file
+    (while_statement (false) (continue_statement)))
 
 
 =====================================
@@ -58,5 +100,6 @@ until false;
 
 ---
 
-(source_file )
+(source_file
+    (repeat_statement (break_statement) (false)))
 

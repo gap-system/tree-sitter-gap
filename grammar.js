@@ -143,6 +143,7 @@ module.exports = grammar({
       $.tilde,
 
       $.list_expression,
+      $.range_expression,
       $.record_expression,
       $.permutation_expression,
 
@@ -234,6 +235,18 @@ module.exports = grammar({
     list_expression: $ => seq(
       '[',
       commaSep(optional($._expression)),
+      ']',
+    ),
+
+    range_expression: $ => seq(
+      '[',
+      field('first', $._expression),
+      optional(seq(
+          ',',
+          field('second', $._expression),
+      )),
+      '..',
+      field('last', $._expression),
       ']',
     ),
 
