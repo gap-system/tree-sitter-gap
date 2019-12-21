@@ -1,22 +1,4 @@
 =====================================
-Integers
-=====================================
-
--1;
-1;
--12345678901234567890;
-12345678901234567890;
-
----
-
-(source_file
-  (unary_expression (integer))
-  (integer)
-  (unary_expression (integer))
-  (integer)
-  )
-
-=====================================
 Lists
 =====================================
 
@@ -71,3 +53,41 @@ rec(a:=1, b:=2);
   (record_expression (integer) (integer))
   (record_expression (identifier) (integer) (identifier) (integer))
   )
+
+=====================================
+Functions
+=====================================
+
+function() end;
+function(a) end;
+function()
+    local x;
+end;
+
+function()
+    return 1;
+end;
+function(a)
+    return a;
+end;
+function()
+    local x;
+    return 1;
+end;
+
+---
+
+(source_file)
+
+=====================================
+Inline Functions
+=====================================
+
+x -> 1;
+x -> y -> x + y;
+{} -> 42
+{x,y} -> x + y
+
+---
+
+(source_file)

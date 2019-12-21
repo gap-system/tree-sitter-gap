@@ -138,8 +138,8 @@ module.exports = grammar({
       $.false,
       $.char,
       $.string,
-//       $.function,
-//       $.short_function,
+      $.function,
+      $.short_function,
       $.tilde,
 
       $.list_expression,
@@ -203,25 +203,37 @@ module.exports = grammar({
 
     function: $ => seq(
       'function',
-      '(',
-      commaSep($.identifier),
-      ')',
-      optional(seq("local", commaSep1($.identifier),";")),
-      field('body', repeat($._statement)), // TODO: should we use field in more places?
+      field('parameters', $.parameters),
+      field('locals', optional($.locals)),
+      field('body', optional($.block)),
       'end'
     ),
+
+    block: $ => repeat1($._statement),
 
     // TODO: make sure precedence is correct, e.g.
     //  x -> x^2  must parse correctly;
     // perhaps turn this into a right associative operator?
     short_function: $ => prec.right(PREC.FUNC, seq(
-      choice(
-        $.identifier,
-        seq('{', commaSep($.identifier), '},' )
+      field('parameters', 
+        choice(
+          $.identifier,
+          seq('{', commaSep($.identifier), '},' )
+        )
       ),
       '->',
       $._expression
     )),
+
+    parameters: $ => seq(
+      '(',
+      commaSep($.identifier),
+      ')'
+    ),
+
+    locals: $ => seq(
+      "local", commaSep1($.identifier), ";"
+    ),
 
     // TODO: restrict where tilde can be used, i.e., only "inside" a list or
     // record expression (but at arbitrary depth)
