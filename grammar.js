@@ -105,9 +105,9 @@ module.exports = grammar({
 
     for_statement: $ => seq(
       'for',
-      field('left', $.identifier),
+      field('variable', $.identifier),
       'in',
-      field('right', seq($._expression)),
+      field('values', seq($._expression)),
       'do',
       repeat($._statement),
       'od'
@@ -131,7 +131,7 @@ module.exports = grammar({
 
       // TODO:  a[idx], a[idx,idx],  a{...}, a![], a!{}
       // TODO:  a.x, a!.x
-      //$.call_expression,
+      // TODO: function call / $.call_expression,
 
       $.integer,
       $.true,
@@ -149,7 +149,6 @@ module.exports = grammar({
 
       $.parenthesized_expression
     ),
-    // TODO: ensure this is forbidden:
 
     binary_expression: $ => choice(
       ...[
@@ -181,6 +180,7 @@ module.exports = grammar({
     )),
 
     integer: $ => /[0-9]+/,
+    // TODO: floats
 
     true: $ => 'true',
 
@@ -239,6 +239,10 @@ module.exports = grammar({
     // record expression (but at arbitrary depth)
     tilde: $ => '~',
 
+    // TODO: add tilde expressions?
+
+    // TODO:
+
     short_multi_function: $ => seq(
       '->',
       $._expression
@@ -282,8 +286,6 @@ module.exports = grammar({
       $._expression,
       ')',
     ),
-
-    // TODO: add tilde expressions?
 
     // TODO: support backslash quotes in identifiers; e.g. these are
     // three valid identifiers:
