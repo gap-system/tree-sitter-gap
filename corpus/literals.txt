@@ -23,37 +23,14 @@ Strings
 "abc";
 "a'c";
 "a\"c";
+"a\142c";
+"a\0x62c";
 
 ---
 
 (source_file
   (string)
   (string)
-  (string)
-  )
-
-=====================================
-Multi-line strings
-=====================================
-
-"""
-A double quote hello,
-without double or single quotes.
-"""
-
-"""
-A double quote "hello",
-with double quotes.
-"""
-
-"""
-A double quote 'hello',
-with single quotes.
-"""
-
----
-
-(source_file
   (string)
   (string)
   (string)

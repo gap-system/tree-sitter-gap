@@ -193,13 +193,29 @@ module.exports = grammar({
       '\''
     ),
 
+    // TODO: properly support multiline triple strings
+    // (ruby and python modules use an external scanner written in C++
+    // for that...)
     string: $ => seq(
       '"',
-      token.immediate(/[^\n"]*/),
-      // TODO: support escapes
-      // TODO: support triple quoted strings
+      optional($._literal_contents),
       '"',
     ),
+
+    _literal_contents: $ => repeat1(choice(
+      token.immediate(/[^\n"\\]/),
+      $._escape_sequence
+    )),
+
+    _escape_sequence: $ => token(seq(
+      '\\',
+      choice(
+        /[^0-7]/,             // single character
+        /0x[0-9a-fA-F]{2,2}/, // hex code
+        /[0-7]{3,3}/,         // octal
+      )
+    )),
+
 
     function: $ => seq(
       'function',
