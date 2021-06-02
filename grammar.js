@@ -241,7 +241,10 @@ module.exports = grammar({
 
     // TODO: add tilde expressions?
 
-    // TODO:
+    // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
+    // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
+    // are how we can find out function declarations / definitions
+    // Dec
 
     short_multi_function: $ => seq(
       '->',
