@@ -1,5 +1,84 @@
 [
   {
+    "type": "argument_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "char",
+          "named": true
+        },
+        {
+          "type": "false",
+          "named": true
+        },
+        {
+          "type": "function",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list_expression",
+          "named": true
+        },
+        {
+          "type": "parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "permutation_expression",
+          "named": true
+        },
+        {
+          "type": "range_expression",
+          "named": true
+        },
+        {
+          "type": "record_expression",
+          "named": true
+        },
+        {
+          "type": "short_function",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "tilde",
+          "named": true
+        },
+        {
+          "type": "true",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "assignment_statement",
     "named": true,
     "fields": {},
@@ -9,6 +88,10 @@
       "types": [
         {
           "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -84,6 +167,10 @@
       "types": [
         {
           "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -193,6 +280,32 @@
     }
   },
   {
+    "type": "call",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "argument_list",
+            "named": true
+          }
+        ]
+      },
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "char",
     "named": true,
     "fields": {}
@@ -207,6 +320,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -364,6 +481,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -527,6 +648,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "char",
             "named": true
           },
@@ -649,6 +774,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "char",
           "named": true
         },
@@ -735,6 +864,10 @@
       "required": false,
       "types": [
         {
+          "type": "ellipsis",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         }
@@ -751,6 +884,10 @@
       "types": [
         {
           "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -822,10 +959,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -904,6 +1045,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "char",
             "named": true
           },
@@ -974,6 +1119,10 @@
             "named": true
           },
           {
+            "type": "call",
+            "named": true
+          },
+          {
             "type": "char",
             "named": true
           },
@@ -1041,6 +1190,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -1120,6 +1273,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "char",
           "named": true
         },
@@ -1192,6 +1349,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -1309,6 +1470,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "char",
           "named": true
         },
@@ -1381,6 +1546,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -1466,6 +1635,10 @@
       "required": false,
       "types": [
         {
+          "type": "ellipsis",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         }
@@ -1490,6 +1663,10 @@
         },
         {
           "type": "break_statement",
+          "named": true
+        },
+        {
+          "type": "call",
           "named": true
         },
         {
@@ -1597,6 +1774,10 @@
           "named": true
         },
         {
+          "type": "call",
+          "named": true
+        },
+        {
           "type": "char",
           "named": true
         },
@@ -1669,6 +1850,10 @@
         "types": [
           {
             "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
             "named": true
           },
           {
@@ -1884,6 +2069,10 @@
   {
     "type": "elif",
     "named": false
+  },
+  {
+    "type": "ellipsis",
+    "named": true
   },
   {
     "type": "else",

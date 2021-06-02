@@ -55,11 +55,33 @@ rec(a:=1, b:=2);
   )
 
 =====================================
+Permutations
+=====================================
+
+();
+(1,2);
+(1,2,3);
+#(1,2)(3,4,5); # TODO: parse this into a single expression, distinguish it from a function call
+
+---
+
+(source_file
+  (permutation_expression)
+  (permutation_expression (integer) (integer))
+  (permutation_expression (integer) (integer) (integer))
+  (comment)
+  )
+
+=====================================
 Functions
 =====================================
 
 function() end;
 function(a) end;
+function(a,b) end;
+function(a...) end;
+function(a,b...) end;
+
 function()
     local x;
 end;
@@ -80,6 +102,9 @@ end;
 (source_file
     (function (parameters))
     (function (parameters (identifier)))
+    (function (parameters (identifier) (identifier)))
+    (function (parameters (identifier) (ellipsis)))
+    (function (parameters (identifier) (identifier) (ellipsis)))
     (function (parameters) (locals (identifier)))
     (function (parameters) (block (return_statement (integer))))
     (function (parameters (identifier)) (block (return_statement (identifier))))
@@ -100,6 +125,8 @@ x -> y -> x + y;
 
 {x,y} -> x + y;
 
+{x...} -> x
+
 ---
 
 (source_file
@@ -108,6 +135,28 @@ x -> y -> x + y;
     (short_function (short_parameters (identifier)) (short_function (short_parameters (identifier)) (binary_expression (identifier) (identifier))))
     (short_function (short_parameters) (integer))
     (short_function (short_parameters (identifier) (identifier)) (binary_expression (identifier) (identifier)))
+    (short_function (short_parameters (identifier) (ellipsis)) (identifier))
+    )
+
+=====================================
+Function calls
+=====================================
+
+foo();
+
+foo(1);
+
+foo(1, 1);
+
+foo(bar());
+
+---
+
+(source_file
+    (call (identifier) (argument_list))
+    (call (identifier) (argument_list (integer)))
+    (call (identifier) (argument_list (integer) (integer)))
+    (call (identifier) (argument_list (call (identifier) (argument_list))))
     )
 
 

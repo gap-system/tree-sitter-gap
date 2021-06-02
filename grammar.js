@@ -9,6 +9,7 @@ const PREC = {
   MULTI: 10,    // ReadTerm => * / mod
   UNARY: 11,    // ReadFactor => not + - (unary)
   POWER: 12,    // ReadFactor => ^
+  CALL: 13,
 }
 
 module.exports = grammar({
@@ -138,6 +139,7 @@ module.exports = grammar({
       $.function,
       $.short_function,
       $.tilde,
+      $.call,
 
       $.list_expression,
       $.range_expression,
@@ -232,14 +234,27 @@ module.exports = grammar({
 
     parameters: $ => seq(
       '(',
-      commaSep($.identifier),
+      optional(seq(
+        commaSep1($.identifier),
+        optional($.ellipsis)
+      )),
       ')'
     ),
 
     short_parameters: $ => choice(
       $.identifier,
-      seq('{', commaSep($.identifier), '}' )
+      seq(
+        '{',
+        optional(seq(
+          commaSep1($.identifier),
+          optional($.ellipsis)
+        )),
+        '}'
+      )
+      // TODO: handle variadic
     ),
+
+    ellipsis: $ => '...',
 
     locals: $ => seq(
       "local", commaSep1($.identifier), ";"
@@ -250,6 +265,21 @@ module.exports = grammar({
     tilde: $ => '~',
 
     // TODO: add tilde expressions?
+
+
+    // TODO: should also handle calls like `(f)()` `f()()`
+    // or `a[1]()` but these are rare, so we defer implementing it fornow
+    // also should handle `a.b()` correctly (as `(a.b)()` not `a.(b())`)
+    call: $ => prec(PREC.CALL, seq(
+      field('function', $.identifier),
+      field('arguments', $.argument_list)
+    )),
+
+    argument_list: $ => seq(
+      '(',
+      optional(commaSep1($._expression)),
+      ')'
+    ),
 
     // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
     // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
@@ -285,7 +315,7 @@ module.exports = grammar({
 
     permutation_expression: $ => seq(
       '(',
-      seq($._expression, ',', $._expression, repeat(seq(',', $._expression))),
+      optional(seq($._expression, ',', commaSep1($._expression))),
       ')',
     ),
 
