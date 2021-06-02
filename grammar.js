@@ -24,6 +24,13 @@ module.exports = grammar({
     $._expression,
     $._statement
   ],
+  
+  conflicts: $ => [
+    // on the top level, both statements and expressions are allowed note that
+    // $.call can appear both as an expression (function call) or statement
+    // (procedure call), and we need to resolve that ambiguity
+    [$.source_file, $._statement_inner],
+  ],
 
   word: $ => $.identifier,
 
@@ -48,7 +55,8 @@ module.exports = grammar({
       $.for_statement,
       $.break_statement,
       $.continue_statement,
-      $.return_statement
+      $.return_statement,
+      $.call, // procedure call
       // TODO: should we handle `Unbind`, `Info`, `Assert`, `TryNextMethod`
       // statements? For now, we get away with just treating them as
       // procedure calls
@@ -129,7 +137,6 @@ module.exports = grammar({
 
       // TODO:  a[idx], a[idx,idx],  a{...}, a![], a!{}
       // TODO:  a.x, a!.x
-      // TODO: function call / $.call_expression,
 
       $.integer,
       $.true,
@@ -139,7 +146,7 @@ module.exports = grammar({
       $.function,
       $.short_function,
       $.tilde,
-      $.call,
+      $.call, // function call
 
       $.list_expression,
       $.range_expression,

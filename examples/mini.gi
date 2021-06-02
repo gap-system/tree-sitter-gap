@@ -9,7 +9,7 @@ Print("This is a string\n");
 for n in [1..100] do
   for i in [1..NrSmallGroups(n)] do
     G := SmallGroup(n,i);
-    Print("SmallGroup(",n, ",", i, ") is abelian? ", IsAbelian(G), "\n");
+    Print("SmallGroup(", n, ",", i, ") is abelian? ", IsAbelian(G), "\n");
   od;
 od;
 

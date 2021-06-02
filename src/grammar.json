@@ -74,6 +74,10 @@
         {
           "type": "SYMBOL",
           "name": "return_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "call"
         }
       ]
     },
@@ -1529,7 +1533,12 @@
       "value": "\\s"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "source_file",
+      "_statement_inner"
+    ]
+  ],
   "precedences": [],
   "externals": [],
   "inline": [

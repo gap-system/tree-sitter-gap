@@ -40,8 +40,8 @@ Strings
 Other primitives
 =====================================
 
-true
-false
+true;
+false;
 
 ---
 

@@ -105,12 +105,17 @@ while false do
   continue;
 od;
 
+while false do
+  f();
+od;
+
 ---
 
 (source_file
     (while_statement (false))
     (while_statement (false) (break_statement))
     (while_statement (false) (continue_statement))
+    (while_statement (false) (call (identifier) (argument_list)))
     )
 
 
