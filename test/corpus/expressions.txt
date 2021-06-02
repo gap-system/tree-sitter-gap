@@ -41,7 +41,9 @@ Records
 =====================================
 
 rec();
+rec(,);
 rec(a:=1);
+rec(a:=1,);
 rec(1:=2);
 rec(a:=1, b:=2);
 
@@ -49,6 +51,8 @@ rec(a:=1, b:=2);
 
 (source_file
   (record_expression)
+  (record_expression)
+  (record_expression (identifier) (integer))
   (record_expression (identifier) (integer))
   (record_expression (integer) (integer))
   (record_expression (identifier) (integer) (identifier) (integer))

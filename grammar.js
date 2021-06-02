@@ -203,10 +203,10 @@ module.exports = grammar({
 
     _literal_contents: $ => repeat1(choice(
       token.immediate(/[^\n"\\]/),
-      $._escape_sequence
+      $.escape_sequence
     )),
 
-    _escape_sequence: $ => token(seq(
+    escape_sequence: $ => token(seq(
       '\\',
       choice(
         /[^0-7]/,             // single character
@@ -310,6 +310,7 @@ module.exports = grammar({
       commaSep(
         seq(choice($.identifier, $.integer), ':=', $._expression)
        ),
+      optional(','),
       ')',
     ),
 

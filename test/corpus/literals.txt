@@ -31,9 +31,9 @@ Strings
 (source_file
   (string)
   (string)
-  (string)
-  (string)
-  (string)
+  (string (escape_sequence))
+  (string (escape_sequence))
+  (string (escape_sequence))
   )
 
 =====================================
