@@ -77,17 +77,37 @@ end;
 
 ---
 
-(source_file)
+(source_file
+    (function (parameters))
+    (function (parameters (identifier)))
+    (function (parameters) (locals (identifier)))
+    (function (parameters) (block (return_statement (integer))))
+    (function (parameters (identifier)) (block (return_statement (identifier))))
+    (function (parameters) (locals (identifier)) (block (return_statement (integer))))
+    )
 
 =====================================
 Inline Functions
 =====================================
 
 x -> 1;
+
+x -> y -> 1;
+
 x -> y -> x + y;
-{} -> 42
-{x,y} -> x + y
+
+{} -> 42;
+
+{x,y} -> x + y;
 
 ---
 
-(source_file)
+(source_file
+    (short_function (short_parameters (identifier)) (integer))
+    (short_function (short_parameters (identifier)) (short_function (short_parameters (identifier)) (integer)))
+    (short_function (short_parameters (identifier)) (short_function (short_parameters (identifier)) (binary_expression (identifier) (identifier))))
+    (short_function (short_parameters) (integer))
+    (short_function (short_parameters (identifier) (identifier)) (binary_expression (identifier) (identifier)))
+    )
+
+

@@ -1,9 +1,7 @@
 const PREC = {
-  COMMA: -1,
-  PRIORITY: 1,
-
   // in the following, we mention the names of the corresponding
   // GAP kernel function
+  LAMBDA: 0,    // ReadFuncExprAbbrevSingle, ReadFuncExprAbbrevMulti => ->
   OR: 1,        // ReadExpr => or
   AND: 2,       // ReadAnd => and
   COMPARE: 3,   // ReadRel => = <> < > <= >= in
@@ -11,7 +9,6 @@ const PREC = {
   MULTI: 10,    // ReadTerm => * / mod
   UNARY: 11,    // ReadFactor => not + - (unary)
   POWER: 12,    // ReadFactor => ^
-  FUNC: 13,     // ReadFuncExprAbbrevSingle, ReadFuncExprAbbrevMulti => ->
 }
 
 module.exports = grammar({
@@ -227,24 +224,21 @@ module.exports = grammar({
 
     block: $ => repeat1($._statement),
 
-    // TODO: make sure precedence is correct, e.g.
-    //  x -> x^2  must parse correctly;
-    // perhaps turn this into a right associative operator?
-    short_function: $ => prec.right(PREC.FUNC, seq(
-      field('parameters', 
-        choice(
-          $.identifier,
-          seq('{', commaSep($.identifier), '},' )
-        )
-      ),
+    short_function: $ => prec.right(PREC.LAMBDA, seq(
+      field('parameters', $.short_parameters),
       '->',
-      $._expression
+      field('body', $._expression)
     )),
 
     parameters: $ => seq(
       '(',
       commaSep($.identifier),
       ')'
+    ),
+
+    short_parameters: $ => choice(
+      $.identifier,
+      seq('{', commaSep($.identifier), '}' )
     ),
 
     locals: $ => seq(
@@ -261,11 +255,6 @@ module.exports = grammar({
     // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
     // are how we can find out function declarations / definitions
     // Dec
-
-    short_multi_function: $ => seq(
-      '->',
-      $._expression
-    ),
 
     list_expression: $ => seq(
       '[',

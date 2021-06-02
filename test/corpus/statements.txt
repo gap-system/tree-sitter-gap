@@ -51,6 +51,17 @@ fi;
 For loops
 =====================================
 
+for i in list do
+od;
+
+for i in list do
+    break;
+od;
+
+for i in list do
+    continue;
+od;
+
 for i in [1, 2, 3] do
     x := x + 1;
 od;
@@ -68,6 +79,9 @@ od;
 ---
 
 (source_file
+    (for_statement (identifier) (identifier))
+    (for_statement (identifier) (identifier) (break_statement))
+    (for_statement (identifier) (identifier) (continue_statement))
     (for_statement (identifier) (list_expression (integer) (integer) (integer))
         (assignment_statement (identifier) (binary_expression (identifier) (integer))))
     (for_statement (identifier) (range_expression (integer) (integer))
@@ -81,25 +95,45 @@ While loops
 =====================================
 
 while false do
+od;
+
+while false do
+  break;
+od;
+
+while false do
   continue;
 od;
 
 ---
 
 (source_file
-    (while_statement (false) (continue_statement)))
+    (while_statement (false))
+    (while_statement (false) (break_statement))
+    (while_statement (false) (continue_statement))
+    )
 
 
 =====================================
-While loops
+Repeat loops
 =====================================
+
+repeat
+until false;
 
 repeat
   break;
 until false;
 
+repeat
+  continue;
+until false;
+
 ---
 
 (source_file
-    (repeat_statement (break_statement) (false)))
+    (repeat_statement (false))
+    (repeat_statement (break_statement) (false))
+    (repeat_statement (continue_statement) (false))
+    )
 
