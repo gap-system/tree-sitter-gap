@@ -258,7 +258,7 @@
         },
         {
           "type": "FIELD",
-          "name": "left",
+          "name": "variable",
           "content": {
             "type": "SYMBOL",
             "name": "identifier"
@@ -270,7 +270,7 @@
         },
         {
           "type": "FIELD",
-          "name": "right",
+          "name": "values",
           "content": {
             "type": "SEQ",
             "members": [
@@ -1344,6 +1344,7 @@
     }
   ],
   "conflicts": [],
+  "precedences": [],
   "externals": [],
   "inline": [
     "_expression",

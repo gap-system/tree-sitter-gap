@@ -358,17 +358,7 @@
     "type": "for_statement",
     "named": true,
     "fields": {
-      "left": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "right": {
+      "values": {
         "multiple": false,
         "required": true,
         "types": [
@@ -434,6 +424,16 @@
           },
           {
             "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "variable": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1864,6 +1864,10 @@
   },
   {
     "type": "break_statement",
+    "named": true
+  },
+  {
+    "type": "comment",
     "named": true
   },
   {
