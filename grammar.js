@@ -137,6 +137,8 @@ module.exports = grammar({
 
       // TODO:  a[idx], a[idx,idx],  a{...}, a![], a!{}
       // TODO:  a.x, a!.x
+      // TODO: floats (and be careful so that also edge cases are supported:
+      //       1. or .1 or 1.e4 ;  while record.1 or a.1.1 or e.1 are all not floats)
 
       $.integer,
       $.true,
@@ -172,7 +174,8 @@ module.exports = grammar({
         [prec.left, '*', PREC.MULTI],
         [prec.left, '/', PREC.MULTI],
         [prec.left, 'mod', PREC.MULTI],
-        [prec.right, '^', PREC.POWER],  // TODO: actually, ^ is *NOT* associative in GAP at all
+        [prec.right, '^', PREC.POWER],  // TODO: actually, ^ is *NOT* associative in GAP at all,
+        //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
       ].map(([fn, operator, precedence]) => fn(precedence, seq(
         $._expression,
         operator,
@@ -186,7 +189,6 @@ module.exports = grammar({
     )),
 
     integer: $ => /[0-9]+/,
-    // TODO: floats
 
     true: $ => 'true',
 
@@ -194,14 +196,16 @@ module.exports = grammar({
 
     char: $ => seq(
       '\'',
-      token.immediate(/[^\n']/),
-      // TODO: escape characters
+      choice(
+        token.immediate(/[^\n']/),
+        $.escape_sequence
+      ),
       '\''
     ),
 
-    // TODO: properly support multiline triple strings
+    // TODO: support multiline triple strings
     // (ruby and python modules use an external scanner written in C++
-    // for that...)
+    // for that... there are some nasty edge cases)
     string: $ => seq(
       '"',
       optional($._literal_contents),
@@ -258,7 +262,6 @@ module.exports = grammar({
         )),
         '}'
       )
-      // TODO: handle variadic
     ),
 
     ellipsis: $ => '...',
@@ -275,7 +278,7 @@ module.exports = grammar({
 
 
     // TODO: should also handle calls like `(f)()` `f()()`
-    // or `a[1]()` but these are rare, so we defer implementing it fornow
+    // or `a[1]()` but these are rare, so we defer implementing it for now
     // also should handle `a.b()` correctly (as `(a.b)()` not `a.(b())`)
     call: $ => prec(PREC.CALL, seq(
       field('function', $.identifier),
@@ -285,6 +288,7 @@ module.exports = grammar({
     argument_list: $ => seq(
       '(',
       optional(commaSep1($._expression)),
+      // TODO: handle options: `f(1,2 : opt)` or `f(1,2 : opt1 := true, opt2: = b)`
       ')'
     ),
 

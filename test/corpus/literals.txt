@@ -37,6 +37,28 @@ Strings
   )
 
 =====================================
+Character
+=====================================
+
+'b';
+'\'';
+'\n';
+'\\';
+'\142';
+'\0x62';
+
+---
+
+(source_file
+  (char)
+  (char (escape_sequence))
+  (char (escape_sequence))
+  (char (escape_sequence))
+  (char (escape_sequence))
+  (char (escape_sequence))
+  )
+
+=====================================
 Other primitives
 =====================================
 
