@@ -1,6 +1,6 @@
 f := function(x,y)
     local z, helper;
-    z := 1;
+    z := 1 - y;
     helper := function(bla)
         return x + y*z - bla;
     end;

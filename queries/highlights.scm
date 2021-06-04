@@ -13,6 +13,10 @@
 (call
   function: (identifier) @function)
 
+(parameters (identifier) @variable.parameter)
+(lambda_parameters (identifier) @variable.parameter)
+(locals (identifier) @variable.parameter)
+
 ; convention: identifiers that start with upper case are "global"
 ;((identifier) @constructor
 ; (#match? @constructor "^[A-Z]"))
