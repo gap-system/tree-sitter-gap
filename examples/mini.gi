@@ -1,8 +1,14 @@
-function(x...)
-    return x;
-end
+f := function(x,y)
+    local z, helper;
+    z := 1;
+    helper := function(bla)
+        return x + y*z - bla;
+    end;
+    return helper;
+end;
 
-{x,y} -> x + y + 1
+x -> x + 1;
+{x,y} -> x + y + 1;
 
 Print("This is a string\n");
 

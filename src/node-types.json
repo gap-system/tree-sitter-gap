@@ -36,6 +36,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -53,10 +57,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -81,80 +81,155 @@
   {
     "type": "assignment_statement",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "binary_expression",
-          "named": true
-        },
-        {
-          "type": "call",
-          "named": true
-        },
-        {
-          "type": "char",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "function",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "list_expression",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "permutation_expression",
-          "named": true
-        },
-        {
-          "type": "range_expression",
-          "named": true
-        },
-        {
-          "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "tilde",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": true
+          },
+          {
+            "type": "function",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "lambda",
+            "named": true
+          },
+          {
+            "type": "list_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "permutation_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "record_expression",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tilde",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": true
+          },
+          {
+            "type": "function",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "lambda",
+            "named": true
+          },
+          {
+            "type": "list_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "permutation_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "record_expression",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tilde",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -194,6 +269,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -211,10 +290,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -351,6 +426,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -368,10 +447,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -520,6 +595,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -537,10 +616,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -688,6 +763,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -705,10 +784,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -782,6 +857,115 @@
     }
   },
   {
+    "type": "lambda",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call",
+            "named": true
+          },
+          {
+            "type": "char",
+            "named": true
+          },
+          {
+            "type": "false",
+            "named": true
+          },
+          {
+            "type": "function",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "lambda",
+            "named": true
+          },
+          {
+            "type": "list_expression",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "permutation_expression",
+            "named": true
+          },
+          {
+            "type": "range_expression",
+            "named": true
+          },
+          {
+            "type": "record_expression",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "tilde",
+            "named": true
+          },
+          {
+            "type": "true",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "lambda_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "lambda_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "ellipsis",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "list_expression",
     "named": true,
     "fields": {},
@@ -818,6 +1002,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -835,10 +1023,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -931,6 +1115,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -948,10 +1136,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -1010,6 +1194,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -1027,10 +1215,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -1089,6 +1273,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -1106,10 +1294,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -1163,6 +1347,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -1180,10 +1368,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -1237,6 +1421,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -1254,10 +1442,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -1317,6 +1501,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -1334,10 +1522,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -1396,6 +1580,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -1413,10 +1601,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {
@@ -1518,6 +1702,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -1538,10 +1726,6 @@
           "named": true
         },
         {
-          "type": "short_function",
-          "named": true
-        },
-        {
           "type": "string",
           "named": true
         },
@@ -1555,115 +1739,6 @@
         },
         {
           "type": "unary_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "short_function",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "binary_expression",
-            "named": true
-          },
-          {
-            "type": "call",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": true
-          },
-          {
-            "type": "false",
-            "named": true
-          },
-          {
-            "type": "function",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "integer",
-            "named": true
-          },
-          {
-            "type": "list_expression",
-            "named": true
-          },
-          {
-            "type": "parenthesized_expression",
-            "named": true
-          },
-          {
-            "type": "permutation_expression",
-            "named": true
-          },
-          {
-            "type": "range_expression",
-            "named": true
-          },
-          {
-            "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          },
-          {
-            "type": "tilde",
-            "named": true
-          },
-          {
-            "type": "true",
-            "named": true
-          },
-          {
-            "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "parameters": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "short_parameters",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "short_parameters",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "ellipsis",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         }
       ]
@@ -1726,6 +1801,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -1751,10 +1830,6 @@
         },
         {
           "type": "return_statement",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -1832,6 +1907,10 @@
           "named": true
         },
         {
+          "type": "lambda",
+          "named": true
+        },
+        {
           "type": "list_expression",
           "named": true
         },
@@ -1849,10 +1928,6 @@
         },
         {
           "type": "record_expression",
-          "named": true
-        },
-        {
-          "type": "short_function",
           "named": true
         },
         {
@@ -1911,6 +1986,10 @@
             "named": true
           },
           {
+            "type": "lambda",
+            "named": true
+          },
+          {
             "type": "list_expression",
             "named": true
           },
@@ -1928,10 +2007,6 @@
           },
           {
             "type": "record_expression",
-            "named": true
-          },
-          {
-            "type": "short_function",
             "named": true
           },
           {

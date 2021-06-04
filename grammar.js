@@ -67,9 +67,9 @@ module.exports = grammar({
     ),
 
     assignment_statement: $ => seq(
-      $._expression,
+      field('left', $._expression),
       ':=',
-      $._expression,
+      field('right', $._expression),
     ),
 
     if_statement: $ => seq(
@@ -144,7 +144,7 @@ module.exports = grammar({
       $.char,
       $.string,
       $.function,
-      $.short_function,
+      $.lambda,
       $.tilde,
       $.call, // function call
 
@@ -233,8 +233,8 @@ module.exports = grammar({
 
     block: $ => repeat1($._statement),
 
-    short_function: $ => prec.right(PREC.LAMBDA, seq(
-      field('parameters', $.short_parameters),
+    lambda: $ => prec.right(PREC.LAMBDA, seq(
+      field('parameters', $.lambda_parameters),
       '->',
       field('body', $._expression)
     )),
@@ -248,7 +248,7 @@ module.exports = grammar({
       ')'
     ),
 
-    short_parameters: $ => choice(
+    lambda_parameters: $ => choice(
       $.identifier,
       seq(
         '{',

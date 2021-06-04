@@ -113,7 +113,7 @@ end;
     (function (parameters) (block (return_statement (integer))))
     (function (parameters (identifier)) (block (return_statement (identifier))))
     (function (parameters) (locals (identifier)) (block (return_statement (integer))))
-    )
+    )   
 
 =====================================
 Inline Functions
@@ -134,12 +134,12 @@ x -> y -> x + y;
 ---
 
 (source_file
-    (short_function (short_parameters (identifier)) (integer))
-    (short_function (short_parameters (identifier)) (short_function (short_parameters (identifier)) (integer)))
-    (short_function (short_parameters (identifier)) (short_function (short_parameters (identifier)) (binary_expression (identifier) (identifier))))
-    (short_function (short_parameters) (integer))
-    (short_function (short_parameters (identifier) (identifier)) (binary_expression (identifier) (identifier)))
-    (short_function (short_parameters (identifier) (ellipsis)) (identifier))
+    (lambda (lambda_parameters (identifier)) (integer))
+    (lambda (lambda_parameters (identifier)) (lambda (lambda_parameters (identifier)) (integer)))
+    (lambda (lambda_parameters (identifier)) (lambda (lambda_parameters (identifier)) (binary_expression (identifier) (identifier))))
+    (lambda (lambda_parameters) (integer))
+    (lambda (lambda_parameters (identifier) (identifier)) (binary_expression (identifier) (identifier)))
+    (lambda (lambda_parameters (identifier) (ellipsis)) (identifier))
     )
 
 =====================================

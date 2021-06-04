@@ -22,6 +22,8 @@
  (#match? @constant "^[A-Z][A-Z_]*$"))
 
 ; any other identifier is a variable
+;((identifier) @constant
+; (#is-not? local))
 (identifier) @variable
 
 ; Literals
@@ -84,3 +86,19 @@
   "until"
   "while"
 ] @keyword
+
+[
+  ","
+  ";"
+  ;"."
+  ;"!."
+] @punctuation.delimiter
+
+[
+  "("
+  ")"
+  "["
+  "]"
+  "{"
+  "}"
+] @punctuation.bracket
