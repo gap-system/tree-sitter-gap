@@ -17,6 +17,74 @@ Integers
   )
 
 =====================================
+Floats
+=====================================
+
+1.0;
+-.6;
++.1;
+123.4123;
+1.;
+
+---
+
+(source_file
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float))
+
+=====================================
+Scientific Notation Floats
+=====================================
+
+1.e322;
+1.e-3;
+1.e+3;
+1.8e10;
+1.e10;
+-1.e10;
++6.022e23;
+.1e10;
+1.E322;
+1.E-3;
+1.E+3;
+1.8E10;
+1.E10;
+-1.E10;
++6.022E23;
+.1E10;
+1.8d10;
+1.8D10;
+1.8q10;
+1.8Q10;
+
+---
+
+(source_file
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float))
+
+=====================================
 Strings
 =====================================
 
@@ -25,6 +93,9 @@ Strings
 "a\"c";
 "a\142c";
 "a\0x62c";
+"""abc""";
+"""a'c""";
+"""a"c""";
 
 ---
 
@@ -34,6 +105,51 @@ Strings
   (string (escape_sequence))
   (string (escape_sequence))
   (string (escape_sequence))
+  (string)
+  (string)
+  (string)
+  )
+
+=====================================
+Multi-line strings
+=====================================
+
+"""
+A double quote hello,
+without double or single quotes.
+""";
+
+"""
+A double quote "hello",
+with double quotes.
+""";
+
+"""
+A double quote 'hello',
+with single quotes.
+""";
+
+"""A double quote hello,
+with text on top.
+""";
+
+"""
+A double quote hello,
+with text on bottom.""";
+
+"""A double quote hello,
+with text on top,
+and on bottom.""";
+
+---
+
+(source_file
+  (string)
+  (string)
+  (string)
+  (string)
+  (string)
+  (string)
   )
 
 =====================================
@@ -70,4 +186,22 @@ false;
 (source_file
   (true)
   (false)
+  )
+
+
+=====================================
+Line continuations
+=====================================
+
+123\
+456;
+
+"a split\
+string";
+
+---
+
+(source_file
+  (integer)
+  (string)
   )
