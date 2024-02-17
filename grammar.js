@@ -141,13 +141,14 @@ module.exports = grammar({
       //       1. or .1 or 1.e4 ;  while record.1 or a.1.1 or e.1 are all not floats)
 
       $.integer,
+      $.float,
       $.true,
       $.false,
+      $.tilde,
       $.char,
       $.string,
       $.function,
       $.lambda,
-      $.tilde,
       $.call, // function call
 
       $.list_expression,
@@ -188,6 +189,44 @@ module.exports = grammar({
       $._expression
     )),
 
+
+    // GAP source file location: src/scanner.c GetNumber
+    float: _ => {
+      const digits = /[0-9]+/;
+      const exponent = /[edqEDQ][\+-]?[0-9]+/;
+      const leading_period = token(seq(
+        optional(digits),
+        '.',
+        digits,
+        optional(exponent),
+      ));
+      const trailing_period_with_exponent = token(seq(
+        digits,
+        '.',
+        exponent,
+      ));
+
+      // TODO: trailing period floats currently cause issues with ranges e.g.
+      // [1..10] fails producing the parse (list_expression (float) (Error))
+      // since it (correctly) tries to parse the prefix [1. as the start of a list
+      // followed by the float "1.". The issue is that with only a single character of
+      // lookahead we cannot correctly disambiguate this situation.
+      // In particular we need two characters of lookahead when our parser has processed
+      // the prefix [1, with these two characters we check if we have 1. or 1.. .
+      // Looks like we need to add an external scanner for this.
+      const trailing_period = token(seq(
+        digits,
+        '.',
+      ));
+
+      return choice(
+        leading_period,
+        trailing_period_with_exponent, 
+        //trailing_period
+      );
+    },
+
+    // GAP source file location: src/scanner.c GetNumber
     integer: $ => /[0-9]+/,
 
     true: $ => 'true',
@@ -206,10 +245,20 @@ module.exports = grammar({
     // TODO: support multiline triple strings
     // (ruby and python modules use an external scanner written in C++
     // for that... there are some nasty edge cases)
-    string: $ => seq(
-      '"',
-      optional($._literal_contents),
-      '"',
+    string: $ => choice(
+      seq(
+        '"',
+        optional($._literal_contents),
+        '"',
+      ),
+      seq(
+        '"""',
+        optional(repeat1(choice(
+          token.immediate(/./),
+          $.escape_sequence
+        ))),
+        '"""',
+      )
     ),
 
     _literal_contents: $ => repeat1(choice(
@@ -274,9 +323,6 @@ module.exports = grammar({
     // record expression (but at arbitrary depth)
     tilde: $ => '~',
 
-    // TODO: add tilde expressions?
-
-
     // TODO: should also handle calls like `(f)()` `f()()`
     // or `a[1]()` but these are rare, so we defer implementing it for now
     // also should handle `a.b()` correctly (as `(a.b)()` not `a.(b())`)
@@ -325,10 +371,19 @@ module.exports = grammar({
       ')',
     ),
 
-    permutation_expression: $ => seq(
+    permutation_expression: $ => choice(
+      // TODO: fix conflict with empty argument list,
+      // i.e. want f() to parse as a call and an identifier and permuation
+      // '()',
+      prec.right(repeat1($.permutation_cycle_expression))
+    ),
+
+    // Does not include trivial cycle because GAP doesn't allow it in a permutation expression,
+    // i.e. (1,2)() and ()(1,2) throw a syntax error.
+    permutation_cycle_expression: $ => seq(
       '(',
-      optional(seq($._expression, ',', commaSep1($._expression))),
-      ')',
+      seq($._expression, ',', commaSep1($._expression)),
+      ')'
     ),
 
     parenthesized_expression: $ => seq(
