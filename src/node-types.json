@@ -1301,7 +1301,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "permutation_cycle_expression",
@@ -2198,6 +2198,10 @@
     "named": false
   },
   {
+    "type": "()",
+    "named": false
+  },
+  {
     "type": ")",
     "named": false
   },
@@ -2343,6 +2347,10 @@
   },
   {
     "type": "integer",
+    "named": true
+  },
+  {
+    "type": "line_continuation",
     "named": true
   },
   {

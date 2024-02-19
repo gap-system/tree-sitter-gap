@@ -17,7 +17,8 @@ module.exports = grammar({
 
   extras: $ => [
     $.comment,
-    /\s/
+    /\s/,
+    $.line_continuation
   ],
 
   inline: $ => [
@@ -266,7 +267,16 @@ module.exports = grammar({
       $.escape_sequence
     )),
 
-    escape_sequence: $ => token(seq(
+    // TODO: Properly handle line continuation characters in strings.
+    // Currently the test
+    // "abc\
+    // def"
+    // Gets parsed as 
+    // (string (escape_sequence))
+    // instead of 
+    // (string) (line_continuation) (string)
+    // Likely easiest to fix when implementing proper line continuation logic.
+    escape_sequence: _ => token(seq(
       '\\',
       choice(
         /[^0-7]/,             // single character
@@ -313,7 +323,7 @@ module.exports = grammar({
       )
     ),
 
-    ellipsis: $ => '...',
+    ellipsis: _ => '...',
 
     locals: $ => seq(
       "local", commaSep1($.identifier), ";"
@@ -331,11 +341,17 @@ module.exports = grammar({
       field('arguments', $.argument_list)
     )),
 
-    argument_list: $ => seq(
-      '(',
-      optional(commaSep1($._expression)),
-      // TODO: handle options: `f(1,2 : opt)` or `f(1,2 : opt1 := true, opt2: = b)`
-      ')'
+    argument_list: $ => choice(
+      // Need to have the empty call separately to disambiguate with empty
+      // permutation. This is possibly due to the "Match Specificity" rule in the
+      // tree-sitter spec.
+      '()',
+      seq(
+        '(',
+        commaSep1($._expression),
+        // TODO: handle options: `f(1,2 : opt)` or `f(1,2 : opt1 := true, opt2: = b)`
+        ')'
+      )
     ),
 
     // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
@@ -372,9 +388,7 @@ module.exports = grammar({
     ),
 
     permutation_expression: $ => choice(
-      // TODO: fix conflict with empty argument list,
-      // i.e. want f() to parse as a call and an identifier and permuation
-      // '()',
+      '()',
       prec.right(repeat1($.permutation_cycle_expression))
     ),
 
@@ -397,9 +411,15 @@ module.exports = grammar({
     //   \[\]
     //   \+
     //   multi\ word\ identifier
-    identifier: $ => /[a-zA-Z_@][a-zA-Z_@0-9]*/,
+    identifier: _ => /[a-zA-Z_@][a-zA-Z_@0-9]*/,
 
-    comment: $ => token(seq('#', /.*/))
+    comment: _ => token(seq('#', /.*/)),
+
+    // TODO: make line continuations seamless, i.e. parse 
+    // 1234\
+    // 5678
+    // as just (integer) instead of ((integer) (line_continuation) (integer))
+    line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
 
   }
 });
