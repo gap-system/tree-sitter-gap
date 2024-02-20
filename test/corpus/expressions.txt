@@ -1,4 +1,29 @@
 =====================================
+Identifiers
+=====================================
+
+foo;
+Bar;
+bAz1;
+hello_world;
+helloWorld;
+n2;
+2n;
+42n;
+
+---
+(source_file
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+)
+
+=====================================
 Lists
 =====================================
 
@@ -108,9 +133,10 @@ rec(a:=1, b:=2, (Concatenation("a", "b")):=1+1);
         (identifier)
         (integer))
     (record_entry
-        (binary_expression
-            (integer)
-            (integer))
+        (parenthesized_expression
+            (binary_expression
+                (integer)
+                (integer)))
         (integer)))
   (record_expression
     (record_entry
@@ -120,12 +146,12 @@ rec(a:=1, b:=2, (Concatenation("a", "b")):=1+1);
         (identifier)
         (integer))
     (record_entry
-        (call
-            (identifier)
-            (argument_list
-                (string)
-                (string))
-        )
+        (parenthesized_expression
+            (call
+                (identifier)
+                (argument_list
+                    (string)
+                    (string))))
         (binary_expression
             (integer)
             (integer))))
@@ -162,6 +188,518 @@ Permutations
       (integer)
       (integer)))
   )
+
+=====================================
+List selectors
+=====================================
+
+A[1];
+A[b];
+A[3];
+A[1+1];
+A[1+Sum([1,2,3])];
+A[1][2];
+A[1+1][2];
+A[B[1]][2][3];
+A[1,2];
+A[1,Sum([1,2])];
+A [1];
+A [1] [2];
+A[2]{[1,2,3]};
+A[1](2);
+A[1]();
+
+---
+
+(source_file
+    (list_selector
+        (identifier)
+        (integer))
+    (list_selector
+        (identifier)
+        (identifier))
+    (list_selector
+        (identifier)
+        (integer))
+    (list_selector
+        (identifier)
+        (binary_expression
+            (integer)
+            (integer)))
+    (list_selector
+        (identifier)
+        (binary_expression
+            (integer)
+            (call
+                (identifier)
+                (argument_list
+                    (list_expression
+                        (integer)
+                        (integer)
+                        (integer))))))
+    (list_selector
+        (list_selector
+            (identifier)
+            (integer))
+        (integer))
+    (list_selector
+        (list_selector
+            (identifier)
+            (binary_expression
+                (integer)
+                (integer)))
+        (integer))
+    (list_selector
+        (list_selector
+            (list_selector
+                (identifier)
+                (list_selector
+                    (identifier)
+                    (integer)))
+            (integer))
+        (integer))
+    (list_selector
+        (identifier)
+        (integer)
+        (integer))
+    (list_selector
+        (identifier)
+        (integer)
+        (call
+            (identifier)
+            (argument_list
+                (list_expression
+                    (integer)
+                    (integer)))))
+    (list_selector
+        (identifier)
+        (integer))
+    (list_selector
+        (list_selector
+            (identifier)
+            (integer))
+        (integer))
+    (sublist_selector
+        (list_selector
+            (identifier)
+            (integer))
+        (list_expression
+            (integer)
+            (integer)
+            (integer)))
+    (call
+        (list_selector
+            (identifier)
+            (integer))
+        (argument_list
+            (integer)))
+    (call
+        (list_selector
+            (identifier)
+            (integer))
+        (argument_list))
+)
+
+=====================================
+Sublist selectors
+=====================================
+
+A{[1]};
+A{[2,3]};
+A{[1+1,1]};
+A{x};
+A{[1..10]};
+A{List([1..10],x->1)};
+A{[1,2,3]}[1];
+A{[1,2,3]}[1,1];
+A{[1,2,3]}{[4,5,6]};
+A{[1,2,3]}(1,2);
+A{[2,2,3]}();
+
+
+---
+
+(source_file
+    (sublist_selector
+        (identifier)
+        (list_expression
+            (integer)))
+    (sublist_selector
+        (identifier)
+        (list_expression
+            (integer)
+            (integer)))
+    (sublist_selector
+        (identifier)
+        (list_expression
+            (binary_expression
+                (integer)
+                (integer))
+            (integer)))
+    (sublist_selector
+        (identifier)
+        (identifier))
+    (sublist_selector
+        (identifier)
+        (range_expression
+            (integer)
+            (integer)))
+    (sublist_selector
+        (identifier)
+        (call
+            (identifier)
+            (argument_list
+                (range_expression
+                    (integer)
+                    (integer))
+                (lambda
+                    (lambda_parameters
+                        (identifier))
+                    (integer)))))
+    (list_selector
+        (sublist_selector
+            (identifier)
+            (list_expression
+                (integer)
+                (integer)
+                (integer)))
+        (integer))
+    (list_selector
+        (sublist_selector
+            (identifier)
+            (list_expression
+                (integer)
+                (integer)
+                (integer)))
+        (integer)
+        (integer))
+    (sublist_selector
+        (sublist_selector
+            (identifier)
+            (list_expression
+                (integer)
+                (integer)
+                (integer)))
+        (list_expression
+            (integer)
+            (integer)
+            (integer)))
+    (call
+        (sublist_selector
+            (identifier)
+            (list_expression
+                (integer)
+                (integer)
+                (integer)))
+        (argument_list
+            (integer)
+            (integer)))
+    (call
+        (sublist_selector
+            (identifier)
+            (list_expression
+                (integer)
+                (integer)
+                (integer)))
+        (argument_list))
+)
+
+=====================================
+Positional selectors
+=====================================
+
+A![1];
+A![1+1];
+A![n];
+A![n](1,3);
+A![n]();
+
+---
+
+(source_file
+    (positional_selector
+        (identifier)
+        (integer))
+    (positional_selector
+        (identifier)
+        (binary_expression
+            (integer)
+            (integer)))
+    (positional_selector
+        (identifier)
+        (identifier))
+    (call
+        (positional_selector
+            (identifier)
+            (identifier))
+        (argument_list
+            (integer)
+            (integer)))
+    (call
+        (positional_selector
+            (identifier)
+            (identifier))
+        (argument_list))
+)
+
+=====================================
+Record selectors
+=====================================
+
+A.1;
+A.1.2;
+A.(1+1);
+A.hello;
+A.hello.1;
+A.1.world;
+A.hello.world;
+A.hello.world.foo;
+A.hello.world[1];
+A.hello.world{[1,2,3]};
+A.(Concatenation("a", "b"));
+A.("ab");
+A.hello();
+A.hello(1);
+A.hello.world();
+A.hello.world(1);
+A.("ab")(1,2);
+A.1(2);
+
+---
+
+(source_file
+    (record_selector
+        (identifier)
+        (integer))
+    (record_selector
+        (record_selector
+            (identifier)
+            (integer))
+        (integer))
+    (record_selector
+        (identifier)
+        (parenthesized_expression
+            (binary_expression
+                (integer)
+                (integer))))
+    (record_selector
+        (identifier)
+        (identifier))
+    (record_selector
+        (record_selector
+            (identifier)
+            (identifier))
+        (integer))
+    (record_selector
+        (record_selector
+            (identifier)
+            (integer))
+        (identifier))
+    (record_selector
+        (record_selector
+            (identifier)
+            (identifier))
+        (identifier))
+    (record_selector
+        (record_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (identifier))
+    (list_selector
+        (record_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (integer))
+    (sublist_selector
+        (record_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (list_expression
+            (integer)
+            (integer)
+            (integer)))
+    (record_selector
+        (identifier)
+        (parenthesized_expression
+            (call
+                (identifier)
+                (argument_list
+                    (string)
+                    (string)))))
+    (record_selector
+        (identifier)
+        (parenthesized_expression
+            (string)))
+    (call
+        (record_selector
+            (identifier)
+            (identifier))
+        (argument_list))
+    (call
+        (record_selector
+            (identifier)
+            (identifier))
+        (argument_list
+            (integer)))
+    (call
+        (record_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (argument_list))
+    (call
+        (record_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (argument_list
+            (integer)))
+    (call
+        (record_selector
+            (identifier)
+            (parenthesized_expression
+                (string)))
+        (argument_list
+            (integer)
+            (integer)))
+    (call
+        (record_selector
+            (identifier)
+            (integer))
+        (argument_list
+            (integer)))
+)
+
+=====================================
+Component selectors
+=====================================
+
+A!.1;
+A!.1!.2;
+A!.(1+1);
+A!.hello;
+A!.hello.world;
+A!.hello!.world!.foo;
+A.hello!.world[1];
+A!.hello!.world{[1,2,3]};
+A!.(Concatenation("a", "b"));
+A!.("ab");
+A!.hello();
+A!.hello(1);
+A!.hello!.world();
+A!.hello!.world(1);
+A!.("ab")(1,2);
+A!.1();
+
+---
+
+(source_file
+    (component_selector
+        (identifier)
+        (integer))
+    (component_selector
+        (component_selector
+            (identifier)
+            (integer))
+        (integer))
+    (component_selector
+        (identifier)
+        (parenthesized_expression
+            (binary_expression
+                (integer)
+                (integer))))
+    (component_selector
+        (identifier)
+        (identifier))
+    (record_selector
+        (component_selector
+            (identifier)
+            (identifier))
+        (identifier))
+    (component_selector
+        (component_selector
+            (component_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (identifier))
+    (list_selector
+        (component_selector
+            (record_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (integer))
+    (sublist_selector
+        (component_selector
+            (component_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (list_expression
+            (integer)
+            (integer)
+            (integer)))
+    (component_selector
+        (identifier)
+        (parenthesized_expression
+            (call
+                (identifier)
+                (argument_list
+                    (string)
+                    (string)))))
+    (component_selector
+        (identifier)
+        (parenthesized_expression
+            (string)))
+    (call
+        (component_selector
+            (identifier)
+            (identifier))
+        (argument_list))
+    (call
+        (component_selector
+            (identifier)
+            (identifier))
+        (argument_list
+            (integer)))
+    (call
+        (component_selector
+            (component_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (argument_list))
+    (call
+        (component_selector
+            (component_selector
+                (identifier)
+                (identifier))
+            (identifier))
+        (argument_list
+            (integer)))
+    (call
+        (component_selector
+            (identifier)
+            (parenthesized_expression
+                (string)))
+        (argument_list
+            (integer)
+            (integer)))
+    (call
+        (component_selector
+            (identifier)
+            (integer))
+        (argument_list))
+)
 
 =====================================
 Functions
@@ -241,6 +779,16 @@ foo(1, 1);
 
 foo(bar());
 
+foo()();
+
+foo(1)();
+
+foo()(1);
+
+foo(1)(1);
+
+(foo)();
+
 ---
 
 (source_file
@@ -248,7 +796,22 @@ foo(bar());
     (call (identifier) (argument_list (integer)))
     (call (identifier) (argument_list (integer) (integer)))
     (call (identifier) (argument_list (call (identifier) (argument_list))))
-    )
+    (call 
+        (call (identifier) (argument_list)) 
+        (argument_list))
+    (call 
+        (call (identifier) (argument_list (integer))) 
+        (argument_list))
+    (call 
+        (call (identifier) (argument_list))
+        (argument_list (integer)))
+    (call 
+        (call (identifier) (argument_list (integer))) 
+        (argument_list (integer)))
+    (call 
+        (parenthesized_expression (identifier)) 
+        (argument_list))
+)
 
 
 =====================================
@@ -257,22 +820,22 @@ Function calls with options
 
 Size( fpgrp : hard, tcselection := "external" );
 Size(fpgrp: hard, tcselection:= "external");
-f(a, 1 : c, d:=1, f)
-f(a, 1 : c, d:=1, f, g:=3, h:="aa")
-f(a, 1 : d:=1, g:=3, h:="aa")
-f(: c, d:=1, f)
-f(a, b:)
-f(:)
-f(:a)
-f(:a:=b)
-f(.1:c,d:=1,f)
-f(a,.1:c,d:=1,f)
+f(a, 1 : c, d:=1, f);
+f(a, 1 : c, d:=1, f, g:=3, h:="aa");
+f(a, 1 : d:=1, g:=3, h:="aa");
+f(: c, d:=1, f);
+f(a, b:);
+f(:);
+f(:a);
+f(:a:=b);
+f(.1:c,d:=1,f);
+f(a,.1:c,d:=1,f);
 # Need to fix floats for these to work
 # f(a, 1. : c, d:=1, f)
 # f(a,1.:c,d:=1,f)
 # f(1.:c,d:=1,f)
-f(1:(1+1),d:=1,f)
-f(1:c,(1+1):=1,f)
+f(1:(1+1),d:=1,f);
+f(1:c,(1+1):=1,f);
 
 ---
 
@@ -413,9 +976,10 @@ f(1:c,(1+1):=1,f)
         (argument_list
             (integer)
             (function_call_option
-                (binary_expression
-                    (integer)
-                    (integer)))
+                (parenthesized_expression
+                    (binary_expression
+                        (integer)
+                        (integer))))
             (function_call_option
                 (record_entry
                     (identifier)
@@ -430,9 +994,10 @@ f(1:c,(1+1):=1,f)
                 (identifier))
             (function_call_option
                 (record_entry
-                    (binary_expression
-                        (integer)
-                        (integer))
+                    (parenthesized_expression
+                        (binary_expression
+                            (integer)
+                            (integer)))
                     (integer)))
             (function_call_option
                 (identifier))))

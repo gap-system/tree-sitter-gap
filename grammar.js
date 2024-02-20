@@ -132,14 +132,10 @@ module.exports = grammar({
     // Expressions
 
     _expression: $ => choice(
-      $.identifier,
+      $._variable,
       $.binary_expression,
       $.unary_expression,
-
-      // TODO:  a[idx], a[idx,idx],  a{...}, a![], a!{}
-      // TODO:  a.x, a!.x
-      // TODO: floats (and be careful so that also edge cases are supported:
-      //       1. or .1 or 1.e4 ;  while record.1 or a.1.1 or e.1 are all not floats)
+      
 
       $.integer,
       $.float,
@@ -150,7 +146,6 @@ module.exports = grammar({
       $.string,
       $.function,
       $.lambda,
-      $.call, // function call
 
       $.list_expression,
       $.range_expression,
@@ -159,6 +154,75 @@ module.exports = grammar({
 
       $.parenthesized_expression
     ),
+
+    // Variables
+
+    // GAP source file location: src/read.c ReadCallVarAss
+    _variable: $ => prec(-1, choice(
+      $.identifier,
+      $.list_selector,
+      $.sublist_selector,
+      $.positional_selector,
+      $.record_selector,
+      $.component_selector,
+      $.call
+    )),
+
+    // GAP source file location: src/read.c ReadSelector
+    list_selector: $ => prec.left(PREC.CALL, seq(
+      $._variable,
+      '[',
+      // TODO: Implement something more sensible here
+      // we really want the expressions as implemented by
+      // ReadExpr in read.c.
+      // Currently our $._expression is way broader.
+      $._expression,
+      optional(seq(
+        ',',
+        $._expression
+      )),
+      ']'
+    )),
+
+    // GAP source file location: src/read.c ReadSelector
+    sublist_selector: $ => prec.left(PREC.CALL, seq(
+      $._variable,
+      '{',
+      $._expression,
+      '}'
+    )),
+
+    // GAP source file location: src/read.c ReadSelector
+    positional_selector: $ => prec.left(PREC.CALL, seq(
+      $._variable,
+      '![',
+      $._expression,
+      ']'
+    )),
+
+    // GAP source file location: src/read.c ReadSelector
+    // TODO: fix issues with integer record selectors, i.e.
+    // make sure that a.1 is not parsed as (identifier) (float)
+    record_selector: $ => prec.left(PREC.CALL, seq(
+      $._variable,
+      '.',
+      choice(
+        $.identifier,
+        $.integer,
+        $.parenthesized_expression,
+      )
+    )),
+
+    // GAP source file location: src/read.c ReadSelector
+    component_selector: $ => prec.left(PREC.CALL, seq(
+      $._variable,
+      '!.',
+      choice(
+        $.identifier,
+        $.integer,
+        $.parenthesized_expression,
+      )
+    )),
 
     binary_expression: $ => choice(
       ...[
@@ -333,11 +397,11 @@ module.exports = grammar({
     // record expression (but at arbitrary depth)
     tilde: $ => '~',
 
-    // TODO: should also handle calls like `(f)()` `f()()`
-    // or `a[1]()` but these are rare, so we defer implementing it for now
-    // also should handle `a.b()` correctly (as `(a.b)()` not `a.(b())`)
     call: $ => prec(PREC.CALL, seq(
-      field('function', $.identifier),
+      field('function', choice(
+        $._variable,
+        $.parenthesized_expression
+      )),
       field('arguments', $.argument_list)
     )),
 
@@ -363,7 +427,7 @@ module.exports = grammar({
     // GAP source file location: src/read.c ReadFuncCallOption
     function_call_option: $ => choice(
       $.identifier,
-      seq('(', $._expression, ')'),
+      $.parenthesized_expression,
       $.record_entry
     ),
 
@@ -405,7 +469,7 @@ module.exports = grammar({
       choice(
         $.identifier,
         $.integer,
-        seq('(', $._expression, ')')
+        $.parenthesized_expression
       ),
       ':=',
       $._expression
@@ -430,6 +494,7 @@ module.exports = grammar({
       ')',
     ),
 
+    // TODO: support identifiers starting with numbers e.g. 2n
     // TODO: support backslash quotes in identifiers; e.g. these are
     // three valid identifiers:
     //   \[\]
