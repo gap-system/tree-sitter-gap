@@ -57,20 +57,79 @@ Records
 rec();
 rec(,);
 rec(a:=1);
+rec( a := 1 );
 rec(a:=1,);
 rec(1:=2);
 rec(a:=1, b:=2);
+rec(a:=1, b:=2, );
+rec(a:=1, b:=2, (1+1):=3);
+rec(a:=1, b:=2, (Concatenation("a", "b")):=1+1);
 
 ---
 
 (source_file
   (record_expression)
   (record_expression)
-  (record_expression (identifier) (integer))
-  (record_expression (identifier) (integer))
-  (record_expression (integer) (integer))
-  (record_expression (identifier) (integer) (identifier) (integer))
-  )
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer)))
+  (record_expression
+    (record_entry
+        (integer)
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (identifier)
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (identifier)
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (binary_expression
+            (integer)
+            (integer))
+        (integer)))
+  (record_expression
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (identifier)
+        (integer))
+    (record_entry
+        (call
+            (identifier)
+            (argument_list
+                (string)
+                (string))
+        )
+        (binary_expression
+            (integer)
+            (integer))))
+)
 
 =====================================
 Permutations
@@ -192,3 +251,189 @@ foo(bar());
     )
 
 
+=====================================
+Function calls with options
+=====================================
+
+Size( fpgrp : hard, tcselection := "external" );
+Size(fpgrp: hard, tcselection:= "external");
+f(a, 1 : c, d:=1, f)
+f(a, 1 : c, d:=1, f, g:=3, h:="aa")
+f(a, 1 : d:=1, g:=3, h:="aa")
+f(: c, d:=1, f)
+f(a, b:)
+f(:)
+f(:a)
+f(:a:=b)
+f(.1:c,d:=1,f)
+f(a,.1:c,d:=1,f)
+# Need to fix floats for these to work
+# f(a, 1. : c, d:=1, f)
+# f(a,1.:c,d:=1,f)
+# f(1.:c,d:=1,f)
+f(1:(1+1),d:=1,f)
+f(1:c,(1+1):=1,f)
+
+---
+
+(source_file
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (string)))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (string)))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (integer)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (integer)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (string)))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (integer)
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (string)))))
+    (call
+        (identifier)
+        (argument_list
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (identifier)))
+    (call
+        (identifier)
+        (argument_list))
+    (call
+        (identifier)
+        (argument_list
+            (function_call_option
+                (identifier))))
+    (call
+        (identifier)
+        (argument_list
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (identifier)))))
+    (call
+        (identifier)
+        (argument_list
+            (float)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))))
+    (call
+        (identifier)
+        (argument_list
+            (identifier)
+            (float)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))))
+    (comment)
+    (comment)
+    (comment)
+    (comment)
+    (call
+        (identifier)
+        (argument_list
+            (integer)
+            (function_call_option
+                (binary_expression
+                    (integer)
+                    (integer)))
+            (function_call_option
+                (record_entry
+                    (identifier)
+                    (integer)))
+            (function_call_option
+                (identifier))))
+    (call
+        (identifier)
+        (argument_list
+            (integer)
+            (function_call_option
+                (identifier))
+            (function_call_option
+                (record_entry
+                    (binary_expression
+                        (integer)
+                        (integer))
+                    (integer)))
+            (function_call_option
+                (identifier))))
+)
