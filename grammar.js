@@ -349,9 +349,22 @@ module.exports = grammar({
       seq(
         '(',
         commaSep1($._expression),
-        // TODO: handle options: `f(1,2 : opt)` or `f(1,2 : opt1 := true, opt2: = b)`
+        ')'
+      ),
+      seq(
+        '(',
+        commaSep($._expression),
+        ':',
+        commaSep($.function_call_option),
         ')'
       )
+    ),
+
+    // GAP source file location: src/read.c ReadFuncCallOption
+    function_call_option: $ => choice(
+      $.identifier,
+      seq('(', $._expression, ')'),
+      $.record_entry
     ),
 
     // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
@@ -377,14 +390,25 @@ module.exports = grammar({
       ']',
     ),
 
+    // GAP source file location: src/read.c ReadRec
     record_expression: $ => seq(
       'rec',
       '(',
       commaSep(
-        seq(choice($.identifier, $.integer), ':=', $._expression)
-       ),
+        $.record_entry
+      ),
       optional(','),
       ')',
+    ),
+
+    record_entry: $ => seq(
+      choice(
+        $.identifier,
+        $.integer,
+        seq('(', $._expression, ')')
+      ),
+      ':=',
+      $._expression
     ),
 
     permutation_expression: $ => choice(
