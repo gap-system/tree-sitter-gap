@@ -776,6 +776,16 @@
     "type": "for_statement",
     "named": true,
     "fields": {
+      "identifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "values": {
         "multiple": false,
         "required": true,
@@ -870,16 +880,6 @@
           },
           {
             "type": "unary_expression",
-            "named": true
-          }
-        ]
-      },
-      "variable": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -3236,10 +3236,6 @@
   },
   {
     "type": "integer",
-    "named": true
-  },
-  {
-    "type": "line_continuation",
     "named": true
   },
   {

@@ -96,6 +96,8 @@ Strings
 """abc""";
 """a'c""";
 """a"c""";
+"hello#world";
+"""hello#world""";
 
 ---
 
@@ -105,6 +107,8 @@ Strings
   (string (escape_sequence))
   (string (escape_sequence))
   (string (escape_sequence))
+  (string)
+  (string)
   (string)
   (string)
   (string)
@@ -162,6 +166,7 @@ Character
 '\\';
 '\142';
 '\0x62';
+'#';
 
 ---
 
@@ -172,6 +177,7 @@ Character
   (char (escape_sequence))
   (char (escape_sequence))
   (char (escape_sequence))
+  (char)
   )
 
 =====================================

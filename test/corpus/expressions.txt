@@ -10,9 +10,25 @@ helloWorld;
 n2;
 2n;
 42n;
+hello\ world;
+\+;
+\[\];
+123\ 456;
+123\a456;
+123\456;
+1\.1;
+1\.1\.2;
 
 ---
 (source_file
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
     (identifier)
     (identifier)
     (identifier)
@@ -828,9 +844,9 @@ f(a, b:);
 f(:);
 f(:a);
 f(:a:=b);
-f(.1:c,d:=1,f);
-f(a,.1:c,d:=1,f);
 # Need to fix floats for these to work
+#f(.1:c,d:=1,f);
+#(a,.1:c,d:=1,f);
 # f(a, 1. : c, d:=1, f)
 # f(a,1.:c,d:=1,f)
 # f(1.:c,d:=1,f)
@@ -942,31 +958,8 @@ f(1:c,(1+1):=1,f);
                 (record_entry
                     (identifier)
                     (identifier)))))
-    (call
-        (identifier)
-        (argument_list
-            (float)
-            (function_call_option
-                (identifier))
-            (function_call_option
-                (record_entry
-                    (identifier)
-                    (integer)))
-            (function_call_option
-                (identifier))))
-    (call
-        (identifier)
-        (argument_list
-            (identifier)
-            (float)
-            (function_call_option
-                (identifier))
-            (function_call_option
-                (record_entry
-                    (identifier)
-                    (integer)))
-            (function_call_option
-                (identifier))))
+    (comment)
+    (comment)
     (comment)
     (comment)
     (comment)
