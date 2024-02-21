@@ -18,7 +18,6 @@ module.exports = grammar({
   extras: $ => [
     $.comment,
     /\s/,
-    $.line_continuation
   ],
 
   inline: $ => [
@@ -112,7 +111,7 @@ module.exports = grammar({
 
     for_statement: $ => seq(
       'for',
-      field('variable', $.identifier),
+      field('identifier', $.identifier),
       'in',
       field('values', seq($._expression)),
       'do',
@@ -169,6 +168,8 @@ module.exports = grammar({
     )),
 
     // GAP source file location: src/read.c ReadSelector
+    // TODO: Allow ~ as the variable of the list expression
+    // (same for other selectors)
     list_selector: $ => prec.left(PREC.CALL, seq(
       $._variable,
       '[',
@@ -259,12 +260,20 @@ module.exports = grammar({
     float: _ => {
       const digits = /[0-9]+/;
       const exponent = /[edqEDQ][\+-]?[0-9]+/;
-      const leading_period = token(seq(
-        optional(digits),
+
+      const middle_period = token(seq(
+        digits,
         '.',
         digits,
         optional(exponent),
       ));
+
+      const leading_period_with_exponent = token(seq(
+        '.',
+        digits,
+        exponent,
+      ));
+
       const trailing_period_with_exponent = token(seq(
         digits,
         '.',
@@ -284,8 +293,16 @@ module.exports = grammar({
         '.',
       ));
 
+      const leading_period = token(prec(-1,seq(
+        '.',
+        digits,
+      )));
+
+
       return choice(
-        leading_period,
+        //leading_period,
+        middle_period,
+        leading_period_with_exponent,
         trailing_period_with_exponent, 
         //trailing_period
       );
@@ -301,11 +318,12 @@ module.exports = grammar({
     char: $ => seq(
       '\'',
       choice(
-        token.immediate(/[^\n']/),
+        token.immediate(prec(1, /[^\n']/)),
         $.escape_sequence
       ),
       '\''
     ),
+
 
     // TODO: support multiline triple strings
     // (ruby and python modules use an external scanner written in C++
@@ -319,7 +337,7 @@ module.exports = grammar({
       seq(
         '"""',
         optional(repeat1(choice(
-          token.immediate(/./),
+          token.immediate(prec(1, /./)),
           $.escape_sequence
         ))),
         '"""',
@@ -327,27 +345,18 @@ module.exports = grammar({
     ),
 
     _literal_contents: $ => repeat1(choice(
-      token.immediate(/[^\n"\\]/),
+      token.immediate(prec(1, /[^\n"\\]/)),
       $.escape_sequence
     )),
 
-    // TODO: Properly handle line continuation characters in strings.
-    // Currently the test
-    // "abc\
-    // def"
-    // Gets parsed as 
-    // (string (escape_sequence))
-    // instead of 
-    // (string) (line_continuation) (string)
-    // Likely easiest to fix when implementing proper line continuation logic.
-    escape_sequence: _ => token(seq(
+    escape_sequence: _ => token(prec(1, seq(
       '\\',
       choice(
         /[^0-7]/,             // single character
         /0x[0-9a-fA-F]{2,2}/, // hex code
         /[0-7]{3,3}/,         // octal
       )
-    )),
+    ))),
 
 
     function: $ => seq(
@@ -494,20 +503,16 @@ module.exports = grammar({
       ')',
     ),
 
-    // TODO: support identifiers starting with numbers e.g. 2n
     // TODO: support backslash quotes in identifiers; e.g. these are
     // three valid identifiers:
     //   \[\]
     //   \+
     //   multi\ word\ identifier
-    identifier: _ => /[a-zA-Z_@][a-zA-Z_@0-9]*/,
+    identifier: _ => /([a-zA-Z_@0-9]|(\\.))*([a-zA-Z_@]|(\\.))[a-zA-Z_@0-9]*/,
 
     comment: _ => token(seq('#', /.*/)),
 
-    // TODO: make line continuations seamless, i.e. parse 
-    // 1234\
-    // 5678
-    // as just (integer) instead of ((integer) (line_continuation) (integer))
+    // TODO: implement external scanner for line continuations
     line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
 
   }
