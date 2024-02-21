@@ -113,7 +113,7 @@ module.exports = grammar({
       'for',
       field('identifier', $.identifier),
       'in',
-      field('values', seq($._expression)),
+      field('values', $._expression),
       'do',
       repeat($._statement),
       'od'
@@ -135,7 +135,6 @@ module.exports = grammar({
       $.binary_expression,
       $.unary_expression,
       
-
       $.integer,
       $.float,
       $.true,
@@ -171,7 +170,7 @@ module.exports = grammar({
     // TODO: Allow ~ as the variable of the list expression
     // (same for other selectors)
     list_selector: $ => prec.left(PREC.CALL, seq(
-      $._variable,
+      field('variable', $._expression),
       '[',
       // TODO: Implement something more sensible here
       // we really want the expressions as implemented by
@@ -187,7 +186,7 @@ module.exports = grammar({
 
     // GAP source file location: src/read.c ReadSelector
     sublist_selector: $ => prec.left(PREC.CALL, seq(
-      $._variable,
+      field('variable', $._expression),
       '{',
       $._expression,
       '}'
@@ -195,7 +194,7 @@ module.exports = grammar({
 
     // GAP source file location: src/read.c ReadSelector
     positional_selector: $ => prec.left(PREC.CALL, seq(
-      $._variable,
+      field('variable', $._expression),
       '![',
       $._expression,
       ']'
@@ -205,7 +204,7 @@ module.exports = grammar({
     // TODO: fix issues with integer record selectors, i.e.
     // make sure that a.1 is not parsed as (identifier) (float)
     record_selector: $ => prec.left(PREC.CALL, seq(
-      $._variable,
+      field('variable', $._expression),
       '.',
       choice(
         $.identifier,
@@ -216,7 +215,7 @@ module.exports = grammar({
 
     // GAP source file location: src/read.c ReadSelector
     component_selector: $ => prec.left(PREC.CALL, seq(
-      $._variable,
+      field('variable', $._expression),
       '!.',
       choice(
         $.identifier,
@@ -318,7 +317,7 @@ module.exports = grammar({
     char: $ => seq(
       '\'',
       choice(
-        token.immediate(prec(1, /[^\n']/)),
+        token.immediate(prec(1, /[^\n]/)),
         $.escape_sequence
       ),
       '\''
@@ -415,20 +414,13 @@ module.exports = grammar({
     )),
 
     argument_list: $ => choice(
-      // Need to have the empty call separately to disambiguate with empty
-      // permutation. This is possibly due to the "Match Specificity" rule in the
-      // tree-sitter spec.
-      '()',
-      seq(
-        '(',
-        commaSep1($._expression),
-        ')'
-      ),
       seq(
         '(',
         commaSep($._expression),
-        ':',
-        commaSep($.function_call_option),
+        optional(seq(
+          ':',
+          commaSep($.function_call_option),
+        )),
         ')'
       )
     ),
@@ -475,17 +467,17 @@ module.exports = grammar({
     ),
 
     record_entry: $ => seq(
-      choice(
+      field('left', choice(
         $.identifier,
         $.integer,
         $.parenthesized_expression
-      ),
+      )),
       ':=',
-      $._expression
+      field('right', $._expression)
     ),
 
     permutation_expression: $ => choice(
-      '()',
+      seq('(', ')'),
       prec.right(repeat1($.permutation_cycle_expression))
     ),
 

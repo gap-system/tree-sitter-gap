@@ -167,6 +167,7 @@ Character
 '\142';
 '\0x62';
 '#';
+''';
 
 ---
 
@@ -178,7 +179,8 @@ Character
   (char (escape_sequence))
   (char (escape_sequence))
   (char)
-  )
+  (char)
+)
 
 =====================================
 Other primitives
