@@ -920,6 +920,7 @@ function(a) end;
 function(a,b) end;
 function(a...) end;
 function(a,b...) end;
+function(a ...) end;
 
 function()
     local x;
@@ -944,6 +945,7 @@ end;
     (function (parameters (identifier) (identifier)))
     (function (parameters (identifier) (ellipsis)))
     (function (parameters (identifier) (identifier) (ellipsis)))
+    (function (parameters (identifier) (ellipsis)))
     (function (parameters) (locals (identifier)))
     (function (parameters) (block (return_statement (integer))))
     (function (parameters (identifier)) (block (return_statement (identifier))))
@@ -976,6 +978,180 @@ x -> y -> x + y;
     (lambda (lambda_parameters (identifier) (identifier)) (binary_expression (identifier) (identifier)))
     (lambda (lambda_parameters (identifier) (ellipsis)) (identifier))
     )
+
+=====================================
+Atomic functions
+=====================================
+
+atomic function() end;
+atomic function(a) end;
+atomic function(readonly a) end;
+atomic function(readwrite a) end;
+atomic function(readwrite a, b) end;
+atomic function(readwrite a, readonly b) end;
+atomic function(readwrite a, readonly b, c) end;
+atomic function(readwrite a, readonly b, c, readwrite d) end;
+atomic function(a...) end;
+atomic function(readonly a...) end;
+atomic function(readwrite a...) end;
+atomic function(a,b...) end;
+atomic function(a, readonly b...) end;
+atomic function(a, readwrite b...) end;
+atomic function(readonly a, readwrite b...) end;
+atomic function(readonly a, b...) end;
+
+atomic function(readwrite y)
+    local x;
+end;
+
+atomic function(readonly x)
+    return 1;
+end;
+
+atomic function(readwrite a)
+    return a;
+end;
+
+atomic function()
+    local x;
+    return 1;
+end;
+
+---
+
+(source_file
+    (atomic_function
+        (qualified_parameters))
+    (atomic_function
+        (qualified_parameters
+            (identifier)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (identifier)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (qualified_identifier
+                (qualifier)
+                (identifier))))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (identifier)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (identifier)
+            (qualified_identifier
+                (qualifier)
+                (identifier))))
+    (atomic_function
+        (qualified_parameters
+            (identifier)
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (identifier)
+            (identifier)
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (identifier)
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (identifier)
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier))
+            (identifier)
+            (ellipsis)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier)))
+        (locals
+            (identifier)))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier)))
+        (block
+            (return_statement
+                (integer))))
+    (atomic_function
+        (qualified_parameters
+            (qualified_identifier
+                (qualifier)
+                (identifier)))
+        (block
+            (return_statement
+                (identifier))))
+    (atomic_function
+        (qualified_parameters)
+        (locals
+            (identifier))
+        (block
+            (return_statement
+                (integer))))
+)
 
 =====================================
 Function calls

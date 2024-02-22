@@ -140,5 +140,146 @@ until false;
     (repeat_statement (false))
     (repeat_statement (break_statement) (false))
     (repeat_statement (continue_statement) (false))
-    )
+)
 
+=====================================
+Atomic statements
+=====================================
+
+atomic A do
+    f(A);
+od;
+
+atomic readonly A do
+    f(A);
+od;
+
+atomic readwrite A do
+    f(A);
+od;
+
+atomic A, B do
+    f(A);
+    g(B);
+od;
+
+atomic readonly A, B do
+    f(A);
+    g(B);
+od;
+
+atomic readonly A, readwrite B do
+    f(A);
+    g(B);
+od;
+
+atomic readonly A, readwrite B, C do
+    f(A);
+    g(B);
+od;
+
+atomic readonly A, readwrite B, C, readonly D do
+    f(A);
+    g(B);
+od;
+
+---
+
+(source_file
+    (atomic_statement
+        (identifier)
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+      (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (identifier)
+        (identifier)
+        (call
+            (identifier)
+            (argument_list
+                (identifier)))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (identifier)
+        (call
+            (identifier)
+            (argument_list
+                (identifier)))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (call
+            (identifier)
+            (argument_list
+                (identifier)))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (identifier)
+        (call
+            (identifier)
+            (argument_list
+                (identifier)))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+    (atomic_statement
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (identifier)
+        (qualified_expression
+            (qualifier)
+            (identifier))
+        (call
+            (identifier)
+            (argument_list
+                (identifier)))
+        (call
+            (identifier)
+            (argument_list
+                (identifier))))
+)
