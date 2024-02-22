@@ -4209,6 +4209,10 @@
     "named": true
   },
   {
+    "type": "line_continuation",
+    "named": true
+  },
+  {
     "type": "local",
     "named": false
   },

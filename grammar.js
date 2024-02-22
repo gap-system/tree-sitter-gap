@@ -15,9 +15,14 @@ const PREC = {
 module.exports = grammar({
   name: 'GAP',
 
+  externals: $ => [
+    $.line_continuation
+  ],
+
   extras: $ => [
     $.comment,
     /\s/,
+    $.line_continuation,
   ],
 
   inline: $ => [
