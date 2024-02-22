@@ -30,11 +30,16 @@ module.exports = grammar({
     // $.call can appear both as an expression (function call) or statement
     // (procedure call), and we need to resolve that ambiguity
     [$.source_file, $._statement_inner],
+    // The parameters of an atomic function do not neccesarily have to use the
+    // `readonly` and `readwrite` qualifiers. Therefore the two parameter lists
+    // have an inherent conflict.
+    [$.parameters, $.qualified_parameters],
   ],
 
   word: $ => $.identifier,
 
   rules: {
+    // TODO: add support for test files
     source_file: $ => repeat(
         choice(
             $._expression,
@@ -53,6 +58,7 @@ module.exports = grammar({
       $.while_statement,
       $.repeat_statement,
       $.for_statement,
+      $.atomic_statement,
       $.break_statement,
       $.continue_statement,
       $.return_statement,
@@ -61,7 +67,6 @@ module.exports = grammar({
       // statements? For now, we get away with just treating them as
       // procedure calls
 
-      // TODO: add support for atomic statements
 
       // TODO: add support for `quit`, `QUIT`, `?`, pragmas ???
     ),
@@ -119,6 +124,20 @@ module.exports = grammar({
       'od'
     ),
 
+    // GAP source file location: src/read.c ReadAtomic
+    atomic_statement: $ => seq(
+      'atomic',
+      field("qualified_expressions",
+        commaSep1(choice(
+          $.qualified_expression,
+          $._expression,
+        )),
+      ),
+      'do',
+      repeat($._statement),
+      'od'
+    ),
+
     break_statement: $ => 'break',
 
     continue_statement: $ => 'continue',
@@ -144,6 +163,7 @@ module.exports = grammar({
       $.string,
       $.function,
       $.lambda,
+      $.atomic_function,
 
       $.list_expression,
       $.range_expression,
@@ -151,6 +171,12 @@ module.exports = grammar({
       $.permutation_expression,
 
       $.parenthesized_expression
+    ),
+
+    // GAP source file location: src/read.c ReadQualifiedExpr
+    qualified_expression: $ => seq(
+      $.qualifier,
+      $._expression
     ),
 
     // Variables
@@ -167,15 +193,9 @@ module.exports = grammar({
     )),
 
     // GAP source file location: src/read.c ReadSelector
-    // TODO: Allow ~ as the variable of the list expression
-    // (same for other selectors)
     list_selector: $ => prec.left(PREC.CALL, seq(
       field('variable', $._expression),
       '[',
-      // TODO: Implement something more sensible here
-      // we really want the expressions as implemented by
-      // ReadExpr in read.c.
-      // Currently our $._expression is way broader.
       $._expression,
       optional(seq(
         ',',
@@ -366,6 +386,15 @@ module.exports = grammar({
       'end'
     ),
 
+    atomic_function: $ => seq(
+      'atomic',
+      'function',
+      field('parameters', $.qualified_parameters),
+      field('locals', optional($.locals)),
+      field('body', optional($.block)),
+      'end'
+    ),
+
     block: $ => repeat1($._statement),
 
     lambda: $ => prec.right(PREC.LAMBDA, seq(
@@ -381,6 +410,18 @@ module.exports = grammar({
         optional($.ellipsis)
       )),
       ')'
+    ),
+
+    qualified_parameters: $ => seq(
+      '(',
+      optional(seq(
+        commaSep1(choice(
+          $.qualified_identifier,
+          $.identifier,
+        )),
+        optional($.ellipsis),
+      )),
+      ')',
     ),
 
     lambda_parameters: $ => choice(
@@ -435,7 +476,6 @@ module.exports = grammar({
     // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
     // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
     // are how we can find out function declarations / definitions
-    // Dec
 
     list_expression: $ => seq(
       '[',
@@ -495,17 +535,19 @@ module.exports = grammar({
       ')',
     ),
 
-    // TODO: support backslash quotes in identifiers; e.g. these are
-    // three valid identifiers:
-    //   \[\]
-    //   \+
-    //   multi\ word\ identifier
     identifier: _ => /([a-zA-Z_@0-9]|(\\.))*([a-zA-Z_@]|(\\.))[a-zA-Z_@0-9]*/,
+
+    qualified_identifier: $ => seq(
+      $.qualifier,
+      $.identifier
+    ),
 
     comment: _ => token(seq('#', /.*/)),
 
     // TODO: implement external scanner for line continuations
     line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
+
+    qualifier: _ => choice('readonly', 'readwrite')
 
   }
 });
