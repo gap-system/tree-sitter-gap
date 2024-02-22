@@ -2258,6 +2258,10 @@
     {
       "type": "PATTERN",
       "value": "\\s"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_continuation"
     }
   ],
   "conflicts": [
@@ -2271,7 +2275,12 @@
     ]
   ],
   "precedences": [],
-  "externals": [],
+  "externals": [
+    {
+      "type": "SYMBOL",
+      "name": "line_continuation"
+    }
+  ],
   "inline": [
     "_expression",
     "_statement"
