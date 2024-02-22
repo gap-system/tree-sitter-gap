@@ -703,6 +703,10 @@
             "named": true
           },
           {
+            "type": "function",
+            "named": true
+          },
+          {
             "type": "identifier",
             "named": true
           },
