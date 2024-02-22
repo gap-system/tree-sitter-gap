@@ -449,7 +449,11 @@ module.exports = grammar({
     call: $ => prec(PREC.CALL, seq(
       field('function', choice(
         $._variable,
-        $.parenthesized_expression
+        $.parenthesized_expression,
+        // Yes, you can define a function and immediately call it
+        $.function
+        // But not an atomic function, for some reason!?
+        // $.atomic_function
       )),
       field('arguments', $.argument_list)
     )),
@@ -545,7 +549,7 @@ module.exports = grammar({
     comment: _ => token(seq('#', /.*/)),
 
     // TODO: implement external scanner for line continuations
-    line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
+    // line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
 
     qualifier: _ => choice('readonly', 'readwrite')
 

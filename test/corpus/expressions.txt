@@ -1181,6 +1181,12 @@ foo( );
 
 foo ( );
 
+function() return true or 1; end();
+
+function(x) return x+1; end(2);
+
+function(x, y) return x+y; end(2, 3);
+
 ---
 
 (source_file
@@ -1206,6 +1212,39 @@ foo ( );
     (call (identifier) (argument_list))
     (call (identifier) (argument_list))
     (call (identifier) (argument_list))
+    (call
+        (function
+            (parameters)
+            (block
+                (return_statement
+                    (binary_expression
+                        (true)
+                        (integer)))))
+        (argument_list))
+    (call
+        (function
+            (parameters
+                (identifier))
+            (block
+                (return_statement
+                    (binary_expression
+                        (identifier)
+                        (integer)))))
+        (argument_list
+            (integer)))
+    (call
+        (function
+            (parameters
+                (identifier)
+                (identifier))
+            (block
+                (return_statement
+                    (binary_expression
+                        (identifier)
+                        (identifier)))))
+        (argument_list
+            (integer)
+            (integer)))
 )
 
 
