@@ -192,8 +192,8 @@ false;
 ---
 
 (source_file
-  (true)
-  (false)
+  (bool)
+  (bool)
   )
 
 
@@ -207,9 +207,55 @@ Line continuations
 "a split\
 string";
 
+"Hello\
+World\nHow\
+Are you?";
+
+abc := 345\
+678;
+
+abc := "a split\
+string";
+
+100.1\
+000;
+
+101\
+0.00;
+
+101\
+.00;
+
+101.\
+00;
+
+'\14\
+2';
+
+'a\
+';
+
+'\
+a';
+
+
 ---
 
 (source_file
   (integer)
   (string)
-  )
+  (string (escape_sequence))
+  (assignment_statement
+    (identifier)
+    (integer))
+  (assignment_statement
+    (identifier)
+    (string))
+  (float)
+  (float)
+  (float)
+  (float)
+  (char (escape_sequence))
+  (char)
+  (char)
+)
