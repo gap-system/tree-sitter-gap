@@ -12,17 +12,23 @@ const PREC = {
   CALL: 13,
 }
 
+const LITERAL_REGEXP = {
+  IDENTIFIER: /([a-zA-Z_@0-9]|\\.)*([a-zA-Z_@]|\\.)[a-zA-Z_@0-9]*/,
+  INTEGER: /[0-9]+/,
+  ESCAPE_SEQUENCE: /\\([^0-7\r\n]|0x[0-9a-fA-F]{2,2}|[0-7]{3,3})/,
+  LINE_CONTINUATION: /\\\r?\n/,
+}
+
 module.exports = grammar({
   name: 'GAP',
 
   externals: $ => [
-    $.line_continuation
   ],
 
   extras: $ => [
     $.comment,
     /\s/,
-    $.line_continuation,
+    $._line_continuation,
   ],
 
   inline: $ => [
@@ -44,7 +50,9 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   rules: {
-    // TODO: add support for test files
+    // TODO: add support for GAP tst file syntax. This probably needs to be
+    // a spearate tree-sitter project which imports the base GAP syntax, similar
+    // to how the cpp grammar is implemented (it imports the c grammar).
     source_file: $ => repeat(
         choice(
             $._expression,
@@ -161,8 +169,7 @@ module.exports = grammar({
       
       $.integer,
       $.float,
-      $.true,
-      $.false,
+      $.bool,
       $.tilde,
       $.char,
       $.string,
@@ -279,31 +286,14 @@ module.exports = grammar({
       $._expression
     )),
 
+    // GAP source file location: src/scanner.c GetNumber
+    integer: $ => lineContinuation(
+      LITERAL_REGEXP.INTEGER,
+      LITERAL_REGEXP.LINE_CONTINUATION,
+    ),
 
     // GAP source file location: src/scanner.c GetNumber
     float: _ => {
-      const digits = /[0-9]+/;
-      const exponent = /[edqEDQ][\+-]?[0-9]+/;
-
-      const middle_period = token(seq(
-        digits,
-        '.',
-        digits,
-        optional(exponent),
-      ));
-
-      const leading_period_with_exponent = token(seq(
-        '.',
-        digits,
-        exponent,
-      ));
-
-      const trailing_period_with_exponent = token(seq(
-        digits,
-        '.',
-        exponent,
-      ));
-
       // TODO: trailing period floats currently cause issues with ranges e.g.
       // [1..10] fails producing the parse (list_expression (float) (Error))
       // since it (correctly) tries to parse the prefix [1. as the start of a list
@@ -312,37 +302,41 @@ module.exports = grammar({
       // In particular we need two characters of lookahead when our parser has processed
       // the prefix [1, with these two characters we check if we have 1. or 1.. .
       // Looks like we need to add an external scanner for this.
-      const trailing_period = token(seq(
-        digits,
-        '.',
-      ));
+      const trailing_period = lineContinuation(
+        /[0-9]+\./,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      );
 
-      const leading_period = token(prec(-1,seq(
-        '.',
-        digits,
-      )));
+      const middle_period = lineContinuation(
+        /[0-9]+\.[0-9]+/,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      );
 
+      // TODO: Leading periods currently conflict with record selectors
+      const leading_period = lineContinuation(
+        /\.[0-9]+/,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      );
+
+      const float_with_exponent = lineContinuation(
+        /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)[edqEDQ][\+-]?[0-9]+/,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      );
 
       return choice(
         //leading_period,
         middle_period,
-        leading_period_with_exponent,
-        trailing_period_with_exponent, 
-        //trailing_period
+        //trailing_period,
+        float_with_exponent,
       );
     },
 
-    // GAP source file location: src/scanner.c GetNumber
-    integer: $ => /[0-9]+/,
-
-    true: $ => 'true',
-
-    false: $ => 'false',
+    bool: _ => choice('true', 'false'),
 
     char: $ => seq(
       '\'',
       choice(
-        token.immediate(prec(1, /[^\n]/)),
+        token.immediate(prec(1, /[^\\\r\n]/)),
         $.escape_sequence
       ),
       '\''
@@ -373,14 +367,15 @@ module.exports = grammar({
       $.escape_sequence
     )),
 
-    escape_sequence: _ => token(prec(1, seq(
-      '\\',
-      choice(
-        /[^0-7]/,             // single character
-        /0x[0-9a-fA-F]{2,2}/, // hex code
-        /[0-7]{3,3}/,         // octal
-      )
-    ))),
+    // GAP source file location: src/scanner.c GetEscapedChar
+    escape_sequence: _ => lineContinuation(
+      LITERAL_REGEXP.ESCAPE_SEQUENCE,
+      LITERAL_REGEXP.LINE_CONTINUATION,
+    ),
+
+    // TODO: restrict where tilde can be used, i.e., only "inside" a list or
+    // record expression (but at arbitrary depth)
+    tilde: $ => '~',
 
 
     function: $ => seq(
@@ -446,10 +441,6 @@ module.exports = grammar({
     locals: $ => seq(
       "local", commaSep1($.identifier), ";"
     ),
-
-    // TODO: restrict where tilde can be used, i.e., only "inside" a list or
-    // record expression (but at arbitrary depth)
-    tilde: $ => '~',
 
     call: $ => prec(PREC.CALL, seq(
       field('function', choice(
@@ -544,19 +535,23 @@ module.exports = grammar({
       ')',
     ),
 
-    identifier: _ => /([a-zA-Z_@0-9]|(\\.))*([a-zA-Z_@]|(\\.))[a-zA-Z_@0-9]*/,
+    identifier: $ => lineContinuation(
+      LITERAL_REGEXP.IDENTIFIER,
+      LITERAL_REGEXP.LINE_CONTINUATION,
+    ),
 
     qualified_identifier: $ => seq(
       $.qualifier,
       $.identifier
     ),
 
+    qualifier: _ => choice('readonly', 'readwrite'),
+
     comment: _ => token(seq('#', /.*/)),
 
-    // TODO: implement external scanner for line continuations
-    // line_continuation: _ => token(seq('\\', choice(seq(optional('\r'), '\n'), '\0'))),
+    // GAP source file location: src/io.c GetNextChar
+    _line_continuation: _ => LITERAL_REGEXP.LINE_CONTINUATION,
 
-    qualifier: _ => choice('readonly', 'readwrite')
 
   }
 });
@@ -567,4 +562,92 @@ function commaSep(rule) {
 
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)))
+}
+
+// This function implements a RegExp transformation for matching an
+// arbitrary number of line continuations within the base RegExp.
+// Roughly speaking, if L is the regex matching the line continuation,
+// and T is this function, then
+//   T(x) = (xL*) if x is a character class
+//   T((A)) = (T(A))
+//   T(AB) = T(A)T(B)
+//   T(A | B) = T(A) | T(B)
+//   T(A*) = T(A)*
+// We perform this transformation in a linear pass by essentially detecting
+// occurences of character classes and performing the transformation on them.
+function lineContinuation(base_regex, line_continuation_regex) {
+  // The irony of writing a custom regex parser within a tree-sitter
+  // grammar is not lost, but here we are.
+  // <RegExp> ::= <CharacterClass>
+  //            | '(', <RegExp>, ')'
+  //            | <RegExp>, <RegExp>
+  //            | <RegExp>, '|', <RegExp>
+  //            | <RegExp>, <Quantifier>
+  // <Quantifier> ::= '*' | '+' | '?'
+  //                | '*?' | '+?' | '??'
+  //                | '{', <Integer>, '}' 
+  //                | '{', <Integer>, ',}' 
+  //                | '{', <Integer>, ',', <Integer>, '}' 
+  //                | '{', <Integer>, '}?' 
+  //                | '{', <Integer>, ',}?' 
+  //                | '{', <Integer>, ',', <Integer>, '}?'
+  // <CharacterClass> ::= '[', <StuffThatMayContainEscapedRightSquareBracket>, ']'
+  //                    | '\\', <AnyLetterToAGoodApproximation>,
+  //                    | <AnyNonQuantifierLetterToAGoodApproximation>
+  const line_continuation_regex_string = '(' + line_continuation_regex.source + ')*'
+  const special_symbols = new Set(['*', '+', '?', '|', '(', ')'])
+  let result_regex_string = '';
+  let escaped = false;
+  let square_bracket = false;
+  let curly_brace = false
+  for (const c of base_regex.source) {
+    // TODO: refactor code spaghetti
+    if (curly_brace) {
+      if (c == '}') {
+        curly_brace = false
+        result_regex_string = result_regex_string.concat(c)
+      } else {
+        result_regex_string = result_regex_string.concat(c)
+      }
+    } else if (square_bracket) {
+      if (escaped) {
+        escaped = false
+        result_regex_string = result_regex_string.concat(c)
+      } else if (c == ']') {
+        square_bracket = false;
+        result_regex_string = result_regex_string.concat(c)
+        result_regex_string = result_regex_string.concat(line_continuation_regex_string)
+        result_regex_string = result_regex_string.concat(')')
+      } else if (c == '\\') {
+        escaped = true;
+        result_regex_string = result_regex_string.concat(c)
+      } else {
+        result_regex_string = result_regex_string.concat(c)
+      }
+    } else if (escaped) {
+        escaped = false;
+        result_regex_string = result_regex_string.concat(c)
+        result_regex_string = result_regex_string.concat(line_continuation_regex_string)
+        result_regex_string = result_regex_string.concat(')')
+    } else if (c == '\\') {
+      escaped = true;
+      result_regex_string = result_regex_string.concat('(')
+      result_regex_string = result_regex_string.concat(c)
+    } else if (c == '[') {
+      square_bracket = true;
+      result_regex_string = result_regex_string.concat('(')
+      result_regex_string = result_regex_string.concat(c)
+    } else if (c == '{') {
+      curly_brace = true;
+      result_regex_string = result_regex_string.concat(c)
+    } else if (special_symbols.has(c)) {
+      result_regex_string = result_regex_string.concat(c)
+    } else {
+      result_regex_string = result_regex_string.concat('(')
+      result_regex_string = result_regex_string.concat(c)
+      result_regex_string = result_regex_string.concat(line_continuation_regex_string)
+      result_regex_string = result_regex_string.concat(')')
+    }
+  }
+  return RegExp(result_regex_string);
 }

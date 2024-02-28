@@ -1218,7 +1218,7 @@ function(x, y) return x+y; end(2, 3);
             (block
                 (return_statement
                     (binary_expression
-                        (true)
+                        (bool)
                         (integer)))))
         (argument_list))
     (call
@@ -1412,4 +1412,55 @@ f(1:c,(1+1):=1,f);
                     (integer)))
             (function_call_option
                 (identifier))))
+)
+
+=====================================
+Line continuations
+=====================================
+
+abc\
+def;
+1\1\
+2\a;
+abc\
+def := 3;
+
+(\
+);
+(1,\
+2);
+(1, 2\
+,3);
+(1,2)\
+(3,4,5);
+( \
+ );
+
+---
+
+(source_file
+    (identifier)
+    (identifier)
+    (assignment_statement
+        (identifier)
+        (integer))
+    (permutation_expression)
+    (permutation_expression
+        (permutation_cycle_expression
+            (integer)
+            (integer)))
+    (permutation_expression
+        (permutation_cycle_expression
+            (integer)
+            (integer)
+            (integer)))
+    (permutation_expression
+        (permutation_cycle_expression
+            (integer)
+            (integer))
+        (permutation_cycle_expression
+            (integer)
+            (integer)
+            (integer)))
+    (permutation_expression)
 )

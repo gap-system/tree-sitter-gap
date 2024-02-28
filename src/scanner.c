@@ -1,6 +1,6 @@
 #include "tree_sitter/parser.h"
 
-enum TokenType { LINE_CONTINUATION };
+// enum TokenType {};
 
 void *tree_sitter_GAP_external_scanner_create() { return NULL; }
 

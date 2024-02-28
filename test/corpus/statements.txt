@@ -29,18 +29,18 @@ fi;
 ---
 
 (source_file
-    (if_statement (true)
+    (if_statement (bool)
         (assignment_statement (identifier) (integer)))
-    (if_statement (true)
+    (if_statement (bool)
         (assignment_statement (identifier) (integer))
         (else_clause
             (assignment_statement (identifier) (integer))))
-    (if_statement (false)
+    (if_statement (bool)
         (assignment_statement (identifier) (integer))
-        (elif_clause (true) (assignment_statement (identifier) (integer))))
-    (if_statement (false)
+        (elif_clause (bool) (assignment_statement (identifier) (integer))))
+    (if_statement (bool)
         (assignment_statement (identifier) (integer))
-        (elif_clause (true)
+        (elif_clause (bool)
             (assignment_statement (identifier) (integer)))
         (else_clause
             (assignment_statement (identifier) (integer))))
@@ -112,10 +112,10 @@ od;
 ---
 
 (source_file
-    (while_statement (false))
-    (while_statement (false) (break_statement))
-    (while_statement (false) (continue_statement))
-    (while_statement (false) (call (identifier) (argument_list)))
+    (while_statement (bool))
+    (while_statement (bool) (break_statement))
+    (while_statement (bool) (continue_statement))
+    (while_statement (bool) (call (identifier) (argument_list)))
     )
 
 
@@ -137,9 +137,9 @@ until false;
 ---
 
 (source_file
-    (repeat_statement (false))
-    (repeat_statement (break_statement) (false))
-    (repeat_statement (continue_statement) (false))
+    (repeat_statement (bool))
+    (repeat_statement (break_statement) (bool))
+    (repeat_statement (continue_statement) (bool))
 )
 
 =====================================
