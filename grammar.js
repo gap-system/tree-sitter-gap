@@ -23,6 +23,9 @@ module.exports = grammar({
   name: 'GAP',
 
   externals: $ => [
+    $.string_start,
+    $._string_content,
+    $.string_end,
   ],
 
   extras: $ => [
@@ -55,7 +58,7 @@ module.exports = grammar({
     // to how the cpp grammar is implemented (it imports the c grammar).
     source_file: $ => repeat(
         choice(
-            $._expression,
+            seq($._expression, ';'),
             $._statement
         )),
 
@@ -342,30 +345,16 @@ module.exports = grammar({
       '\''
     ),
 
-
-    // TODO: support multiline triple strings
-    // (ruby and python modules use an external scanner written in C++
-    // for that... there are some nasty edge cases)
-    string: $ => choice(
-      seq(
-        '"',
-        optional($._literal_contents),
-        '"',
-      ),
-      seq(
-        '"""',
-        optional(repeat1(choice(
-          token.immediate(prec(1, /./)),
-          $.escape_sequence
-        ))),
-        '"""',
-      )
+    string: $ => seq(
+      $.string_start,
+      repeat($.string_content),
+      $.string_end,
     ),
 
-    _literal_contents: $ => repeat1(choice(
-      token.immediate(prec(1, /[^\n"\\]/)),
-      $.escape_sequence
-    )),
+    string_content: $ => prec.right(repeat1(choice(
+      $.escape_sequence,
+      $._string_content,
+    ))),
 
     // GAP source file location: src/scanner.c GetEscapedChar
     escape_sequence: _ => lineContinuation(
