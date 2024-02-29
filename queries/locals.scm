@@ -1,13 +1,21 @@
-;((function) @local.scope
-; (#set! local.scope-inherits false))
+((lambda) @local.scope
+ (#set! local.scope-inherits false))
+((function) @local.scope
+ (#set! local.scope-inherits false))
 
-(lambda) @local.scope
-(function) @local.scope
 
-(parameters (identifier) @local.definition)
-(lambda_parameters (identifier) @local.definition)
-(locals (identifier) @local.definition)
+(parameters
+  (identifier) @local.definition)
+(qualified_parameters
+  (identifier) @local.definition)
+(qualified_parameters
+  (qualified_identifier
+    (identifier) @local.definition))
+(lambda_parameters
+  (identifier) @local.definition)
+(locals
+  (identifier) @local.definition)
 
 (identifier) @local.reference
-
-;(assignment_statement left: (identifier) @local.definition)
+(qualified_identifier
+  (identifier) @local.reference)

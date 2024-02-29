@@ -1,6 +1,20 @@
 ; highlights.scm
 ; based on https://github.com/tree-sitter/tree-sitter-python/blob/master/queries/highlights.scm
 
+; convention: identifiers that start with upper case are "global"
+;((identifier) @constructor
+; (#match? @constructor "^[A-Z]"))
+
+; convention: constants are of the form ALL_CAPS_AND_UNDERSCORES and have length at least 2
+((identifier) @constant
+ (#match? @constant "^[A-Z_][A-Z_]+$"))
+
+
+; Function calls
+
+(call
+  function: (identifier) @function)
+
 ; Builtin functions
 
 ((call
@@ -9,41 +23,66 @@
    @function.builtin
    "^(Assert|Info|IsBound|Unbind|TryNextMethod)$"))
 
-; Function calls
-(call
-  function: (identifier) @function)
+; Function parameters
 
-(parameters (identifier) @variable.parameter)
-(lambda_parameters (identifier) @variable.parameter)
-(locals (identifier) @variable.parameter)
+(parameters
+  (identifier) @variable.parameter)
+(qualified_parameters
+  (identifier) @variable.parameter)
+(qualified_parameters
+  (qualified_identifier
+    (identifier) @variable.parameter))
+(lambda_parameters
+  (identifier) @variable.parameter)
+(locals
+  (identifier) @variable.parameter)
 
-; convention: identifiers that start with upper case are "global"
-;((identifier) @constructor
-; (#match? @constructor "^[A-Z]"))
+; Record selectors as properties
 
-; convention: constants are of the form ALL_CAPS_AND_UNDERSCORES
-((identifier) @constant
- (#match? @constant "^[A-Z][A-Z_]*$"))
+(record_entry
+  left: [
+    (identifier)
+    (integer)
+  ] @property)
 
-; any other identifier is a variable
-;((identifier) @constant
-; (#is-not? local))
+
+(record_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @property)
+
+(component_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @property)
+
+(function_call_option
+  (identifier) @property)
+
+; Any other identifier is a variable
 (identifier) @variable
+
 
 ; Literals
 
 [
-  (true)
-  (false)
+  (bool)
 ] @constant.builtin
 
 [
+  (tilde)
+] @variable.builtin
+
+[
   (integer)
-  ;(float)
+  (float)
 ] @number
 
 (comment) @comment
 (string) @string
+(char) @string
 (escape_sequence) @escape
 
 [
@@ -65,12 +104,14 @@
   "mod"
   "not"
   "or"
+  ".."
+  (ellipsis)
 ] @operator
 
 [
-  ;"atomic"
-  ;"break"  ; FIXME why does this give an error???
-  ;"continue" ; FIXME why does this give an error???
+  "atomic"
+  (break_statement)
+  (continue_statement)
   "do"
   "elif"
   "else"
@@ -81,8 +122,8 @@
   "if"
   "local"
   "od"
-  ;"readonly"
-  ;"readwrite"
+  "readonly"
+  "readwrite"
   "rec"
   "repeat"
   "return"
@@ -94,14 +135,16 @@
 [
   ","
   ";"
-  ;"."
-  ;"!."
+  "."
+  "!."
+  ":"
 ] @punctuation.delimiter
 
 [
   "("
   ")"
   "["
+  "!["
   "]"
   "{"
   "}"

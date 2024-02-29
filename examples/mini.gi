@@ -7,6 +7,8 @@ f := function(x,y)
     return helper;
 end;
 
+f("abc", 1.100e-20 : a:= 2, beta, 1:=10);
+
 x -> x + 1;
 {x,y} -> x + y + 1;
 
@@ -26,10 +28,15 @@ BindGlobal("foo", 1);
 BIND_GLOBAL("bar", 2);
 
 r := rec(
-    a := [1,2,3],
+    a := [1.0,2.3e10,3],
     b := true,
     c := fail,
    );
+r.a;
+
+p := rec(a:=r, b:=~.a, 1 := ~);
+
+p.1.a.c;
 
 InstallImmediateMethod( IsFinitelyGeneratedGroup,
     IsGroup and HasGeneratorsOfGroup,

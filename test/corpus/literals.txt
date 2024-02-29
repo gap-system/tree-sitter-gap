@@ -21,19 +21,25 @@ Floats
 =====================================
 
 1.0;
--.6;
-+.1;
+# (unary_expression (float))
+#-.6;
+# (unary_expression (float))
+#+.1;
 123.4123;
-1.;
+# (float)
+#1.;
 
 ---
 
 (source_file
   (float)
-  (unary_expression (float))
-  (unary_expression (float))
+  (comment)
+  (comment)
+  (comment)
+  (comment)
   (float)
-  (float))
+  (comment)
+  (comment))
 
 =====================================
 Scientific Notation Floats
@@ -280,10 +286,12 @@ Other primitives
 
 true;
 false;
+fail;
 
 ---
 
 (source_file
+  (bool)
   (bool)
   (bool)
   )

@@ -738,6 +738,24 @@
     "type": "component_selector",
     "named": true,
     "fields": {
+      "selector": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      },
       "variable": {
         "multiple": false,
         "required": true,
@@ -836,24 +854,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2929,6 +2929,24 @@
     "type": "record_selector",
     "named": true,
     "fields": {
+      "selector": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      },
       "variable": {
         "multiple": false,
         "required": true,
@@ -3027,24 +3045,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4075,6 +4075,10 @@
   {
     "type": "escape_sequence",
     "named": true
+  },
+  {
+    "type": "fail",
+    "named": false
   },
   {
     "type": "false",

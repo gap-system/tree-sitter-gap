@@ -241,22 +241,22 @@ module.exports = grammar({
     record_selector: $ => prec.left(PREC.CALL, seq(
       field('variable', $._expression),
       '.',
-      choice(
+      field('selector', choice(
         $.identifier,
         $.integer,
         $.parenthesized_expression,
-      )
+      ))
     )),
 
     // GAP source file location: src/read.c ReadSelector
     component_selector: $ => prec.left(PREC.CALL, seq(
       field('variable', $._expression),
       '!.',
-      choice(
+      field('selector', choice(
         $.identifier,
         $.integer,
         $.parenthesized_expression,
-      )
+      ))
     )),
 
     binary_expression: $ => choice(
@@ -334,7 +334,8 @@ module.exports = grammar({
       );
     },
 
-    bool: _ => choice('true', 'false'),
+    // GAP source file location: src/bool.c
+    bool: _ => choice('true', 'false', 'fail'),
 
     char: $ => seq(
       '\'',
