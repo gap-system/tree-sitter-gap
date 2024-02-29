@@ -19,8 +19,15 @@ hello\ world;
 1\.1;
 1\.1\.2;
 
+foo; bar;
+foo;bar;
+
 ---
 (source_file
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
     (identifier)
     (identifier)
     (identifier)
@@ -166,8 +173,14 @@ rec(a:=1, b:=2, (Concatenation("a", "b")):=1+1);
             (call
                 (identifier)
                 (argument_list
-                    (string)
-                    (string))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end)))))
         (binary_expression
             (integer)
             (integer))))
@@ -641,12 +654,21 @@ foo().1;
             (call
                 (identifier)
                 (argument_list
-                    (string)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (record_selector
         (identifier)
         (parenthesized_expression
-            (string)))
+            (string
+                (string_start)
+                (string_content)
+                (string_end))))
     (call
         (record_selector
             (identifier)
@@ -677,7 +699,10 @@ foo().1;
         (record_selector
             (identifier)
             (parenthesized_expression
-                (string)))
+                (string
+                    (string_start)
+                    (string_content)
+                    (string_end))))
         (argument_list
             (integer)
             (integer)))
@@ -709,7 +734,10 @@ foo().1;
                     (record_selector
                         (tilde)
                         (identifier)))
-                (string))))
+                (string
+                    (string_start)
+                    (string_content)
+                    (string_end)))))
     (record_selector
         (record_expression
             (record_entry
@@ -817,12 +845,21 @@ foo()!.1;
             (call
                 (identifier)
                 (argument_list
-                    (string)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (component_selector
         (identifier)
         (parenthesized_expression
-            (string)))
+            (string
+                (string_start)
+                (string_content)
+                (string_end))))
     (call
         (component_selector
             (identifier)
@@ -853,7 +890,10 @@ foo()!.1;
         (component_selector
             (identifier)
             (parenthesized_expression
-                (string)))
+                (string
+                    (string_start)
+                    (string_content)
+                    (string_end))))
         (argument_list
             (integer)
             (integer)))
@@ -884,7 +924,10 @@ foo()!.1;
                     (component_selector
                         (tilde)
                         (identifier)))
-                (string))))
+                (string
+                    (string_start)
+                    (string_content)
+                    (string_end)))))
     (component_selector
         (record_expression
             (record_entry
@@ -1283,7 +1326,10 @@ f(1:c,(1+1):=1,f);
             (function_call_option
                 (record_entry
                     (identifier)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (call
         (identifier)
         (argument_list
@@ -1293,7 +1339,10 @@ f(1:c,(1+1):=1,f);
             (function_call_option
                 (record_entry
                     (identifier)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (call
         (identifier)
         (argument_list
@@ -1327,7 +1376,10 @@ f(1:c,(1+1):=1,f);
             (function_call_option
                 (record_entry
                     (identifier)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (call
         (identifier)
         (argument_list
@@ -1344,7 +1396,10 @@ f(1:c,(1+1):=1,f);
             (function_call_option
                 (record_entry
                     (identifier)
-                    (string)))))
+                    (string
+                        (string_start)
+                        (string_content)
+                        (string_end))))))
     (call
         (identifier)
         (argument_list

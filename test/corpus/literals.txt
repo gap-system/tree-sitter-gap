@@ -93,26 +93,93 @@ Strings
 "a\"c";
 "a\142c";
 "a\0x62c";
+"a\142c\142d";
+"a\142\142c";
 """abc""";
 """a'c""";
 """a"c""";
+"""a\c""";
+"""a\'c""";
 "hello#world";
 """hello#world""";
+ "abc";
+ """abc""";
 
 ---
 
 (source_file
-  (string)
-  (string)
-  (string (escape_sequence))
-  (string (escape_sequence))
-  (string (escape_sequence))
-  (string)
-  (string)
-  (string)
-  (string)
-  (string)
-  )
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence))
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence))
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence))
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence)
+      (escape_sequence))
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence)
+      (escape_sequence))
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+)
 
 =====================================
 Multi-line strings
@@ -145,16 +212,41 @@ with text on bottom.""";
 with text on top,
 and on bottom.""";
 
+"""ABCD\3
+EFG\""";
+
 ---
 
 (source_file
-  (string)
-  (string)
-  (string)
-  (string)
-  (string)
-  (string)
-  )
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+)
 
 =====================================
 Character
@@ -238,19 +330,32 @@ string";
 '\
 a';
 
+"""Hello\
+World""";
+
 
 ---
 
 (source_file
   (integer)
-  (string)
-  (string (escape_sequence))
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
+  (string
+    (string_start)
+    (string_content
+      (escape_sequence))
+    (string_end))
   (assignment_statement
     (identifier)
     (integer))
   (assignment_statement
     (identifier)
-    (string))
+    (string
+      (string_start)
+      (string_content)
+      (string_end)))
   (float)
   (float)
   (float)
@@ -258,4 +363,8 @@ a';
   (char (escape_sequence))
   (char)
   (char)
+  (string
+    (string_start)
+    (string_content)
+    (string_end))
 )
