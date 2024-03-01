@@ -38,7 +38,7 @@ module.exports = grammar({
     $._expression,
     $._statement
   ],
-  
+
   conflicts: $ => [
     // on the top level, both statements and expressions are allowed note that
     // $.call can appear both as an expression (function call) or statement
@@ -57,10 +57,10 @@ module.exports = grammar({
     // a separate tree-sitter project which imports the base GAP syntax, similar
     // to how the cpp grammar is implemented (it imports the c grammar).
     source_file: $ => repeat(
-        choice(
-            seq($._expression, ';'),
-            $._statement
-        )),
+      choice(
+        seq($._expression, ';'),
+        $._statement
+      )),
 
     // Statements
     _statement: $ => choice(
@@ -154,9 +154,9 @@ module.exports = grammar({
       'od'
     ),
 
-    break_statement: $ => 'break',
+    break_statement: _ => 'break',
 
-    continue_statement: $ => 'continue',
+    continue_statement: _ => 'continue',
 
     return_statement: $ => seq(
       'return',
@@ -169,7 +169,7 @@ module.exports = grammar({
       $._variable,
       $.binary_expression,
       $.unary_expression,
-      
+
       $.integer,
       $.float,
       $.bool,
@@ -290,7 +290,7 @@ module.exports = grammar({
     )),
 
     // GAP source file location: src/scanner.c GetNumber
-    integer: $ => lineContinuation(
+    integer: _ => lineContinuation(
       LITERAL_REGEXP.INTEGER,
       LITERAL_REGEXP.LINE_CONTINUATION,
     ),
@@ -365,7 +365,7 @@ module.exports = grammar({
 
     // TODO: restrict where tilde can be used, i.e., only "inside" a list or
     // record expression (but at arbitrary depth)
-    tilde: $ => '~',
+    tilde: _ => '~',
 
 
     function: $ => seq(
@@ -477,8 +477,8 @@ module.exports = grammar({
       '[',
       field('first', $._expression),
       optional(seq(
-          ',',
-          field('second', $._expression),
+        ',',
+        field('second', $._expression),
       )),
       '..',
       field('last', $._expression),
@@ -525,7 +525,7 @@ module.exports = grammar({
       ')',
     ),
 
-    identifier: $ => lineContinuation(
+    identifier: _ => lineContinuation(
       LITERAL_REGEXP.IDENTIFIER,
       LITERAL_REGEXP.LINE_CONTINUATION,
     ),
@@ -591,52 +591,39 @@ function lineContinuation(base_regex, line_continuation_regex) {
   let square_bracket = false;
   let curly_brace = false
   for (const c of base_regex.source) {
-    // TODO: refactor code spaghetti
-    if (curly_brace) {
-      if (c == '}') {
-        curly_brace = false
-        result_regex_string = result_regex_string.concat(c)
-      } else {
-        result_regex_string = result_regex_string.concat(c)
-      }
-    } else if (square_bracket) {
-      if (escaped) {
-        escaped = false
-        result_regex_string = result_regex_string.concat(c)
-      } else if (c == ']') {
-        square_bracket = false;
-        result_regex_string = result_regex_string.concat(c)
-        result_regex_string = result_regex_string.concat(line_continuation_regex_string)
-        result_regex_string = result_regex_string.concat(')')
-      } else if (c == '\\') {
-        escaped = true;
-        result_regex_string = result_regex_string.concat(c)
-      } else {
-        result_regex_string = result_regex_string.concat(c)
-      }
-    } else if (escaped) {
-        escaped = false;
-        result_regex_string = result_regex_string.concat(c)
-        result_regex_string = result_regex_string.concat(line_continuation_regex_string)
-        result_regex_string = result_regex_string.concat(')')
-    } else if (c == '\\') {
-      escaped = true;
+    // TODO: Refactor more
+    // BEFORE
+    if (!curly_brace && !square_bracket && !escaped &&
+      (c == '\\' || c == '[' ||
+        (c != '{' && !special_symbols.has(c)))) {
       result_regex_string = result_regex_string.concat('(')
-      result_regex_string = result_regex_string.concat(c)
-    } else if (c == '[') {
-      square_bracket = true;
-      result_regex_string = result_regex_string.concat('(')
-      result_regex_string = result_regex_string.concat(c)
-    } else if (c == '{') {
-      curly_brace = true;
-      result_regex_string = result_regex_string.concat(c)
-    } else if (special_symbols.has(c)) {
-      result_regex_string = result_regex_string.concat(c)
-    } else {
-      result_regex_string = result_regex_string.concat('(')
-      result_regex_string = result_regex_string.concat(c)
+    }
+
+    result_regex_string = result_regex_string.concat(c)
+
+    // AFTER
+    if (!curly_brace &&
+      (!escaped && square_bracket && c == ']') ||
+      (!square_bracket && escaped) ||
+      (!curly_brace && !square_bracket && !escaped && c != '\\' && c != '[' && c != '{' && !special_symbols.has(c))
+    ) {
       result_regex_string = result_regex_string.concat(line_continuation_regex_string)
       result_regex_string = result_regex_string.concat(')')
+    }
+
+    // FLAGS
+    if (curly_brace && c == '}') {
+      curly_brace = false
+    } else if (!curly_brace && escaped) {
+      escaped = false
+    } else if (!curly_brace && !escaped && square_bracket && c == ']') {
+      square_bracket = false;
+    } else if (!curly_brace && !escaped && c == '\\') {
+      escaped = true;
+    } else if (!curly_brace && !square_bracket && !escaped && c == '[') {
+      square_bracket = true;
+    } else if (!curly_brace && !square_bracket && !escaped && c == '{') {
+      curly_brace = true;
     }
   }
   return RegExp(result_regex_string);

@@ -10,7 +10,7 @@ tree-sitter-gap
 - Install `tree-sitter`, [official instructions](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation);
 - Read ["how to create a parser"](https://tree-sitter.github.io/tree-sitter/creating-parsers);
 - Make the existing tests pass;
-- Resolve the TODOs below in source and test files;
+- Resolve the TODOs in source and test files;
 - Add more missing language features;
 - Validate by running on the whole GAP library and on packages, see [Tests](#tests) section below.
 
