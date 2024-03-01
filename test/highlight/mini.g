@@ -1,14 +1,14 @@
 f := function(x,y)
-# <- variable
+# <- function
 # ^ operator
-#    ^ keyword
+#    ^ keyword.function
 #            ^ punctuation.bracket
 #             ^ variable.parameter
 #              ^ punctuation.delimiter
 #               ^ variable.parameter
 #                ^ punctuation.bracket
     local z, helper;
-#   ^ keyword
+#   ^ keyword.function
 #         ^ variable.parameter
 #            ^ variable.parameter
 #                  ^ punctuation.delimiter
@@ -22,12 +22,12 @@ f := function(x,y)
     helper := function(bla)
 #   ^ variable.parameter
 #          ^ operator
-#             ^ keyword
+#             ^ keyword.function
 #                     ^ punctuation.bracket
 #                      ^ variable.parameter
 #                         ^ punctuation.bracket
         return x + y*z - bla;
-#       ^ keyword
+#       ^ keyword.return
 #              ^ variable
 #                ^ operator
 #                  ^ variable
@@ -36,22 +36,22 @@ f := function(x,y)
 #                        ^ variable.parameter
 #                           ^ punctuation.delimiter
     end;
-#   ^ keyword
+#   ^ keyword.function
 #      ^ punctuation.delimiter
     return helper;
-#   ^ keyword
+#   ^ keyword.return
 #          ^ variable.parameter
 #                ^ punctuation.delimiter
 end;
-# <- keyword
+# <- keyword.function
 #  ^ punctuation.delimiter
 
 f("abc", 1.100e-20 : a:= 2, beta, 1:=10);
-# <- function
+# <- function.call
 #^ punctuation.bracket
 # ^ string
 #      ^ punctuation.delimiter
-#        ^ number
+#        ^ number.float
 #                  ^ punctuation.delimiter
 #                    ^ property
 #                     ^ operator
@@ -87,40 +87,45 @@ x -> x + 1;
 #                 ^ punctuation.delimiter
 
 Print("This is a string\n");
-# <- function
+# <- function.call
 #    ^ punctuation.bracket
 #     ^ string
-#                      ^ escape
+#                      ^ string.escape
 #                         ^ punctuation.bracket
 #                          ^ punctuation.delimiter
 
+'\142';
+# <- character
+#^ string.escape
+#     ^ punctuation.delimiter
+
 for n in [1..100] do
-# <- keyword
+# <- keyword.repeat
 #   ^ variable
-#     ^ operator
+#     ^ keyword.operator
 #        ^ punctuation.bracket
 #         ^ number
 #          ^ operator
 #            ^ number
 #               ^ punctuation.bracket
-#                 ^ keyword
+#                 ^ keyword.repeat
   for i in [1..NrSmallGroups(n)] do
-# ^ keyword
+# ^ keyword.repeat
 #     ^ variable
-#       ^ operator
+#       ^ keyword.operator
 #          ^ punctuation.bracket
 #           ^ number
 #            ^ operator
-#              ^ function
+#              ^ function.call
 #                           ^ punctuation.bracket
 #                            ^ variable
 #                             ^ punctuation.bracket
 #                              ^ punctuation.bracket
-#                                ^ keyword
+#                                ^ keyword.repeat
     G := SmallGroup(n,i);
 #   ^ variable
 #     ^ operator
-#        ^ function
+#        ^ function.call
 #                  ^ punctuation.bracket
 #                   ^ variable
 #                    ^ punctuation.delimiter
@@ -128,7 +133,7 @@ for n in [1..100] do
 #                      ^ punctuation.bracket
 #                       ^ punctuation.delimiter
     Print("SmallGroup(", n, ",", i, ") is abelian? ", IsAbelian(G), "\n");
-#   ^ function
+#   ^ function.call
 #        ^ punctuation.bracket
 #         ^ string
 #                      ^ punctuation.delimiter
@@ -140,39 +145,39 @@ for n in [1..100] do
 #                                 ^ punctuation.delimiter
 #                                   ^ string
 #                                                   ^ punctuation.delimiter
-#                                                     ^ function
+#                                                     ^ function.call
 #                                                              ^ punctuation.bracket
 #                                                               ^ variable
 #                                                                ^ punctuation.bracket
 #                                                                 ^ punctuation.delimiter
 #                                                                   ^ string
-#                                                                    ^ escape
+#                                                                    ^ string.escape
 #                                                                       ^ punctuation.bracket
 #                                                                        ^ punctuation.delimiter
     if IsPerfectGroup(G) = true then
-#   ^ keyword
-#      ^ function
+#   ^ keyword.conditional
+#      ^ function.call
 #                    ^ punctuation.bracket
 #                     ^ variable
 #                      ^ punctuation.bracket
 #                        ^ operator
 #                          ^ constant.builtin
-#                               ^ keyword
+#                               ^ keyword.conditional
       break;
 #     ^ keyword
 #          ^ punctuation.delimiter
     fi;
-#   ^ keyword
+#   ^ keyword.conditional
 #     ^ punctuation.delimiter
   od;
-# ^ keyword
+# ^ keyword.repeat
 #   ^ punctuation.delimiter
 od;
-# <- keyword
+# <- keyword.repeat
 # ^ punctuation.delimiter
 
 BindGlobal("foo", 1);
-# <- function
+# <- function.call
 #         ^ punctuation.bracket
 #          ^ string
 #               ^ punctuation.delimiter
@@ -197,9 +202,9 @@ r := rec(
 #   ^ property
 #     ^ operator
 #        ^ punctuation.bracket
-#         ^ number
+#         ^ number.float
 #            ^ punctuation.delimiter
-#             ^ number
+#             ^ number.float
 #                   ^ punctuation.delimiter
 #                    ^ number
 #                     ^ punctuation.bracket
@@ -255,42 +260,42 @@ p.1.a.c;
 #      ^ punctuation.delimiter
 
 InstallImmediateMethod( IsFinitelyGeneratedGroup,
-# <- function
+# <- function.call
 #                     ^ punctuation.bracket
 #                       ^ variable
 #                                               ^ punctuation.delimiter
     IsGroup and HasGeneratorsOfGroup,
 #   ^ variable
-#           ^ operator
+#           ^ keyword.operator
 #               ^ variable
     function( G )
-#   ^ keyword
+#   ^ keyword.function
 #           ^ punctuation.bracket
 #             ^ variable.parameter
 #               ^ punctuation.bracket
     if IsFinite( GeneratorsOfGroup( G ) ) then
-#   ^ keyword
-#      ^ function
+#   ^ keyword.conditional
+#      ^ function.call
 #              ^ punctuation.bracket
-#                ^ function
+#                ^ function.call
 #                                 ^ punctuation.bracket
 #                                   ^ variable.parameter
 #                                     ^ punctuation.bracket
 #                                       ^ punctuation.bracket
-#                                         ^ keyword
+#                                         ^ keyword.conditional
       return true;
-#     ^ keyword
+#     ^ keyword.return
 #            ^ constant.builtin
 #                ^ punctuation.delimiter
     fi;
-#   ^ keyword
+#   ^ keyword.conditional
 #     ^ punctuation.delimiter
     TryNextMethod();
-#   ^ function
+#   ^ function.call
 #                ^ punctuation.bracket
 #                 ^ punctuation.bracket
 #                  ^ punctuation.delimiter
     end );
-#   ^ keyword
+#   ^ keyword.function
 #       ^ punctuation.bracket
 #        ^ punctuation.delimiter

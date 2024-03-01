@@ -1,41 +1,29 @@
-; highlights.scm
-; based on https://github.com/tree-sitter/tree-sitter-python/blob/master/queries/highlights.scm
-
-; convention: identifiers that start with upper case are "global"
-;((identifier) @constructor
-; (#match? @constructor "^[A-Z]"))
+; Constants
 
 ; convention: constants are of the form ALL_CAPS_AND_UNDERSCORES and have length at least 2
 ((identifier) @constant
  (#match? @constant "^[A-Z_][A-Z_]+$"))
 
+; Functions
 
-; Function calls
+(assignment_statement
+  left: (identifier) @function
+  right: (function))
+
+(assignment_statement
+  left: (identifier) @function
+  right: (atomic_function))
+
+(assignment_statement
+  left: (identifier) @function
+  right: (lambda))
 
 (call
-  function: (identifier) @function)
-
-; Builtin functions
+  function: (identifier) @function.call)
 
 ((call
   function: (identifier) @function.builtin)
- (#match?
-   @function.builtin
-   "^(Assert|Info|IsBound|Unbind|TryNextMethod)$"))
-
-; Function parameters
-
-(parameters
-  (identifier) @variable.parameter)
-(qualified_parameters
-  (identifier) @variable.parameter)
-(qualified_parameters
-  (qualified_identifier
-    (identifier) @variable.parameter))
-(lambda_parameters
-  (identifier) @variable.parameter)
-(locals
-  (identifier) @variable.parameter)
+ (#match? @function.builtin "^(Assert|Info|IsBound|Unbind|TryNextMethod)$"))
 
 ; Record selectors as properties
 
@@ -61,29 +49,39 @@
 (function_call_option
   (identifier) @property)
 
-; Any other identifier is a variable
-(identifier) @variable
+; Function parameters
 
+(parameters
+  (identifier) @variable.parameter)
+
+(qualified_parameters
+  (identifier) @variable.parameter)
+
+(qualified_parameters
+  (qualified_identifier
+    (identifier) @variable.parameter))
+
+(lambda_parameters
+  (identifier) @variable.parameter)
+
+(locals
+  (identifier) @variable.parameter)
+
+; Other identifiers
+
+(identifier) @variable
 
 ; Literals
 
-[
-  (bool)
-] @constant.builtin
-
-[
-  (tilde)
-] @variable.builtin
-
-[
-  (integer)
-  (float)
-] @number
-
-(comment) @comment
+(bool) @constant.builtin
+(tilde) @variable.builtin
+(integer) @number
+(float) @number.float
+(comment) @comment @spell
 (string) @string
-(char) @string
-(escape_sequence) @escape
+(char) @character
+(escape_sequence) @string.escape
+
 
 [
   "+"
@@ -99,38 +97,52 @@
   "="
   ">"
   ">="
-  "and"
-  "in"
-  "mod"
-  "not"
-  "or"
   ".."
   (ellipsis)
 ] @operator
+
 
 [
   "atomic"
   (break_statement)
   (continue_statement)
-  "do"
-  "elif"
-  "else"
-  "end"
-  "fi"
-  "for"
-  "function"
-  "if"
-  "local"
-  "od"
   "readonly"
   "readwrite"
   "rec"
-  "repeat"
-  "return"
-  "then"
-  "until"
-  "while"
 ] @keyword
+
+[
+  "and"
+  "in"
+  "mod"
+  "not"
+  "or"
+] @keyword.operator
+  
+[
+  "function"
+  "local"
+  "end"
+] @keyword.function
+
+[
+  "for"
+  "while"
+  "do"
+  "od"
+  "repeat"
+  "until"
+] @keyword.repeat
+
+[
+  "if"
+  "then"
+  "elif"
+  "else"
+  "fi"
+] @keyword.conditional
+
+"return" @keyword.return
 
 [
   ","

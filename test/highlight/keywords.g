@@ -1,57 +1,57 @@
 if x = 2 then
-# <- keyword
-#        ^ keyword 
+# <- keyword.conditional
+#        ^ keyword.conditional
 elif 1+1 = 2 then
-# <- keyword
-#            ^ keyword 
+# <- keyword.conditional
+#            ^ keyword.conditional
   Print(10);
 else
-# <- keyword
+# <- keyword.conditional
   1+1;
 fi;
-# <- keyword
+# <- keyword.conditional
 
 atomic readonly x, y, readwrite z do
 # <- keyword
 #      ^ keyword
 #                     ^ keyword
-#                                 ^ keyword
+#                                 ^ keyword.repeat
   x := 3;
 od;
-# <- keyword
+# <- keyword.repeat
 
 for x in [1..10] do
-# <- keyword
-#                ^ keyword
+# <- keyword.repeat
+#                ^ keyword.repeat
   Print(x);
   continue;
 # ^ keyword
 od;
-# <- keyword
+# <- keyword.repeat
 
 while x > 0 do
-# <- keyword
-#           ^ keyword
+# <- keyword.repeat
+#           ^ keyword.repeat
   x := x - 1;
   break;
 # ^ keyword
 od;
-# <- keyword
+# <- keyword.repeat
 
 repeat
-# <- keyword
+# <- keyword.repeat
   x := x + 1;
 until x > 0;
-# <- keyword
+# <- keyword.repeat
 
 x := rec(1:=3, a:=2);
 #    ^ keyword
 
 fun := function(x)
-#      ^ keyword
+#      ^ keyword.function
   local y;
-# ^ keyword
+# ^ keyword.function
   return x + y;
-# ^ keyword
+# ^ keyword.return
 end;
-# <- keyword
+# <- keyword.function

@@ -44,7 +44,7 @@ module.exports = grammar({
     // $.call can appear both as an expression (function call) or statement
     // (procedure call), and we need to resolve that ambiguity
     [$.source_file, $._statement_inner],
-    // The parameters of an atomic function do not neccesarily have to use the
+    // The parameters of an atomic function do not necessarily have to use the
     // `readonly` and `readwrite` qualifiers. Therefore the two parameter lists
     // have an inherent conflict.
     [$.parameters, $.qualified_parameters],
@@ -54,7 +54,7 @@ module.exports = grammar({
 
   rules: {
     // TODO: add support for GAP tst file syntax. This probably needs to be
-    // a spearate tree-sitter project which imports the base GAP syntax, similar
+    // a separate tree-sitter project which imports the base GAP syntax, similar
     // to how the cpp grammar is implemented (it imports the c grammar).
     source_file: $ => repeat(
         choice(
@@ -564,7 +564,7 @@ function commaSep1(rule) {
 //   T(A | B) = T(A) | T(B)
 //   T(A*) = T(A)*
 // We perform this transformation in a linear pass by essentially detecting
-// occurences of character classes and performing the transformation on them.
+// occurrences of character classes and performing the transformation on them.
 function lineContinuation(base_regex, line_continuation_regex) {
   // The irony of writing a custom regex parser within a tree-sitter
   // grammar is not lost, but here we are.

@@ -14,6 +14,8 @@ x -> x + 1;
 
 Print("This is a string\n");
 
+'\142';
+
 for n in [1..100] do
   for i in [1..NrSmallGroups(n)] do
     G := SmallGroup(n,i);
