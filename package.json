@@ -1,21 +1,26 @@
 {
   "name": "tree-sitter-gap",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "GAP grammar for tree-sitter",
   "keywords": [
     "tree-sitter",
     "parser",
-    "GAP"
+    "GAP",
+    "GAP-system"
   ],
   "author": "Max Horn",
+  "contributors": [
+    "Max Horn",
+    "Reinis Cirpons <rc234@st-andrews.ac.uk> (https://reinisc.id.lv)"
+  ],
   "license": "MIT",
-  "homepage": "https://github.com/fingolfin/tree-sitter-gap#readme",
+  "homepage": "https://github.com/reiniscirpons/tree-sitter-gap#readme",
   "bugs": {
-    "url": "https://github.com/fingolfin/tree-sitter-gap/issues"
+    "url": "https://github.com/reiniscirpons/tree-sitter-gap/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fingolfin/tree-sitter-gap.git"
+    "url": "git+https://github.com/reiniscirpons/tree-sitter-gap.git"
   },
   "main": "bindings/node",
   "scripts": {
@@ -32,9 +37,15 @@
     {
       "scope": "source.gap",
       "file-types": [
+        "g",
         "gi",
-        "gd",
-        "g"
+        "gd"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "locals": [
+        "queries/locals.scm"
       ]
     }
   ]
