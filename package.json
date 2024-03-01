@@ -25,13 +25,13 @@
   "main": "bindings/node",
   "scripts": {
     "build": "tree-sitter generate && node-gyp build --debug",
-    "test": "tree-sitter test && tree-sitter parse examples/* --quiet --time"
+    "test": "tree-sitter test && tree-sitter parse examples/*.g* --quiet --time"
   },
   "dependencies": {
     "nan": "^2.14.0"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.19.3"
+    "tree-sitter-cli": "^0.20.0"
   },
   "tree-sitter": [
     {
