@@ -26,6 +26,7 @@ module.exports = grammar({
     $.string_start,
     $._string_content,
     $.string_end,
+    $._trailing_period_float,
   ],
 
   extras: $ => [
@@ -53,9 +54,6 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   rules: {
-    // TODO: add support for GAP tst file syntax. This probably needs to be
-    // a separate tree-sitter project which imports the base GAP syntax, similar
-    // to how the cpp grammar is implemented (it imports the c grammar).
     source_file: $ => repeat(
       choice(
         seq($._expression, ';'),
@@ -79,12 +77,32 @@ module.exports = grammar({
       $.continue_statement,
       $.return_statement,
       $.call, // procedure call
-      // TODO: should we handle `Unbind`, `Info`, `Assert`, `TryNextMethod`
+      // TODO: (fingolfin) should we handle `Unbind`, `Info`, `Assert`, `TryNextMethod`
       // statements? For now, we get away with just treating them as
       // procedure calls
+      // NOTE: (reiniscirpons) these are already distinguished as builtin
+      // functions in ./queries/highlights.scm, we probably dont need to do
+      // anything special in the grammar itself
 
 
-      // TODO: add support for `quit`, `QUIT`, `?`, pragmas ???
+      // TODO: (fingolfin) add support for `quit`, `QUIT`, `?`, pragmas ???
+      // NOTE: (reiniscirpons) some pointers for this:
+      // As per 
+      // GAP source location src/read.c TryReadStatement
+      // quit, QUIT and ? cannot be used within statements or expressions, so
+      // it might be easiest to implement them as a separate construct that can
+      // appear in the source file.
+      //
+      // The help syntax is described in the GAP manual
+      // https://docs.gap-system.org/doc/ref/chap2.html
+      // The help scanner function implemented here:
+      // GAP source file location: src/scanner.c ReadHelp
+      // The help request string parser implemented here:
+      // GAP source file location: lib/helpbase.gi HELP
+      //
+      // Pragmas are described in the GAP manual
+      // https://docs.gap-system.org/doc/ref/chap5.html
+
     ),
 
     assignment_statement: $ => seq(
@@ -236,8 +254,9 @@ module.exports = grammar({
     )),
 
     // GAP source file location: src/read.c ReadSelector
-    // TODO: fix issues with integer record selectors, i.e.
-    // make sure that a.1 is not parsed as (identifier) (float)
+    // TODO: (reiniscirpons) fix issues with integer record selectors once
+    // leading period floats are introduced, i.e. make sure that a.1 is not
+    // parsed as (identifier) (float)
     record_selector: $ => prec.left(PREC.CALL, seq(
       field('variable', $._expression),
       '.',
@@ -275,7 +294,7 @@ module.exports = grammar({
         [prec.left, '*', PREC.MULTI],
         [prec.left, '/', PREC.MULTI],
         [prec.left, 'mod', PREC.MULTI],
-        [prec.right, '^', PREC.POWER],  // TODO: actually, ^ is *NOT* associative in GAP at all,
+        [prec.right, '^', PREC.POWER],  // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
         //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
       ].map(([fn, operator, precedence]) => fn(precedence, seq(
         $._expression,
@@ -296,8 +315,8 @@ module.exports = grammar({
     ),
 
     // GAP source file location: src/scanner.c GetNumber
-    float: _ => {
-      // TODO: trailing period floats currently cause issues with ranges e.g.
+    float: $ => {
+      // TODO: (reiniscirpons) trailing period floats currently cause issues with ranges e.g.
       // [1..10] fails producing the parse (list_expression (float) (Error))
       // since it (correctly) tries to parse the prefix [1. as the start of a list
       // followed by the float "1.". The issue is that with only a single character of
@@ -310,26 +329,33 @@ module.exports = grammar({
         LITERAL_REGEXP.LINE_CONTINUATION,
       );
 
-      const middle_period = lineContinuation(
-        /[0-9]+\.[0-9]+/,
+      const trailing_period_with_conversion = lineContinuation(
+        /[0-9]+\.(_[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])/,
         LITERAL_REGEXP.LINE_CONTINUATION,
       );
 
-      // TODO: Leading periods currently conflict with record selectors
+      const middle_period = lineContinuation(
+        /[0-9]+\.[0-9]+(_[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])?/,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      );
+
+      // TODO: (reiniscirpons) Leading periods currently conflict with record selectors
+      // TODO: (reiniscirpons) add conversion marker support for leading period floats
       const leading_period = lineContinuation(
         /\.[0-9]+/,
         LITERAL_REGEXP.LINE_CONTINUATION,
       );
 
       const float_with_exponent = lineContinuation(
-        /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)[edqEDQ][\+-]?[0-9]+/,
+        /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)[edqEDQ][\+-]?[0-9]+_?[a-zA-Z]?/,
         LITERAL_REGEXP.LINE_CONTINUATION,
       );
 
       return choice(
         //leading_period,
         middle_period,
-        //trailing_period,
+        $._trailing_period_float,
+        trailing_period_with_conversion,
         float_with_exponent,
       );
     },
@@ -363,7 +389,7 @@ module.exports = grammar({
       LITERAL_REGEXP.LINE_CONTINUATION,
     ),
 
-    // TODO: restrict where tilde can be used, i.e., only "inside" a list or
+    // TODO: (fingolfin) restrict where tilde can be used, i.e., only "inside" a list or
     // record expression (but at arbitrary depth)
     tilde: _ => '~',
 
@@ -463,9 +489,12 @@ module.exports = grammar({
       $.record_entry
     ),
 
-    // TODO: add special rules for calls to Declare{GlobalFunction,Operation,...},
+    // TODO: (fingolfin) add special rules for calls to Declare{GlobalFunction,Operation,...},
     // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
     // are how we can find out function declarations / definitions
+    // NOTE: (reiniscirpons) not sure we need to do anything specials for these functions in the grammar itself.
+    // We can maybe distinguish them in ./queries/highlights.scm as builtin functions. When parsing they should be
+    // treated the same as any other function call I think.
 
     list_expression: $ => seq(
       '[',
@@ -591,7 +620,8 @@ function lineContinuation(base_regex, line_continuation_regex) {
   let square_bracket = false;
   let curly_brace = false
   for (const c of base_regex.source) {
-    // TODO: Refactor more
+    // TODO: (reiniscirpons) Refactor more
+
     // BEFORE
     if (!curly_brace && !square_bracket && !escaped &&
       (c == '\\' || c == '[' ||

@@ -26,8 +26,9 @@ Floats
 # (unary_expression (float))
 #+.1;
 123.4123;
-# (float)
-#1.;
+1.;
+123.;
++1.;
 
 ---
 
@@ -38,8 +39,9 @@ Floats
   (comment)
   (comment)
   (float)
-  (comment)
-  (comment))
+  (float)
+  (float)
+  (unary_expression (float)))
 
 =====================================
 Scientific Notation Floats
@@ -87,6 +89,124 @@ Scientific Notation Floats
   (float)
   (float)
   (float)
+  (float)
+  (float))
+
+=====================================
+Conversion marker Floats
+=====================================
+
+1.0i;
+#.0i;
+1.i;
+1.e322a;
+1.e-3b;
+1.e+3c;
+1.8e10d;
+1.e10e;
+-1.e10f;
++6.022e23g;
+.1e10A;
+1.E322B;
+1.E-3C;
+1.E+3D;
+1.8E10E;
+1.E10F;
+-1.E10G;
++6.022E23H;
+.1E10I;
+1.8d10J;
+1.8D10K;
+1.8q10L;
+1.8Q10M;
+
+---
+
+(source_file
+  (float)
+  (comment)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float))
+
+=====================================
+Eager Conversion Floats
+=====================================
+
+1.0_l;
+#.0_r;
+1._I;
+1.e322_a;
+1.e-3_b;
+1.e+3_c;
+1.8e10_d;
+1.e10_e;
+-1.e10_f;
++6.022e23_A;
+.1e10_B;
+1.E322_C;
+1.E-3_D;
+1.E+3_E;
+1.8E10_F;
+1.E10_G;
+-1.E10_o;
++6.022E23_p;
+.1E10_q;
+1.8d10_d;
+1.8D10_l;
+1.8q10_L;
+1.8Q10_L;
+1.0_;
+#.0_;
+1._;
+1.e322_;
+
+---
+
+(source_file
+  (float)
+  (comment)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (comment)
   (float)
   (float))
 
@@ -329,6 +449,41 @@ string";
 101.\
 00;
 
+101.\
+e10;
+
+101.\
+a;
+
+101.\
+_l;
+
+101.\
+_;
+
+101\
+._;
+
+101._\
+l;
+
+101.\
+;
+
+101.\
+\
+;
+
+101\
+.\
+;
+
+101\
+.;
+
+10\
+1.;
+
 '\14\
 2';
 
@@ -364,6 +519,17 @@ World""";
       (string_start)
       (string_content)
       (string_end)))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
   (float)
   (float)
   (float)
