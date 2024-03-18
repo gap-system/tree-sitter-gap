@@ -1,10 +1,12 @@
 #include "tree_sitter/parser.h"
+#include <ctype.h>
 #include <wctype.h>
 
 enum TokenType {
   STRING_START,
   STRING_CONTENT,
   STRING_END,
+  TRAILING_PERIOD_FLOAT,
 };
 
 typedef struct {
@@ -13,12 +15,26 @@ typedef struct {
 
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
+static inline bool skip_line_continuation(TSLexer *lexer) {
+  lexer->mark_end(lexer);
+  while (lexer->lookahead == '\\') {
+    skip(lexer);
+    if (lexer->lookahead == '\r')
+      skip(lexer);
+    if (lexer->lookahead == '\n')
+      skip(lexer);
+    else
+      return false;
+  }
+  lexer->mark_end(lexer);
+  return true;
+}
 
 bool tree_sitter_GAP_external_scanner_scan(void *payload, TSLexer *lexer,
                                            const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
-  if (valid_symbols[STRING_START]) {
+  if (valid_symbols[STRING_START] || valid_symbols[TRAILING_PERIOD_FLOAT]) {
     while (iswspace(lexer->lookahead))
       skip(lexer);
     if (lexer->lookahead == '"') {
@@ -34,6 +50,31 @@ bool tree_sitter_GAP_external_scanner_scan(void *payload, TSLexer *lexer,
         }
       }
       lexer->result_symbol = STRING_START;
+      return true;
+    } else if (iswdigit(lexer->lookahead)) {
+
+      while (iswdigit(lexer->lookahead)) {
+        advance(lexer);
+        if (!skip_line_continuation(lexer))
+          return false;
+      }
+
+      if (lexer->lookahead != '.')
+        return false;
+      if (!skip_line_continuation(lexer))
+        return false;
+
+      advance(lexer);
+
+      if (!skip_line_continuation(lexer))
+        return false;
+
+      if (lexer->lookahead == '.' || lexer->lookahead == '_' ||
+          iswalnum(lexer->lookahead))
+        return false;
+
+      lexer->mark_end(lexer);
+      lexer->result_symbol = TRAILING_PERIOD_FLOAT;
       return true;
     }
     return false;

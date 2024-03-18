@@ -1,5 +1,6 @@
 GAP_DIR=temp_gap_for_tests
 EXAMPLES_DIR=./examples
+TST_TO_G=./examples/tst_to_g.py
 
 # Recursively get files matching given extension regex from input directory,
 # flatten and copy to output directory.
@@ -24,10 +25,22 @@ create_gap_tests: $(GAP_DIR)
 	@$(call get_files, ".*\.\(gd\|gi\|g\)", $(GAP_DIR)/grp, $(EXAMPLES_DIR)/temp_gap)
 	@$(call get_files, ".*\.\(gd\|gi\|g\)", $(GAP_DIR)/lib, $(EXAMPLES_DIR)/temp_gap)
 	@$(call get_files, ".*\.\(gd\|gi\|g\)", $(GAP_DIR)/tst, $(EXAMPLES_DIR)/temp_gap)
+	mkdir -p $(EXAMPLES_DIR)/temp_tst
+	@$(call get_files, ".*\.\(tst\)", $(GAP_DIR)/grp, $(EXAMPLES_DIR)/temp_tst)
+	@$(call get_files, ".*\.\(tst\)", $(GAP_DIR)/lib, $(EXAMPLES_DIR)/temp_tst)
+	@$(call get_files, ".*\.\(tst\)", $(GAP_DIR)/tst, $(EXAMPLES_DIR)/temp_tst)
+	for tst_file in $(EXAMPLES_DIR)/temp_tst/*.tst; do \
+		python3 $(TST_TO_G) $${tst_file}; \
+	done
 
 create_pkg_tests: $(GAP_DIR)/pkg
 	mkdir -p $(EXAMPLES_DIR)/temp_pkg
 	@$(call get_files, ".*\.\(gd\|gi\|g\)", $(GAP_DIR)/pkg, $(EXAMPLES_DIR)/temp_pkg)
+	mkdir -p $(EXAMPLES_DIR)/temp_tst
+	@$(call get_files, ".*\.\(tst\)", $(GAP_DIR)/pkg, $(EXAMPLES_DIR)/temp_tst)
+	for tst_file in $(EXAMPLES_DIR)/temp_tst/*.tst; do \
+		python3 $(TST_TO_G) $${tst_file}; \
+	done
 
 test_gap: create_gap_tests
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_gap/*.g*' --quiet --stat
@@ -35,12 +48,16 @@ test_gap: create_gap_tests
 test_pkg: create_pkg_tests
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_pkg/*.g*' --quiet --stat
 
+test_tst: create_gap_tests create_pkg_tests
+	tree-sitter parse '$(EXAMPLES_DIR)/temp_tst/*.g*' --quiet --stat
+
 test_all: create_gap_tests create_pkg_tests
 	tree-sitter parse '$(EXAMPLES_DIR)/**/*.g*' --quiet --stat
 
 clean:
 	rm -rf $(EXAMPLES_DIR)/temp_gap
 	rm -rf $(EXAMPLES_DIR)/temp_pkg
+	rm -rf $(EXAMPLES_DIR)/temp_tst
 
 distclean: clean
 	rm -rf ./$(GAP_DIR)
