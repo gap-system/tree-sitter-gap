@@ -1,46 +1,39 @@
 const PREC = {
   // in the following, we mention the names of the corresponding
   // GAP kernel function
-  LAMBDA: 0,    // ReadFuncExprAbbrevSingle, ReadFuncExprAbbrevMulti => ->
-  OR: 1,        // ReadExpr => or
-  AND: 2,       // ReadAnd => and
-  COMPARE: 3,   // ReadRel => = <> < > <= >= in
-  PLUS: 9,      // ReadAri => + - (binary)
-  MULTI: 10,    // ReadTerm => * / mod
-  UNARY: 11,    // ReadFactor => not + - (unary)
-  POWER: 12,    // ReadFactor => ^
+  LAMBDA: 0, // ReadFuncExprAbbrevSingle, ReadFuncExprAbbrevMulti => ->
+  OR: 1, // ReadExpr => or
+  AND: 2, // ReadAnd => and
+  COMPARE: 3, // ReadRel => = <> < > <= >= in
+  PLUS: 9, // ReadAri => + - (binary)
+  MULTI: 10, // ReadTerm => * / mod
+  UNARY: 11, // ReadFactor => not + - (unary)
+  POWER: 12, // ReadFactor => ^
   CALL: 13,
-}
+};
 
 const LITERAL_REGEXP = {
   IDENTIFIER: /([a-zA-Z_@0-9]|\\.)*([a-zA-Z_@]|\\.)[a-zA-Z_@0-9]*/,
   INTEGER: /[0-9]+/,
   ESCAPE_SEQUENCE: /\\([^0-7\r\n]|0x[0-9a-fA-F]{2,2}|[0-7]{3,3})/,
   LINE_CONTINUATION: /\\\r?\n/,
-}
+};
 
 module.exports = grammar({
-  name: 'GAP',
+  name: "GAP",
 
-  externals: $ => [
+  externals: ($) => [
     $.string_start,
     $._string_content,
     $.string_end,
     $._trailing_period_float,
   ],
 
-  extras: $ => [
-    $.comment,
-    /\s/,
-    $._line_continuation,
-  ],
+  extras: ($) => [$.comment, /\s/, $._line_continuation],
 
-  inline: $ => [
-    $._expression,
-    $._statement
-  ],
+  inline: ($) => [$._expression, $._statement],
 
-  conflicts: $ => [
+  conflicts: ($) => [
     // on the top level, both statements and expressions are allowed note that
     // $.call can appear both as an expression (function call) or statement
     // (procedure call), and we need to resolve that ambiguity
@@ -51,271 +44,267 @@ module.exports = grammar({
     [$.parameters, $.qualified_parameters],
   ],
 
-  word: $ => $.identifier,
+  word: ($) => $.identifier,
 
   rules: {
-    source_file: $ => repeat(
-      choice(
-        seq($._expression, ';'),
-        $._statement
-      )),
+    source_file: ($) => repeat(choice(seq($._expression, ";"), $._statement)),
 
     // Statements
-    _statement: $ => choice(
-      seq($._statement_inner, ';'),
-      ';' // empty statement
-    ),
+    _statement: ($) =>
+      choice(
+        seq($._statement_inner, ";"),
+        ";", // empty statement
+      ),
 
-    _statement_inner: $ => choice(
-      $.assignment_statement,
-      $.if_statement,
-      $.while_statement,
-      $.repeat_statement,
-      $.for_statement,
-      $.atomic_statement,
-      $.break_statement,
-      $.continue_statement,
-      $.return_statement,
-      $.call, // procedure call
-      // TODO: (fingolfin) should we handle `Unbind`, `Info`, `Assert`, `TryNextMethod`
-      // statements? For now, we get away with just treating them as
-      // procedure calls
-      // NOTE: (reiniscirpons) these are already distinguished as builtin
-      // functions in ./queries/highlights.scm, we probably dont need to do
-      // anything special in the grammar itself
+    _statement_inner: ($) =>
+      choice(
+        $.assignment_statement,
+        $.if_statement,
+        $.while_statement,
+        $.repeat_statement,
+        $.for_statement,
+        $.atomic_statement,
+        $.break_statement,
+        $.continue_statement,
+        $.return_statement,
+        $.call, // procedure call
+        // TODO: (fingolfin) should we handle `Unbind`, `Info`, `Assert`, `TryNextMethod`
+        // statements? For now, we get away with just treating them as
+        // procedure calls
+        // NOTE: (reiniscirpons) these are already distinguished as builtin
+        // functions in ./queries/highlights.scm, we probably dont need to do
+        // anything special in the grammar itself
 
+        // TODO: (fingolfin) add support for `quit`, `QUIT`, `?`, pragmas ???
+        // NOTE: (reiniscirpons) some pointers for this:
+        // As per
+        // GAP source location src/read.c TryReadStatement
+        // quit, QUIT and ? cannot be used within statements or expressions, so
+        // it might be easiest to implement them as a separate construct that can
+        // appear in the source file.
+        //
+        // The help syntax is described in the GAP manual
+        // https://docs.gap-system.org/doc/ref/chap2.html
+        // The help scanner function implemented here:
+        // GAP source file location: src/scanner.c ReadHelp
+        // The help request string parser implemented here:
+        // GAP source file location: lib/helpbase.gi HELP
+        //
+        // Pragmas are described in the GAP manual
+        // https://docs.gap-system.org/doc/ref/chap5.html
+      ),
 
-      // TODO: (fingolfin) add support for `quit`, `QUIT`, `?`, pragmas ???
-      // NOTE: (reiniscirpons) some pointers for this:
-      // As per 
-      // GAP source location src/read.c TryReadStatement
-      // quit, QUIT and ? cannot be used within statements or expressions, so
-      // it might be easiest to implement them as a separate construct that can
-      // appear in the source file.
-      //
-      // The help syntax is described in the GAP manual
-      // https://docs.gap-system.org/doc/ref/chap2.html
-      // The help scanner function implemented here:
-      // GAP source file location: src/scanner.c ReadHelp
-      // The help request string parser implemented here:
-      // GAP source file location: lib/helpbase.gi HELP
-      //
-      // Pragmas are described in the GAP manual
-      // https://docs.gap-system.org/doc/ref/chap5.html
+    assignment_statement: ($) =>
+      seq(field("left", $._expression), ":=", field("right", $._expression)),
 
-    ),
+    if_statement: ($) =>
+      seq(
+        "if",
+        field("condition", $._expression),
+        "then",
+        repeat($._statement),
+        repeat($.elif_clause),
+        optional($.else_clause),
+        "fi",
+      ),
 
-    assignment_statement: $ => seq(
-      field('left', $._expression),
-      ':=',
-      field('right', $._expression),
-    ),
+    elif_clause: ($) =>
+      seq(
+        "elif",
+        field("condition", $._expression),
+        "then",
+        repeat($._statement),
+      ),
 
-    if_statement: $ => seq(
-      'if',
-      field('condition', $._expression),
-      'then',
-      repeat($._statement),
-      repeat($.elif_clause),
-      optional($.else_clause),
-      'fi'
-    ),
+    else_clause: ($) => seq("else", repeat($._statement)),
 
-    elif_clause: $ => seq(
-      'elif',
-      field('condition', $._expression),
-      'then',
-      repeat($._statement),
-    ),
+    while_statement: ($) =>
+      seq(
+        "while",
+        field("condition", $._expression),
+        "do",
+        repeat($._statement),
+        "od",
+      ),
 
-    else_clause: $ => seq(
-      'else',
-      repeat($._statement),
-    ),
+    repeat_statement: ($) =>
+      seq(
+        "repeat",
+        repeat($._statement),
+        "until",
+        field("condition", $._expression),
+      ),
 
-    while_statement: $ => seq(
-      'while',
-      field('condition', $._expression),
-      'do',
-      repeat($._statement),
-      'od'
-    ),
-
-    repeat_statement: $ => seq(
-      'repeat',
-      repeat($._statement),
-      'until',
-      field('condition', $._expression)
-    ),
-
-    for_statement: $ => seq(
-      'for',
-      field('identifier', $.identifier),
-      'in',
-      field('values', $._expression),
-      'do',
-      repeat($._statement),
-      'od'
-    ),
+    for_statement: ($) =>
+      seq(
+        "for",
+        field("identifier", $.identifier),
+        "in",
+        field("values", $._expression),
+        "do",
+        repeat($._statement),
+        "od",
+      ),
 
     // GAP source file location: src/read.c ReadAtomic
-    atomic_statement: $ => seq(
-      'atomic',
-      field("qualified_expressions",
-        commaSep1(choice(
-          $.qualified_expression,
-          $._expression,
-        )),
+    atomic_statement: ($) =>
+      seq(
+        "atomic",
+        field(
+          "qualified_expressions",
+          commaSep1(choice($.qualified_expression, $._expression)),
+        ),
+        "do",
+        repeat($._statement),
+        "od",
       ),
-      'do',
-      repeat($._statement),
-      'od'
-    ),
 
-    break_statement: _ => 'break',
+    break_statement: (_) => "break",
 
-    continue_statement: _ => 'continue',
+    continue_statement: (_) => "continue",
 
-    return_statement: $ => seq(
-      'return',
-      optional($._expression)
-    ),
+    return_statement: ($) => seq("return", optional($._expression)),
 
     // Expressions
 
-    _expression: $ => choice(
-      $._variable,
-      $.binary_expression,
-      $.unary_expression,
+    _expression: ($) =>
+      choice(
+        $._variable,
+        $.binary_expression,
+        $.unary_expression,
 
-      $.integer,
-      $.float,
-      $.bool,
-      $.tilde,
-      $.char,
-      $.string,
-      $.function,
-      $.lambda,
-      $.atomic_function,
+        $.integer,
+        $.float,
+        $.bool,
+        $.tilde,
+        $.char,
+        $.string,
+        $.function,
+        $.lambda,
+        $.atomic_function,
 
-      $.list_expression,
-      $.range_expression,
-      $.record_expression,
-      $.permutation_expression,
+        $.list_expression,
+        $.range_expression,
+        $.record_expression,
+        $.permutation_expression,
 
-      $.parenthesized_expression
-    ),
+        $.parenthesized_expression,
+      ),
 
     // GAP source file location: src/read.c ReadQualifiedExpr
-    qualified_expression: $ => seq(
-      $.qualifier,
-      $._expression
-    ),
+    qualified_expression: ($) => seq($.qualifier, $._expression),
 
     // Variables
 
     // GAP source file location: src/read.c ReadCallVarAss
-    _variable: $ => prec(-1, choice(
-      $.identifier,
-      $.list_selector,
-      $.sublist_selector,
-      $.positional_selector,
-      $.record_selector,
-      $.component_selector,
-      $.call
-    )),
+    _variable: ($) =>
+      prec(
+        -1,
+        choice(
+          $.identifier,
+          $.list_selector,
+          $.sublist_selector,
+          $.positional_selector,
+          $.record_selector,
+          $.component_selector,
+          $.call,
+        ),
+      ),
 
     // GAP source file location: src/read.c ReadSelector
-    list_selector: $ => prec.left(PREC.CALL, seq(
-      field('variable', $._expression),
-      '[',
-      $._expression,
-      optional(seq(
-        ',',
-        $._expression
-      )),
-      ']'
-    )),
+    list_selector: ($) =>
+      prec.left(
+        PREC.CALL,
+        seq(
+          field("variable", $._expression),
+          "[",
+          $._expression,
+          optional(seq(",", $._expression)),
+          "]",
+        ),
+      ),
 
     // GAP source file location: src/read.c ReadSelector
-    sublist_selector: $ => prec.left(PREC.CALL, seq(
-      field('variable', $._expression),
-      '{',
-      $._expression,
-      '}'
-    )),
+    sublist_selector: ($) =>
+      prec.left(
+        PREC.CALL,
+        seq(field("variable", $._expression), "{", $._expression, "}"),
+      ),
 
     // GAP source file location: src/read.c ReadSelector
-    positional_selector: $ => prec.left(PREC.CALL, seq(
-      field('variable', $._expression),
-      '![',
-      $._expression,
-      ']'
-    )),
+    positional_selector: ($) =>
+      prec.left(
+        PREC.CALL,
+        seq(field("variable", $._expression), "![", $._expression, "]"),
+      ),
 
     // GAP source file location: src/read.c ReadSelector
     // TODO: (reiniscirpons) fix issues with integer record selectors once
     // leading period floats are introduced, i.e. make sure that a.1 is not
     // parsed as (identifier) (float)
-    record_selector: $ => prec.left(PREC.CALL, seq(
-      field('variable', $._expression),
-      '.',
-      field('selector', choice(
-        $.identifier,
-        $.integer,
-        $.parenthesized_expression,
-      ))
-    )),
+    record_selector: ($) =>
+      prec.left(
+        PREC.CALL,
+        seq(
+          field("variable", $._expression),
+          ".",
+          field(
+            "selector",
+            choice($.identifier, $.integer, $.parenthesized_expression),
+          ),
+        ),
+      ),
 
     // GAP source file location: src/read.c ReadSelector
-    component_selector: $ => prec.left(PREC.CALL, seq(
-      field('variable', $._expression),
-      '!.',
-      field('selector', choice(
-        $.identifier,
-        $.integer,
-        $.parenthesized_expression,
-      ))
-    )),
+    component_selector: ($) =>
+      prec.left(
+        PREC.CALL,
+        seq(
+          field("variable", $._expression),
+          "!.",
+          field(
+            "selector",
+            choice($.identifier, $.integer, $.parenthesized_expression),
+          ),
+        ),
+      ),
 
-    binary_expression: $ => choice(
-      ...[
-        [prec.left, 'or', PREC.OR],
-        [prec.left, 'and', PREC.AND],
-        [prec.left, '=', PREC.COMPARE],
-        [prec.left, '<>', PREC.COMPARE],
-        [prec.left, '<', PREC.COMPARE],
-        [prec.left, '>', PREC.COMPARE],
-        [prec.left, '<=', PREC.COMPARE],
-        [prec.left, '>=', PREC.COMPARE],
-        [prec.left, 'in', PREC.COMPARE],
-        [prec.left, '+', PREC.PLUS],
-        [prec.left, '-', PREC.PLUS],
-        [prec.left, '*', PREC.MULTI],
-        [prec.left, '/', PREC.MULTI],
-        [prec.left, 'mod', PREC.MULTI],
-        [prec.right, '^', PREC.POWER],  // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
-        //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
-      ].map(([fn, operator, precedence]) => fn(precedence, seq(
-        $._expression,
-        operator,
-        $._expression
-      )))
-    ),
+    binary_expression: ($) =>
+      choice(
+        ...[
+          [prec.left, "or", PREC.OR],
+          [prec.left, "and", PREC.AND],
+          [prec.left, "=", PREC.COMPARE],
+          [prec.left, "<>", PREC.COMPARE],
+          [prec.left, "<", PREC.COMPARE],
+          [prec.left, ">", PREC.COMPARE],
+          [prec.left, "<=", PREC.COMPARE],
+          [prec.left, ">=", PREC.COMPARE],
+          [prec.left, "in", PREC.COMPARE],
+          [prec.left, "+", PREC.PLUS],
+          [prec.left, "-", PREC.PLUS],
+          [prec.left, "*", PREC.MULTI],
+          [prec.left, "/", PREC.MULTI],
+          [prec.left, "mod", PREC.MULTI],
+          [prec.right, "^", PREC.POWER], // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
+          //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
+        ].map(([fn, operator, precedence]) =>
+          fn(precedence, seq($._expression, operator, $._expression)),
+        ),
+      ),
 
-    unary_expression: $ => prec.left(PREC.UNARY, seq(
-      choice('not', '+', '-'),
-      $._expression
-    )),
-
-    // GAP source file location: src/scanner.c GetNumber
-    integer: _ => lineContinuation(
-      LITERAL_REGEXP.INTEGER,
-      LITERAL_REGEXP.LINE_CONTINUATION,
-    ),
+    unary_expression: ($) =>
+      prec.left(PREC.UNARY, seq(choice("not", "+", "-"), $._expression)),
 
     // GAP source file location: src/scanner.c GetNumber
-    float: $ => {
+    integer: (_) =>
+      lineContinuation(
+        LITERAL_REGEXP.INTEGER,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      ),
+
+    // GAP source file location: src/scanner.c GetNumber
+    float: ($) => {
       // TODO: (reiniscirpons) trailing period floats currently cause issues with ranges e.g.
       // [1..10] fails producing the parse (list_expression (float) (Error))
       // since it (correctly) tries to parse the prefix [1. as the start of a list
@@ -361,133 +350,127 @@ module.exports = grammar({
     },
 
     // GAP source file location: src/bool.c
-    bool: _ => choice('true', 'false', 'fail'),
+    bool: (_) => choice("true", "false", "fail"),
 
-    char: $ => seq(
-      '\'',
-      choice(
-        token.immediate(prec(1, /[^\\\r\n]/)),
-        $.escape_sequence
+    char: ($) =>
+      seq(
+        "'",
+        choice(token.immediate(prec(1, /[^\\\r\n]/)), $.escape_sequence),
+        "'",
       ),
-      '\''
-    ),
 
-    string: $ => seq(
-      $.string_start,
-      repeat($.string_content),
-      $.string_end,
-    ),
+    string: ($) => seq($.string_start, repeat($.string_content), $.string_end),
 
-    string_content: $ => prec.right(repeat1(choice(
-      $.escape_sequence,
-      $._string_content,
-    ))),
+    string_content: ($) =>
+      prec.right(repeat1(choice($.escape_sequence, $._string_content))),
 
     // GAP source file location: src/scanner.c GetEscapedChar
-    escape_sequence: _ => lineContinuation(
-      LITERAL_REGEXP.ESCAPE_SEQUENCE,
-      LITERAL_REGEXP.LINE_CONTINUATION,
-    ),
+    escape_sequence: (_) =>
+      lineContinuation(
+        LITERAL_REGEXP.ESCAPE_SEQUENCE,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      ),
 
     // TODO: (fingolfin) restrict where tilde can be used, i.e., only "inside" a list or
     // record expression (but at arbitrary depth)
-    tilde: _ => '~',
+    tilde: (_) => "~",
 
-
-    function: $ => seq(
-      'function',
-      field('parameters', $.parameters),
-      field('locals', optional($.locals)),
-      field('body', optional($.block)),
-      'end'
-    ),
-
-    atomic_function: $ => seq(
-      'atomic',
-      'function',
-      field('parameters', $.qualified_parameters),
-      field('locals', optional($.locals)),
-      field('body', optional($.block)),
-      'end'
-    ),
-
-    block: $ => repeat1($._statement),
-
-    lambda: $ => prec.right(PREC.LAMBDA, seq(
-      field('parameters', $.lambda_parameters),
-      '->',
-      field('body', $._expression)
-    )),
-
-    parameters: $ => seq(
-      '(',
-      optional(seq(
-        commaSep1($.identifier),
-        optional($.ellipsis)
-      )),
-      ')'
-    ),
-
-    qualified_parameters: $ => seq(
-      '(',
-      optional(seq(
-        commaSep1(choice(
-          $.qualified_identifier,
-          $.identifier,
-        )),
-        optional($.ellipsis),
-      )),
-      ')',
-    ),
-
-    lambda_parameters: $ => choice(
-      $.identifier,
+    function: ($) =>
       seq(
-        '{',
-        optional(seq(
-          commaSep1($.identifier),
-          optional($.ellipsis)
-        )),
-        '}'
-      )
-    ),
+        "function",
+        field("parameters", $.parameters),
+        field("locals", optional($.locals)),
+        field("body", optional($.block)),
+        "end",
+      ),
 
-    ellipsis: _ => '...',
-
-    locals: $ => seq(
-      "local", commaSep1($.identifier), ";"
-    ),
-
-    call: $ => prec(PREC.CALL, seq(
-      field('function', choice(
-        $._variable,
-        $.parenthesized_expression,
-        // Yes, you can define a function and immediately call it
-        $.function
-        // But not an atomic function, for some reason!?
-        // $.atomic_function
-      )),
-      field('arguments', $.argument_list)
-    )),
-
-    argument_list: $ => choice(
+    atomic_function: ($) =>
       seq(
-        '(',
-        commaSep($._expression),
-        optional(seq(
-          ':',
-          commaSep($.function_call_option),
-        )),
-        ')'
-      )
-    ),
+        "atomic",
+        "function",
+        field("parameters", $.qualified_parameters),
+        field("locals", optional($.locals)),
+        field("body", optional($.block)),
+        "end",
+      ),
+
+    block: ($) => repeat1($._statement),
+
+    lambda: ($) =>
+      prec.right(
+        PREC.LAMBDA,
+        seq(
+          field("parameters", $.lambda_parameters),
+          "->",
+          field("body", $._expression),
+        ),
+      ),
+
+    parameters: ($) =>
+      seq(
+        "(",
+        optional(seq(commaSep1($.identifier), optional($.ellipsis))),
+        ")",
+      ),
+
+    qualified_parameters: ($) =>
+      seq(
+        "(",
+        optional(
+          seq(
+            commaSep1(choice($.qualified_identifier, $.identifier)),
+            optional($.ellipsis),
+          ),
+        ),
+        ")",
+      ),
+
+    lambda_parameters: ($) =>
+      choice(
+        $.identifier,
+        seq(
+          "{",
+          optional(seq(commaSep1($.identifier), optional($.ellipsis))),
+          "}",
+        ),
+      ),
+
+    ellipsis: (_) => "...",
+
+    locals: ($) => seq("local", commaSep1($.identifier), ";"),
+
+    call: ($) =>
+      prec(
+        PREC.CALL,
+        seq(
+          field(
+            "function",
+            choice(
+              $._variable,
+              $.parenthesized_expression,
+              // Yes, you can define a function and immediately call it
+              $.function,
+              // But not an atomic function, for some reason!?
+              // $.atomic_function
+            ),
+          ),
+          field("arguments", $.argument_list),
+        ),
+      ),
+
+    argument_list: ($) =>
+      choice(
+        seq(
+          "(",
+          commaSep($._expression),
+          optional(seq(":", commaSep($.function_call_option))),
+          ")",
+        ),
+      ),
 
     // GAP source file location: src/read.c ReadFuncCallOption
-    function_call_option: $ => choice(
-      $.identifier,
-      $.parenthesized_expression,
-      $.record_entry
-    ),
+    function_call_option: ($) =>
+      choice($.identifier, $.parenthesized_expression, $.record_entry),
 
     // TODO: (fingolfin) add special rules for calls to Declare{GlobalFunction,Operation,...},
     // BindGlobal, BIND_GLOBAL, Install{Method,GlobalFunction,} ? They are not part of the language per se, but they
@@ -496,91 +479,68 @@ module.exports = grammar({
     // We can maybe distinguish them in ./queries/highlights.scm as builtin functions. When parsing they should be
     // treated the same as any other function call I think.
 
-    list_expression: $ => seq(
-      '[',
-      commaSep(optional($._expression)),
-      ']',
-    ),
+    list_expression: ($) => seq("[", commaSep(optional($._expression)), "]"),
 
-    range_expression: $ => seq(
-      '[',
-      field('first', $._expression),
-      optional(seq(
-        ',',
-        field('second', $._expression),
-      )),
-      '..',
-      field('last', $._expression),
-      ']',
-    ),
+    range_expression: ($) =>
+      seq(
+        "[",
+        field("first", $._expression),
+        optional(seq(",", field("second", $._expression))),
+        "..",
+        field("last", $._expression),
+        "]",
+      ),
 
     // GAP source file location: src/read.c ReadRec
-    record_expression: $ => seq(
-      'rec',
-      '(',
-      commaSep(
-        $.record_entry
+    record_expression: ($) =>
+      seq("rec", "(", commaSep($.record_entry), optional(","), ")"),
+
+    record_entry: ($) =>
+      seq(
+        field(
+          "left",
+          choice($.identifier, $.integer, $.parenthesized_expression),
+        ),
+        ":=",
+        field("right", $._expression),
       ),
-      optional(','),
-      ')',
-    ),
 
-    record_entry: $ => seq(
-      field('left', choice(
-        $.identifier,
-        $.integer,
-        $.parenthesized_expression
-      )),
-      ':=',
-      field('right', $._expression)
-    ),
-
-    permutation_expression: $ => choice(
-      seq('(', ')'),
-      prec.right(repeat1($.permutation_cycle_expression))
-    ),
+    permutation_expression: ($) =>
+      choice(
+        seq("(", ")"),
+        prec.right(repeat1($.permutation_cycle_expression)),
+      ),
 
     // Does not include trivial cycle because GAP doesn't allow it in a permutation expression,
     // i.e. (1,2)() and ()(1,2) throw a syntax error.
-    permutation_cycle_expression: $ => seq(
-      '(',
-      seq($._expression, ',', commaSep1($._expression)),
-      ')'
-    ),
+    permutation_cycle_expression: ($) =>
+      seq("(", seq($._expression, ",", commaSep1($._expression)), ")"),
 
-    parenthesized_expression: $ => seq(
-      '(',
-      $._expression,
-      ')',
-    ),
+    parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
-    identifier: _ => lineContinuation(
-      LITERAL_REGEXP.IDENTIFIER,
-      LITERAL_REGEXP.LINE_CONTINUATION,
-    ),
+    identifier: (_) =>
+      lineContinuation(
+        LITERAL_REGEXP.IDENTIFIER,
+        LITERAL_REGEXP.LINE_CONTINUATION,
+      ),
 
-    qualified_identifier: $ => seq(
-      $.qualifier,
-      $.identifier
-    ),
+    qualified_identifier: ($) => seq($.qualifier, $.identifier),
 
-    qualifier: _ => choice('readonly', 'readwrite'),
+    qualifier: (_) => choice("readonly", "readwrite"),
 
-    comment: _ => token(seq('#', /.*/)),
+    comment: (_) => token(seq("#", /.*/)),
 
     // GAP source file location: src/io.c GetNextChar
-    _line_continuation: _ => LITERAL_REGEXP.LINE_CONTINUATION,
-
-
-  }
+    _line_continuation: (_) => LITERAL_REGEXP.LINE_CONTINUATION,
+  },
 });
 
 function commaSep(rule) {
-  return optional(commaSep1(rule))
+  return optional(commaSep1(rule));
 }
 
 function commaSep1(rule) {
-  return seq(rule, repeat(seq(',', rule)))
+  return seq(rule, repeat(seq(",", rule)));
 }
 
 // This function implements a RegExp transformation for matching an
@@ -604,55 +564,67 @@ function lineContinuation(base_regex, line_continuation_regex) {
   //            | <RegExp>, <Quantifier>
   // <Quantifier> ::= '*' | '+' | '?'
   //                | '*?' | '+?' | '??'
-  //                | '{', <Integer>, '}' 
-  //                | '{', <Integer>, ',}' 
-  //                | '{', <Integer>, ',', <Integer>, '}' 
-  //                | '{', <Integer>, '}?' 
-  //                | '{', <Integer>, ',}?' 
+  //                | '{', <Integer>, '}'
+  //                | '{', <Integer>, ',}'
+  //                | '{', <Integer>, ',', <Integer>, '}'
+  //                | '{', <Integer>, '}?'
+  //                | '{', <Integer>, ',}?'
   //                | '{', <Integer>, ',', <Integer>, '}?'
   // <CharacterClass> ::= '[', <StuffThatMayContainEscapedRightSquareBracket>, ']'
   //                    | '\\', <AnyLetterToAGoodApproximation>,
   //                    | <AnyNonQuantifierLetterToAGoodApproximation>
-  const line_continuation_regex_string = '(' + line_continuation_regex.source + ')*'
-  const special_symbols = new Set(['*', '+', '?', '|', '(', ')'])
-  let result_regex_string = '';
+  const line_continuation_regex_string =
+    "(" + line_continuation_regex.source + ")*";
+  const special_symbols = new Set(["*", "+", "?", "|", "(", ")"]);
+  let result_regex_string = "";
   let escaped = false;
   let square_bracket = false;
-  let curly_brace = false
+  let curly_brace = false;
   for (const c of base_regex.source) {
     // TODO: (reiniscirpons) Refactor more
 
     // BEFORE
-    if (!curly_brace && !square_bracket && !escaped &&
-      (c == '\\' || c == '[' ||
-        (c != '{' && !special_symbols.has(c)))) {
-      result_regex_string = result_regex_string.concat('(')
+    if (
+      !curly_brace &&
+      !square_bracket &&
+      !escaped &&
+      (c == "\\" || c == "[" || (c != "{" && !special_symbols.has(c)))
+    ) {
+      result_regex_string = result_regex_string.concat("(");
     }
 
-    result_regex_string = result_regex_string.concat(c)
+    result_regex_string = result_regex_string.concat(c);
 
     // AFTER
-    if (!curly_brace &&
-      (!escaped && square_bracket && c == ']') ||
+    if (
+      (!curly_brace && !escaped && square_bracket && c == "]") ||
       (!square_bracket && escaped) ||
-      (!curly_brace && !square_bracket && !escaped && c != '\\' && c != '[' && c != '{' && !special_symbols.has(c))
+      (!curly_brace &&
+        !square_bracket &&
+        !escaped &&
+        c != "\\" &&
+        c != "[" &&
+        c != "{" &&
+        !special_symbols.has(c))
     ) {
-      result_regex_string = result_regex_string.concat(line_continuation_regex_string)
-      result_regex_string = result_regex_string.concat(')')
+      result_regex_string = result_regex_string.concat(
+        line_continuation_regex_string,
+      );
+      result_regex_string = result_regex_string.concat(")");
     }
 
     // FLAGS
-    if (curly_brace && c == '}') {
-      curly_brace = false
+    if (curly_brace && c == "}") {
+      curly_brace = false;
     } else if (!curly_brace && escaped) {
-      escaped = false
-    } else if (!curly_brace && !escaped && square_bracket && c == ']') {
+      escaped = false;
+    } else if (!curly_brace && !escaped && square_bracket && c == "]") {
       square_bracket = false;
-    } else if (!curly_brace && !escaped && c == '\\') {
+    } else if (!curly_brace && !escaped && c == "\\") {
       escaped = true;
-    } else if (!curly_brace && !square_bracket && !escaped && c == '[') {
+    } else if (!curly_brace && !square_bracket && !escaped && c == "[") {
       square_bracket = true;
-    } else if (!curly_brace && !square_bracket && !escaped && c == '{') {
+    } else if (!curly_brace && !square_bracket && !escaped && c == "{") {
       curly_brace = true;
     }
   }
