@@ -21,27 +21,37 @@ Floats
 =====================================
 
 1.0;
-# (unary_expression (float))
-#-.6;
-# (unary_expression (float))
-#+.1;
+.1;
+-.6;
++.1;
 123.4123;
 1.;
 123.;
 +1.;
 
+# Ported from GAP test file: tst/testinstall/kernel/read.tst 
+# The following should all produce an error
+12.34\56;
+12.34\a56;
+12.34\56a;
+
 ---
 
 (source_file
   (float)
-  (comment)
-  (comment)
-  (comment)
-  (comment)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
   (float)
   (float)
   (float)
-  (unary_expression (float)))
+  (unary_expression (float))
+  (comment)
+  (comment)
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+)
 
 =====================================
 Scientific Notation Floats
@@ -97,7 +107,7 @@ Conversion marker Floats
 =====================================
 
 1.0i;
-#.0i;
+.0i;
 1.i;
 1.e322a;
 1.e-3b;
@@ -120,39 +130,69 @@ Conversion marker Floats
 1.8q10L;
 1.8Q10M;
 
+# Ported from GAP test file: tst/testinstall/kernel/scanner.tst 
+1.i;
+1.e0i;
+1.0i;
+1.0e0i;
+# The following should all produce an error
+1.ix;
+1.ei;
+1.eix;
+1.e0ix;
+1.0ix;
+1.0ei;
+1.0eix;
+1.0e0ix;
+
 ---
 
 (source_file
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
   (float)
   (comment)
   (float)
   (float)
   (float)
   (float)
-  (float)
-  (float)
-  (unary_expression (float))
-  (unary_expression (float))
-  (float)
-  (float)
-  (float)
-  (float)
-  (float)
-  (float)
-  (unary_expression (float))
-  (unary_expression (float))
-  (float)
-  (float)
-  (float)
-  (float)
-  (float))
+  (comment)
+  (float) (ERROR (identifier))
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+)
 
 =====================================
 Eager Conversion Floats
 =====================================
 
 1.0_l;
-#.0_r;
+.0_r;
 1._I;
 1.e322_a;
 1.e-3_b;
@@ -175,14 +215,79 @@ Eager Conversion Floats
 1.8q10_L;
 1.8Q10_L;
 1.0_;
-#.0_;
+.0_;
 1._;
 1.e322_;
+
+# Ported from GAP test file: tst/testinstall/kernel/scanner.tst 
+1._;
+1._y;
+1.i_;
+1.i_y;
+1.e0_;
+1.e0_y;
+1.e0i_;
+1.e0i_y;
+1.0_;
+1.0_y;
+1.0i_;
+1.0i_y;
+1.0e0_;
+1.0e0_y;
+1.0e0i_;
+1.0e0i_y;
+# The following should all produce an error
+1._yx;
+1.i_yx;
+1.e_;
+1.e_y;
+1.e_yx;
+1.ei_;
+1.ei_y;
+1.ei_yx;
+1.e0_yx;
+1.e0i_yx;
+1.0_yx;
+1.0i_yx;
+1.0e_;
+1.0e_y;
+1.0e_yx;
+1.0ei_;
+1.0ei_y;
+1.0ei_yx;
+1.0e0_yx;
+1.0e0i_yx;
 
 ---
 
 (source_file
   (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (unary_expression (float))
+  (unary_expression (float))
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
+  (float)
   (comment)
   (float)
   (float)
@@ -190,16 +295,10 @@ Eager Conversion Floats
   (float)
   (float)
   (float)
-  (unary_expression (float))
-  (unary_expression (float))
   (float)
   (float)
   (float)
   (float)
-  (float)
-  (float)
-  (unary_expression (float))
-  (unary_expression (float))
   (float)
   (float)
   (float)
@@ -207,8 +306,27 @@ Eager Conversion Floats
   (float)
   (float)
   (comment)
-  (float)
-  (float))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (ERROR (integer)) (identifier)
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+  (float) (ERROR (identifier))
+)
 
 =====================================
 Strings

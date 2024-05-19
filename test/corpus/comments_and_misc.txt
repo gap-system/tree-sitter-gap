@@ -1,0 +1,72 @@
+========
+Comments
+========
+
+# Anything else here should be ignored
+
+---
+
+(source_file (comment))
+
+===================
+IsBound discrepancy
+===================
+
+# Ported from GAP test file: tst/testinstall/kernel/read.tst
+# The following should produce a syntax error, but dont.
+# For now we do not treat `IsBound` and similar functions any
+# differently to normal functions
+IsBound("a");
+IsBound(x->x);
+
+---
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (call
+    (identifier)
+    (argument_list
+      (string
+        (string_start)
+        (string_content)
+        (string_end))))
+  (call
+    (identifier)
+    (argument_list
+      (lambda
+        (lambda_parameters
+          (identifier))
+        (identifier))))
+)
+
+==============================
+Associativity of ^ discrepancy
+==============================
+
+# Ported from GAP test file: tst/testinstall/kernel/read.tst
+# The following should produce a syntax error, but does not.
+# For now we treat `^` as associative. It is unclear how to
+# make double exponentiation raise an error without significant
+# changes to binary expression handling.
+2^3^4;
+
+---
+
+(source_file
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (comment)
+  (binary_expression
+    (integer)
+    (binary_expression
+      (integer)
+      (integer))
+      )
+)
+
+
