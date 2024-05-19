@@ -17,6 +17,12 @@ const LITERAL_REGEXP = {
   INTEGER: /[0-9]+/,
   ESCAPE_SEQUENCE: /\\([^0-7\r\n]|0x[0-9a-fA-F]{2,2}|[0-7]{3,3})/,
   LINE_CONTINUATION: /\\\r?\n/,
+  NON_TRAILING_PERIOD_FLOAT: /[0-9]*\.[0-9]+/,
+  // TODO: (reiniscirpons) Perhaps break this up a bit?
+  EXPONENT_OR_CONVERSION_FLOAT:
+    /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)(([edqEDQ][\+-]?[0-9]+[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])(_[a-zA-Z]?)?|_[a-zA-Z]?)/,
+  // ^ Basic float selector           ^ Exponent                    ^ Conversion marker  ^ Eager conversion marker
+  //                                                      ^ Conversion marker
 };
 
 module.exports = grammar({
@@ -26,6 +32,21 @@ module.exports = grammar({
     $.string_start,
     $._string_content,
     $.string_end,
+    // NOTE: (reiniscirpons) trailing period floats are implemented using an
+    // external scanner since we require more than one token of lookahead to
+    // disambiguate them from range expressions. Take for example the two
+    // expressions `[1..10]` and `[1.,10]`. With only a single character of
+    // lookahead, the parser cannot disambiguate which case it is in upon
+    // reading the prefix `[1`, as the next token it sees is a `.` in both
+    // cases. I also (unsuccessfully) tried solving this by declaring a
+    // conflict between list expressions and range expressions. However, since
+    // the conflict spans multiple levels, i.e. its a conflict between the
+    // partial parses
+    // (list_expression (float ...
+    // and
+    // (range_expression (integer ...
+    // the error will occur when parsing the float, which does not trigger
+    // conflict resolution for the range/list expressions.
     $._trailing_period_float,
   ],
 
@@ -73,7 +94,7 @@ module.exports = grammar({
         // procedure calls
         // NOTE: (reiniscirpons) these are already distinguished as builtin
         // functions in ./queries/highlights.scm, we probably dont need to do
-        // anything special in the grammar itself
+        // anything special in the grammar itself.
 
         // TODO: (fingolfin) add support for `quit`, `QUIT`, `?`, pragmas ???
         // NOTE: (reiniscirpons) some pointers for this:
@@ -239,14 +260,26 @@ module.exports = grammar({
       ),
 
     // GAP source file location: src/read.c ReadSelector
-    // TODO: (reiniscirpons) fix issues with integer record selectors once
-    // leading period floats are introduced, i.e. make sure that a.1 is not
-    // parsed as (identifier) (float)
     record_selector: ($) =>
       prec.left(
         PREC.CALL,
         seq(
-          field("variable", $._expression),
+          field(
+            "variable",
+            // NOTE: (reiniscirpons) We dont use `$._expression` here since it
+            // causes a myriad of issues with float parsing. The key problem is
+            // that we cannot have a dot following an integer, since that just
+            // describes a float!
+            choice(
+              $._variable,
+              $.bool,
+              $.tilde,
+              $.char,
+              $.string,
+              $.record_expression,
+              $.parenthesized_expression,
+            ),
+          ),
           ".",
           field(
             "selector",
@@ -304,50 +337,18 @@ module.exports = grammar({
       ),
 
     // GAP source file location: src/scanner.c GetNumber
-    float: ($) => {
-      // TODO: (reiniscirpons) trailing period floats currently cause issues with ranges e.g.
-      // [1..10] fails producing the parse (list_expression (float) (Error))
-      // since it (correctly) tries to parse the prefix [1. as the start of a list
-      // followed by the float "1.". The issue is that with only a single character of
-      // lookahead we cannot correctly disambiguate this situation.
-      // In particular we need two characters of lookahead when our parser has processed
-      // the prefix [1, with these two characters we check if we have 1. or 1.. .
-      // Looks like we need to add an external scanner for this.
-      const trailing_period = lineContinuation(
-        /[0-9]+\./,
-        LITERAL_REGEXP.LINE_CONTINUATION,
-      );
-
-      const trailing_period_with_conversion = lineContinuation(
-        /[0-9]+\.(_[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])/,
-        LITERAL_REGEXP.LINE_CONTINUATION,
-      );
-
-      const middle_period = lineContinuation(
-        /[0-9]+\.[0-9]+(_[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])?/,
-        LITERAL_REGEXP.LINE_CONTINUATION,
-      );
-
-      // TODO: (reiniscirpons) Leading periods currently conflict with record selectors
-      // TODO: (reiniscirpons) add conversion marker support for leading period floats
-      const leading_period = lineContinuation(
-        /\.[0-9]+/,
-        LITERAL_REGEXP.LINE_CONTINUATION,
-      );
-
-      const float_with_exponent = lineContinuation(
-        /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)[edqEDQ][\+-]?[0-9]+_?[a-zA-Z]?/,
-        LITERAL_REGEXP.LINE_CONTINUATION,
-      );
-
-      return choice(
-        //leading_period,
-        middle_period,
+    float: ($) =>
+      choice(
+        lineContinuation(
+          LITERAL_REGEXP.NON_TRAILING_PERIOD_FLOAT,
+          LITERAL_REGEXP.LINE_CONTINUATION,
+        ),
         $._trailing_period_float,
-        trailing_period_with_conversion,
-        float_with_exponent,
-      );
-    },
+        lineContinuation(
+          LITERAL_REGEXP.EXPONENT_OR_CONVERSION_FLOAT,
+          LITERAL_REGEXP.LINE_CONTINUATION,
+        ),
+      ),
 
     // GAP source file location: src/bool.c
     bool: (_) => choice("true", "false", "fail"),
@@ -481,15 +482,28 @@ module.exports = grammar({
 
     list_expression: ($) => seq("[", commaSep(optional($._expression)), "]"),
 
-    range_expression: ($) =>
-      seq(
+    range_expression: ($) => {
+      const valid_index_expressions = choice(
+        $._variable,
+        $.binary_expression,
+        $.unary_expression,
+
+        $.integer,
+
+        $.permutation_expression,
+
+        $.parenthesized_expression,
+      );
+
+      return seq(
         "[",
-        field("first", $._expression),
-        optional(seq(",", field("second", $._expression))),
+        field("first", valid_index_expressions),
+        optional(seq(",", field("second", valid_index_expressions))),
         "..",
-        field("last", $._expression),
+        field("last", valid_index_expressions),
         "]",
-      ),
+      );
+    },
 
     // GAP source file location: src/read.c ReadRec
     record_expression: ($) =>

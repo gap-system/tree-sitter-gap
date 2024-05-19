@@ -659,8 +659,37 @@
             "type": "FIELD",
             "name": "variable",
             "content": {
-              "type": "SYMBOL",
-              "name": "_expression"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_variable"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "bool"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "tilde"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "char"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "string"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "record_expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "parenthesized_expression"
+                }
+              ]
             }
           },
           {
@@ -1092,7 +1121,7 @@
       "members": [
         {
           "type": "PATTERN",
-          "value": "([0-9](\\\\\\r?\\n)*)+(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)+((_(\\\\\\r?\\n)*)([a-zA-Z](\\\\\\r?\\n)*)?|([a-cf-pr-zA-CF-PR-Z](\\\\\\r?\\n)*))?"
+          "value": "([0-9](\\\\\\r?\\n)*)*(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)+"
         },
         {
           "type": "SYMBOL",
@@ -1100,11 +1129,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "([0-9](\\\\\\r?\\n)*)+(\\.(\\\\\\r?\\n)*)((_(\\\\\\r?\\n)*)([a-zA-Z](\\\\\\r?\\n)*)?|([a-cf-pr-zA-CF-PR-Z](\\\\\\r?\\n)*))"
-        },
-        {
-          "type": "PATTERN",
-          "value": "(([0-9](\\\\\\r?\\n)*)+(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)*|([0-9](\\\\\\r?\\n)*)*(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)+)([edqEDQ](\\\\\\r?\\n)*)([\\+-](\\\\\\r?\\n)*)?([0-9](\\\\\\r?\\n)*)+(_(\\\\\\r?\\n)*)?([a-zA-Z](\\\\\\r?\\n)*)?"
+          "value": "(([0-9](\\\\\\r?\\n)*)+(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)*|([0-9](\\\\\\r?\\n)*)*(\\.(\\\\\\r?\\n)*)([0-9](\\\\\\r?\\n)*)+)((([edqEDQ](\\\\\\r?\\n)*)([\\+-](\\\\\\r?\\n)*)?([0-9](\\\\\\r?\\n)*)+([a-zA-Z](\\\\\\r?\\n)*)?|([a-cf-pr-zA-CF-PR-Z](\\\\\\r?\\n)*))((_(\\\\\\r?\\n)*)([a-zA-Z](\\\\\\r?\\n)*)?)?|(_(\\\\\\r?\\n)*)([a-zA-Z](\\\\\\r?\\n)*)?)"
         }
       ]
     },
@@ -1839,8 +1864,33 @@
           "type": "FIELD",
           "name": "first",
           "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_variable"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "binary_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "unary_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "permutation_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "parenthesized_expression"
+              }
+            ]
           }
         },
         {
@@ -1857,8 +1907,33 @@
                   "type": "FIELD",
                   "name": "second",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "_expression"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_variable"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "binary_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "unary_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "integer"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "permutation_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "parenthesized_expression"
+                      }
+                    ]
                   }
                 }
               ]
@@ -1876,8 +1951,33 @@
           "type": "FIELD",
           "name": "last",
           "content": {
-            "type": "SYMBOL",
-            "name": "_expression"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_variable"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "binary_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "unary_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "permutation_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "parenthesized_expression"
+              }
+            ]
           }
         },
         {
