@@ -4,3 +4,4 @@ build
 *.log
 temp*/
 log.html
+examples/corpus_*.tar.gz
