@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-gap",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GAP grammar for tree-sitter",
   "keywords": [
     "tree-sitter",
