@@ -185,7 +185,7 @@ BindGlobal("foo", 1);
 #                  ^ punctuation.bracket
 #                   ^ punctuation.delimiter
 BIND_GLOBAL("bar", 2);
-# <- constant
+# <- function.call
 #          ^ punctuation.bracket
 #           ^ string
 #                ^ punctuation.delimiter
@@ -291,7 +291,7 @@ InstallImmediateMethod( IsFinitelyGeneratedGroup,
 #   ^ keyword.conditional
 #     ^ punctuation.delimiter
     TryNextMethod();
-#   ^ function.call
+#   ^ function.builtin
 #                ^ punctuation.bracket
 #                 ^ punctuation.bracket
 #                  ^ punctuation.delimiter

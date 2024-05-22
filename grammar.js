@@ -55,10 +55,6 @@ module.exports = grammar({
   inline: ($) => [$._expression, $._statement],
 
   conflicts: ($) => [
-    // on the top level, both statements and expressions are allowed note that
-    // $.call can appear both as an expression (function call) or statement
-    // (procedure call), and we need to resolve that ambiguity
-    [$.source_file, $._statement_inner],
     // The parameters of an atomic function do not necessarily have to use the
     // `readonly` and `readwrite` qualifiers. Therefore the two parameter lists
     // have an inherent conflict.

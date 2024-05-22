@@ -1,5 +1,5 @@
+#include "tree_sitter/alloc.h"
 #include "tree_sitter/parser.h"
-#include <ctype.h>
 #include <wctype.h>
 
 enum TokenType {
@@ -181,7 +181,7 @@ void tree_sitter_GAP_external_scanner_deserialize(void *payload,
 }
 
 void *tree_sitter_GAP_external_scanner_create() {
-  Scanner *scanner = calloc(1, sizeof(Scanner));
+  Scanner *scanner = ts_calloc(1, sizeof(Scanner));
   return scanner;
 }
 

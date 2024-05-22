@@ -8,6 +8,14 @@
     "GAP",
     "GAP-system"
   ],
+  "files": [
+    "grammar.js",
+    "binding.gyp",
+    "prebuilds/**",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
   "author": "Max Horn",
   "contributors": [
     "Max Horn",
@@ -23,15 +31,30 @@
     "url": "git+https://github.com/reiniscirpons/tree-sitter-gap.git"
   },
   "main": "bindings/node",
+  "types": "bindings/node",
   "scripts": {
     "build": "tree-sitter generate && node-gyp build --debug",
-    "test": "tree-sitter test && tree-sitter parse examples/*.g* --quiet --time"
+    "test": "tree-sitter test && tree-sitter parse examples/*.g* --quiet --time",
+    "install": "node-gyp-build",
+    "prebuildify": "prebuildify --napi --strip",
+    "format": "prettier --write grammar.js"
   },
   "dependencies": {
-    "nan": "^2.14.0"
+    "node-addon-api": "^8.0.0",
+    "node-gyp-build": "^4.8.1"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.21.0"
+  },
+  "peerDependenciesMeta": {
+    "tree_sitter": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.20.0"
+    "tree-sitter-cli": "^0.22.6",
+    "prebuildify": "^6.0.0",
+    "prettier": "^3.2.5"
   },
   "tree-sitter": [
     {
