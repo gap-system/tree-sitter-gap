@@ -1,5 +1,10 @@
 ; Constants
 
+; NOTE: (reiniscirpons) in case multiple queries match, last query wins. So
+; queries should go from least specific to most specific. (This is the default
+; behaviour since tree-sitter 0.22.2)
+(identifier) @variable
+
 ; convention: constants are of the form ALL_CAPS_AND_UNDERSCORES and have length at least 2
 ((identifier) @constant
  (#match? @constant "^[A-Z_][A-Z_]+$"))
@@ -25,30 +30,6 @@
   function: (identifier) @function.builtin)
  (#match? @function.builtin "^(Assert|Info|IsBound|Unbind|TryNextMethod)$"))
 
-; Record selectors as properties
-
-(record_entry
-  left: [
-    (identifier)
-    (integer)
-  ] @property)
-
-
-(record_selector
-  selector: [
-    (identifier)
-    (integer)
-  ] @property)
-
-(component_selector
-  selector: [
-    (identifier)
-    (integer)
-  ] @property)
-
-(function_call_option
-  (identifier) @property)
-
 ; Function parameters
 
 (parameters
@@ -66,10 +47,6 @@
 
 (locals
   (identifier) @variable.parameter)
-
-; Other identifiers
-
-(identifier) @variable
 
 ; Literals
 
@@ -118,7 +95,7 @@
   "not"
   "or"
 ] @keyword.operator
-  
+
 [
   "function"
   "local"
@@ -161,3 +138,27 @@
   "{"
   "}"
 ] @punctuation.bracket
+
+; Record selectors as properties
+
+(record_entry
+  left: [
+    (identifier)
+    (integer)
+  ] @property)
+
+
+(record_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @property)
+
+(component_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @property)
+
+(function_call_option
+  (identifier) @property)

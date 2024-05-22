@@ -4,10 +4,10 @@ EXAMPLES_DIR=./examples
 .PHONY: compile format corpus test_quick test_gap test_pkg test_all clean distclean
 
 compile: grammar.js src/scanner.c
-	tree-sitter generate
+	tree-sitter generate --no-bindings
 
 format:
-	prettier -w grammar.js
+	npm run format
 
 corpus:
 	./etc/extract_corpus.sh -v $(CORPUS_VERSION) temp_extract_corpus

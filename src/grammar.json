@@ -2250,10 +2250,6 @@
   ],
   "conflicts": [
     [
-      "source_file",
-      "_statement_inner"
-    ],
-    [
       "parameters",
       "qualified_parameters"
     ]
@@ -2283,4 +2279,3 @@
   ],
   "supertypes": []
 }
-
