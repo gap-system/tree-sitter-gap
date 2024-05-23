@@ -26,13 +26,13 @@ $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION):
 	mkdir -p $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
 	tar -xzf $(EXAMPLES_DIR)/corpus_pkg_$(CORPUS_VERSION).tar.gz -C $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
 
-test_quick:
+test_quick: compile
 	tree-sitter test
 
-test_gap: $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION)
+test_gap: $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION) compile
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION)/*.g*' --quiet --stat
 
-test_pkg: $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
+test_pkg: $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION) compile
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)/*.g*' --quiet --stat
 
 test_all: test_quick $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION) $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
