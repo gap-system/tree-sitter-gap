@@ -546,7 +546,7 @@ module.exports = grammar({
     // GAP source file location: lib/helpbase.gi HELP
     help_statement: ($) =>
       choice(
-        /\?;*\r?\n/,
+        seq("?", /;*\r?\n/),
         seq(
           "?",
           optional(
@@ -556,7 +556,9 @@ module.exports = grammar({
                 alias(LITERAL_REGEXP.HELP_TOPIC_OR_BOOK, $.help_book),
                 ":",
                 optional("?"),
-                optional(alias(/[^\r\n]+/, $.help_topic)),
+                optional(
+                  alias(/[^?\r\n;]|[^?\r\n][^\r\n]*[^\r\n;]/, $.help_topic),
+                ),
               ),
               alias(/[-+&<>]|<<|>>/, $.help_operator),
               alias(/[0-9]+/, $.help_selector),
