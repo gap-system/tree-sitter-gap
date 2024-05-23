@@ -54,7 +54,7 @@ module.exports = grammar({
     $._trailing_period_float,
   ],
 
-  extras: ($) => [$.comment, /\s/, $._line_continuation],
+  extras: ($) => [$.comment, $.pragma, /\s/, $._line_continuation],
 
   inline: ($) => [$._expression, $._statement],
 
@@ -103,10 +103,6 @@ module.exports = grammar({
         // NOTE: (reiniscirpons) these are already distinguished as builtin
         // functions in ./queries/highlights.scm, we probably dont need to do
         // anything special in the grammar itself.
-
-        // TODO: (fingolfin) add support for pragmas ???
-        // NOTE: (reiniscirpons) Pragmas are described in the GAP manual:
-        // https://docs.gap-system.org/doc/ref/chap5.html
       ),
 
     quit_statement: (_) => /quit|QUIT/,
@@ -537,6 +533,8 @@ module.exports = grammar({
     qualified_identifier: ($) => seq($.qualifier, $.identifier),
 
     qualifier: (_) => choice("readonly", "readwrite"),
+
+    pragma: (_) => token(seq("#%", /.*/)),
 
     comment: (_) => token(seq("#", /.*/)),
 

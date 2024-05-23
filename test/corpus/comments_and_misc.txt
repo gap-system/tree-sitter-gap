@@ -8,6 +8,16 @@ Comments
 
 (source_file (comment))
 
+========
+Pragmas
+========
+
+#% Anything else here should be ignored
+
+---
+
+(source_file (pragma))
+
 ===================
 IsBound discrepancy
 ===================
