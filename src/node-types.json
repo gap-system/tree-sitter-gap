@@ -1294,7 +1294,7 @@
           "named": true
         },
         {
-          "type": "help_operation",
+          "type": "help_operator",
           "named": true
         },
         {
@@ -3968,7 +3968,7 @@
     "named": true
   },
   {
-    "type": "help_operation",
+    "type": "help_operator",
     "named": true
   },
   {

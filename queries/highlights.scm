@@ -58,6 +58,7 @@
 (string) @string
 (char) @character
 (escape_sequence) @string.escape
+(pragma) @keyword.directive
 
 
 [
@@ -78,6 +79,9 @@
   (ellipsis)
 ] @operator
 
+(help_statement
+  (help_operator) @operator)
+
 
 [
   "atomic"
@@ -86,6 +90,7 @@
   "readonly"
   "readwrite"
   "rec"
+  (quit_statement)
 ] @keyword
 
 [
@@ -128,6 +133,13 @@
   "!."
   ":"
 ] @punctuation.delimiter
+
+(help_statement "?" @punctuation.special)
+
+[
+ (help_topic)
+ (help_book)
+] @string.special
 
 [
   "("

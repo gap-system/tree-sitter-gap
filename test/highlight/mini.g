@@ -299,3 +299,17 @@ InstallImmediateMethod( IsFinitelyGeneratedGroup,
 #   ^ keyword.function
 #       ^ punctuation.bracket
 #        ^ punctuation.delimiter
+
+quit;
+# < keyword
+
+QUIT;
+# < keyword
+
+#% pragma
+# < keyword.directive
+
+?Integer
+?Reference:?Integer
+?Reference:?Integer;;;
+?>>

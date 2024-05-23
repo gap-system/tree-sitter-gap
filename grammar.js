@@ -558,7 +558,7 @@ module.exports = grammar({
                 optional("?"),
                 optional(alias(/[^\r\n]+/, $.help_topic)),
               ),
-              alias(/[-+&<>]|<<|>>/, $.help_operation),
+              alias(/[-+&<>]|<<|>>/, $.help_operator),
               alias(/[0-9]+/, $.help_selector),
             ),
           ),

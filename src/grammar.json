@@ -2353,7 +2353,7 @@
                         "value": "[-+&<>]|<<|>>"
                       },
                       "named": true,
-                      "value": "help_operation"
+                      "value": "help_operator"
                     },
                     {
                       "type": "ALIAS",
