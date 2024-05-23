@@ -81,6 +81,9 @@ fi;
 if true then
   QUIT;
 fi;
+1+1; quit;
+1+1;QUIT;
+quit := 3;
 
 ---
 
@@ -97,5 +100,65 @@ fi;
     (bool)
     (ERROR
       (identifier)))
+  (binary_expression
+    (integer)
+    (integer))
+  (quit_statement)
+  (binary_expression
+    (integer)
+    (integer))
+  (quit_statement)
+  (quit_statement) (ERROR (integer))
+)
+
+==============
+Help statement
+==============
+
+?Integer
+?Reference:Integer
+?Reference:?Integer
+?>
+?<
+?>>
+?<<
+?-
+?+
+?
+?&
+?1
+?120
+?Reference:
+?Reference:?
+1+1; ?Integer
+"""
+?Integer
+""";
+
+---
+
+(source_file
+  (help_statement (help_topic))
+  (help_statement (help_book) (help_topic))
+  (help_statement (help_book) (help_topic))
+  (help_statement (help_operation))
+  (help_statement (help_operation))
+  (help_statement (help_operation))
+  (help_statement (help_operation))
+  (help_statement (help_operation))
+  (help_statement (help_operation))
+  (help_statement)
+  (help_statement (help_operation))
+  (help_statement (help_selector))
+  (help_statement (help_selector))
+  (help_statement (help_book))
+  (help_statement (help_book))
+  (binary_expression (integer) (integer))
+  (help_statement (help_topic))
+  (string
+    (string_start)
+    (string_content)
+    (string_end)
+  )
 )
 

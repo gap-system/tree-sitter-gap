@@ -36,6 +36,10 @@
                 "value": ";"
               }
             ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "help_statement"
           }
         ]
       }
@@ -2249,6 +2253,122 @@
     "_line_continuation": {
       "type": "PATTERN",
       "value": "\\\\\\r?\\n"
+    },
+    "help_statement": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "\\?;*\\r?\\n"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "?"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[^-+&<>0-9:][^\\r\\n:]*|([-+&]|<<|>>)[^\\r\\n:]+|[0-9]+[^0-9\\r\\n:][^\\r\\n:]"
+                      },
+                      "named": true,
+                      "value": "help_topic"
+                    },
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[^-+&<>0-9:][^\\r\\n:]*|([-+&]|<<|>>)[^\\r\\n:]+|[0-9]+[^0-9\\r\\n:][^\\r\\n:]"
+                          },
+                          "named": true,
+                          "value": "help_book"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": ":"
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "?"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "PATTERN",
+                                "value": "[^\\r\\n]+"
+                              },
+                              "named": true,
+                              "value": "help_topic"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[-+&<>]|<<|>>"
+                      },
+                      "named": true,
+                      "value": "help_operation"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+"
+                      },
+                      "named": true,
+                      "value": "help_selector"
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "STRING",
+                "value": ";"
+              }
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\r?\\n"
+            }
+          ]
+        }
+      ]
     }
   },
   "extras": [
