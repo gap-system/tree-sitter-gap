@@ -2274,8 +2274,17 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\?;*\\r?\\n"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "?"
+            },
+            {
+              "type": "PATTERN",
+              "value": ";*\\r?\\n"
+            }
+          ]
         },
         {
           "type": "SEQ",
@@ -2334,7 +2343,7 @@
                               "type": "ALIAS",
                               "content": {
                                 "type": "PATTERN",
-                                "value": "[^\\r\\n]+"
+                                "value": "[^?\\r\\n;]|[^?\\r\\n][^\\r\\n]*[^\\r\\n;]"
                               },
                               "named": true,
                               "value": "help_topic"

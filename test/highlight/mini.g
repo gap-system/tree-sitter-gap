@@ -309,7 +309,13 @@ QUIT;
 #% pragma
 # < keyword.directive
 
+# FIXME: (reiniscirpons) It seems that the following statements cannot be
+# tested for highlighting. I have a hunch that this is related to the
+# newline capture used in the grammar.
 ?Integer
 ?Reference:?Integer
 ?Reference:?Integer;;;
+?
 ?>>
+?7138
+

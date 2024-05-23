@@ -174,3 +174,6 @@
 
 (function_call_option
   (identifier) @property)
+
+(help_statement
+  (help_selector) @property)
