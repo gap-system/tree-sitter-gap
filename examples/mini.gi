@@ -48,3 +48,15 @@ InstallImmediateMethod( IsFinitelyGeneratedGroup,
     fi;
     TryNextMethod();
     end );
+
+quit;
+
+QUIT;
+
+#% pragma
+
+
+?Integer
+?Reference:?Integer
+?Reference:?Integer;;;
+?>>
