@@ -64,7 +64,14 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   rules: {
-    source_file: ($) => repeat(choice(seq($._expression, ";"), $._statement)),
+    source_file: ($) =>
+      repeat(
+        choice(
+          seq($._expression, ";"),
+          $._statement,
+          seq($.quit_statement, ";"),
+        ),
+      ),
 
     // Statements
     _statement: ($) =>
@@ -110,6 +117,8 @@ module.exports = grammar({
         // Pragmas are described in the GAP manual
         // https://docs.gap-system.org/doc/ref/chap5.html
       ),
+
+    quit_statement: (_) => /quit|QUIT/,
 
     assignment_statement: ($) =>
       seq(field("left", $._expression), ":=", field("right", $._expression)),

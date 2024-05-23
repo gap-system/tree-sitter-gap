@@ -3225,6 +3225,10 @@
           "named": true
         },
         {
+          "type": "quit_statement",
+          "named": true
+        },
+        {
           "type": "range_expression",
           "named": true
         },
@@ -3959,6 +3963,10 @@
   {
     "type": "or",
     "named": false
+  },
+  {
+    "type": "quit_statement",
+    "named": true
   },
   {
     "type": "readonly",

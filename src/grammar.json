@@ -23,6 +23,19 @@
           {
             "type": "SYMBOL",
             "name": "_statement"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "quit_statement"
+              },
+              {
+                "type": "STRING",
+                "value": ";"
+              }
+            ]
           }
         ]
       }
@@ -93,6 +106,10 @@
           "name": "call"
         }
       ]
+    },
+    "quit_statement": {
+      "type": "PATTERN",
+      "value": "quit|QUIT"
     },
     "assignment_statement": {
       "type": "SEQ",

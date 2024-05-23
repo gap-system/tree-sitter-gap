@@ -69,4 +69,33 @@ Associativity of ^ discrepancy
       )
 )
 
+===============
+Quit statements
+===============
+
+quit;
+QUIT;
+if 1 = 2 then
+  quit;
+fi;
+if true then
+  QUIT;
+fi;
+
+---
+
+(source_file
+  (quit_statement)
+  (quit_statement)
+  (if_statement
+    (binary_expression
+      (integer)
+      (integer))
+        (ERROR
+          (identifier)))
+  (if_statement
+    (bool)
+    (ERROR
+      (identifier)))
+)
 
