@@ -19,10 +19,14 @@ const LITERAL_REGEXP = {
   LINE_CONTINUATION: /\\\r?\n/,
   NON_TRAILING_PERIOD_FLOAT: /[0-9]*\.[0-9]+/,
   // TODO: (reiniscirpons) Perhaps break this up a bit?
+  // v Basic float selector           v Exponent                    v Conversion marker  v Eager conversion marker
+  //                                                      v Conversion marker
   EXPONENT_OR_CONVERSION_FLOAT:
     /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)(([edqEDQ][\+-]?[0-9]+[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])(_[a-zA-Z]?)?|_[a-zA-Z]?)/,
-  // ^ Basic float selector           ^ Exponent                    ^ Conversion marker  ^ Eager conversion marker
-  //                                                      ^ Conversion marker
+  // Help topic or book must exclude the help operators and selectors, which
+  // leads to the following rather complicated regex
+  HELP_TOPIC_OR_BOOK:
+    /[^-+&<>0-9:][^\r\n:]*|([-+&]|<<|>>)[^\r\n:]+|[0-9]+[^0-9\r\n:][^\r\n:]/,
 };
 
 module.exports = grammar({
@@ -70,6 +74,7 @@ module.exports = grammar({
           seq($._expression, ";"),
           $._statement,
           seq($.quit_statement, ";"),
+          $.help_statement,
         ),
       ),
 
@@ -99,22 +104,8 @@ module.exports = grammar({
         // functions in ./queries/highlights.scm, we probably dont need to do
         // anything special in the grammar itself.
 
-        // TODO: (fingolfin) add support for `quit`, `QUIT`, `?`, pragmas ???
-        // NOTE: (reiniscirpons) some pointers for this:
-        // As per
-        // GAP source location src/read.c TryReadStatement
-        // quit, QUIT and ? cannot be used within statements or expressions, so
-        // it might be easiest to implement them as a separate construct that can
-        // appear in the source file.
-        //
-        // The help syntax is described in the GAP manual
-        // https://docs.gap-system.org/doc/ref/chap2.html
-        // The help scanner function implemented here:
-        // GAP source file location: src/scanner.c ReadHelp
-        // The help request string parser implemented here:
-        // GAP source file location: lib/helpbase.gi HELP
-        //
-        // Pragmas are described in the GAP manual
+        // TODO: (fingolfin) add support for pragmas ???
+        // NOTE: (reiniscirpons) Pragmas are described in the GAP manual:
         // https://docs.gap-system.org/doc/ref/chap5.html
       ),
 
@@ -551,6 +542,32 @@ module.exports = grammar({
 
     // GAP source file location: src/io.c GetNextChar
     _line_continuation: (_) => LITERAL_REGEXP.LINE_CONTINUATION,
+
+    // GAP source file location: src/scanner.c GetHelp
+    // GAP source file location: src/intrprtr.c IntrHelp
+    // GAP source file location: lib/helpbase.gi HELP
+    help_statement: ($) =>
+      choice(
+        /\?;*\r?\n/,
+        seq(
+          "?",
+          optional(
+            choice(
+              alias(LITERAL_REGEXP.HELP_TOPIC_OR_BOOK, $.help_topic),
+              seq(
+                alias(LITERAL_REGEXP.HELP_TOPIC_OR_BOOK, $.help_book),
+                ":",
+                optional("?"),
+                optional(alias(/[^\r\n]+/, $.help_topic)),
+              ),
+              alias(/[-+&<>]|<<|>>/, $.help_operation),
+              alias(/[0-9]+/, $.help_selector),
+            ),
+          ),
+          repeat(";"),
+          /\r?\n/,
+        ),
+      ),
   },
 });
 
