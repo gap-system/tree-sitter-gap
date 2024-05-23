@@ -4016,6 +4016,10 @@
     "named": false
   },
   {
+    "type": "pragma",
+    "named": true
+  },
+  {
     "type": "quit_statement",
     "named": true
   },
