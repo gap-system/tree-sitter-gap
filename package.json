@@ -1,12 +1,12 @@
 {
   "name": "tree-sitter-gap",
-  "version": "0.1.2",
-  "description": "GAP grammar for tree-sitter",
+  "version": "0.2.0",
+  "description": "gap grammar for tree-sitter",
   "keywords": [
     "tree-sitter",
     "parser",
-    "GAP",
-    "GAP-system"
+    "gap",
+    "gap-system"
   ],
   "files": [
     "grammar.js",
@@ -22,13 +22,13 @@
     "Reinis Cirpons <rc234@st-andrews.ac.uk> (https://reinisc.id.lv)"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/reiniscirpons/tree-sitter-gap#readme",
+  "homepage": "https://github.com/gap-system/tree-sitter-gap#readme",
   "bugs": {
-    "url": "https://github.com/reiniscirpons/tree-sitter-gap/issues"
+    "url": "https://github.com/gap-system/tree-sitter-gap/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reiniscirpons/tree-sitter-gap.git"
+    "url": "git+https://github.com/gap-system/tree-sitter-gap.git"
   },
   "main": "bindings/node",
   "types": "bindings/node",

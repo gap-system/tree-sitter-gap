@@ -2,10 +2,10 @@ prefix=@PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: tree-sitter-GAP
-Description: Gap grammar for tree-sitter
+Name: tree-sitter-gap
+Description: gap grammar for tree-sitter
 URL: @URL@
 Version: @VERSION@
 Requires: @REQUIRES@
-Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-GAP
+Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-gap
 Cflags: -I${includedir}

@@ -1,17 +1,17 @@
 # tree-sitter-gap
 
-[![Build/test](https://github.com/reiniscirpons/tree-sitter-gap/actions/workflows/ci.yml/badge.svg)](https://github.com/reiniscirpons/tree-sitter-gap/actions/workflows/ci.yml)
+[![Build/test](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml/badge.svg)](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml)
 
 [tree-sitter](https://github.com/tree-sitter/tree-sitter) grammar for [GAP system](https://www.gap-system.org/) files.
 
 ## Want to help complete this?
 
-- Install `tree-sitter`, [official instructions](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation);
+- Install `tree-sitter` (version >= 0.22.2), [official instructions](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation);
 - Read ["how to create a parser"](https://tree-sitter.github.io/tree-sitter/creating-parsers);
 - Make the existing tests pass;
 - Resolve the TODOs in source and test files;
 - Add more missing language features;
-- Validate by running on the whole GAP library and on packages, see [Tests](#tests) section below.
+- Validate by running on the whole `GAP` library and on packages, see [Tests](#tests) section below.
 
 Files to edit are
 
@@ -27,7 +27,7 @@ Files to edit are
 
 Almost everything else was generated automatically by `tree-sitter generate`.
 
-Bits of the `GAP` syntax is documented in [Chapter 4](https://docs.gap-system.org/doc/ref/chap4_mj.html) of the GAP manual.
+Bits of the `GAP` syntax are documented in [Chapter 4](https://docs.gap-system.org/doc/ref/chap4_mj.html) of the GAP manual.
 A more in-depth look at the `GAP` grammar can be obtained by studying the `GAP-system` source files, especially
 
 - [`read.c`](https://github.com/gap-system/gap/blob/master/src/read.c) for parsing keywords and high level language constructs;
@@ -39,7 +39,7 @@ A more in-depth look at the `GAP` grammar can be obtained by studying the `GAP-s
 To run syntax tree and highlighting tests run
 
 ```
-tree-sitter test
+make test_quick
 ```
 
 note that highlighting tests will only be run once all syntax tree tests pass.
@@ -62,7 +62,14 @@ parses.
 
 ### Issues finding grammar in external tools
 
-Try specifying the grammar name as `GAP` all caps, instead of lowercase `gap`.
+Try specifying the grammar name as lowercase `gap`, instead of uppercase `GAP`.
+
+### Highlighting tests fail
+
+Make sure you are using `tree-sitter` 0.22.2 or above. A breaking change in
+highlight group priority was introduces with version 0.22.2, which means that
+older versions of the `tree-sitter` tool will incorrectly highlight the
+existing test files.
 
 ## Acknowledgements
 

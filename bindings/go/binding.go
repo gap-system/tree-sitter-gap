@@ -1,4 +1,4 @@
-package tree_sitter_GAP
+package tree_sitter_gap
 
 // #cgo CFLAGS: -std=c11 -fPIC
 // #include "../../src/parser.c"

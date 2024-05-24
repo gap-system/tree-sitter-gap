@@ -1,4 +1,4 @@
-module github.com/tree-sitter/tree-sitter-GAP
+module github.com/gap-system/tree-sitter-gap
 
 go 1.22
 

@@ -1,11 +1,11 @@
 [package]
-name = "tree-sitter-GAP"
-description = "GAP grammar for the tree-sitter parsing library"
-version = "0.1.2"
+name = "tree-sitter-gap"
+description = "gap grammar for the tree-sitter parsing library"
+version = "0.2.0"
 authors = ["Max Horn", "Reinis Cirpons <rc234@st-andrews.ac.uk>"]
-keywords = ["incremental", "parsing", "GAP", "GAP-system"]
+keywords = ["incremental", "parsing", "gap", "gap-system"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/reiniscirpons/tree-sitter-GAP"
+repository = "https://github.com/gap-system/tree-sitter-gap"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
