@@ -30,7 +30,7 @@ static inline bool skip_line_continuation(TSLexer *lexer) {
   return true;
 }
 
-bool tree_sitter_GAP_external_scanner_scan(void *payload, TSLexer *lexer,
+bool tree_sitter_gap_external_scanner_scan(void *payload, TSLexer *lexer,
                                            const bool *valid_symbols) {
   Scanner *scanner = (Scanner *)payload;
 
@@ -161,7 +161,7 @@ bool tree_sitter_GAP_external_scanner_scan(void *payload, TSLexer *lexer,
   return false;
 }
 
-unsigned tree_sitter_GAP_external_scanner_serialize(void *payload,
+unsigned tree_sitter_gap_external_scanner_serialize(void *payload,
                                                     char *buffer) {
   Scanner *scanner = (Scanner *)payload;
 
@@ -170,7 +170,7 @@ unsigned tree_sitter_GAP_external_scanner_serialize(void *payload,
   return size;
 }
 
-void tree_sitter_GAP_external_scanner_deserialize(void *payload,
+void tree_sitter_gap_external_scanner_deserialize(void *payload,
                                                   const char *buffer,
                                                   unsigned length) {
   Scanner *scanner = (Scanner *)payload;
@@ -180,12 +180,12 @@ void tree_sitter_GAP_external_scanner_deserialize(void *payload,
   }
 }
 
-void *tree_sitter_GAP_external_scanner_create() {
+void *tree_sitter_gap_external_scanner_create() {
   Scanner *scanner = ts_calloc(1, sizeof(Scanner));
   return scanner;
 }
 
-void tree_sitter_GAP_external_scanner_destroy(void *payload) {
+void tree_sitter_gap_external_scanner_destroy(void *payload) {
   Scanner *scanner = (Scanner *)payload;
   free(scanner);
 }

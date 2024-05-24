@@ -1,5 +1,5 @@
 {
-  "name": "GAP",
+  "name": "gap",
   "word": "identifier",
   "rules": {
     "source_file": {

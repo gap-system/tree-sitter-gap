@@ -1,4 +1,4 @@
-"Gap grammar for tree-sitter"
+"gap grammar for tree-sitter"
 
 from ._binding import language
 

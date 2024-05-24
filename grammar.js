@@ -30,7 +30,7 @@ const LITERAL_REGEXP = {
 };
 
 module.exports = grammar({
-  name: "GAP",
+  name: "gap",
 
   externals: ($) => [
     $.string_start,

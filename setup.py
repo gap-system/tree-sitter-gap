@@ -9,7 +9,7 @@ from wheel.bdist_wheel import bdist_wheel
 class Build(build):
     def run(self):
         if isdir("queries"):
-            dest = join(self.build_lib, "tree_sitter_GAP", "queries")
+            dest = join(self.build_lib, "tree_sitter_gap", "queries")
             self.copy_tree("queries", dest)
         super().run()
 
