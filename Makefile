@@ -38,6 +38,8 @@ test_pkg: $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION) compile
 test_all: test_quick $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION) $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_corpus_*/*.g*' --quiet --stat
 
+image-example-parse.svg: grammar.js src/scanner.c ./etc/visualize_parse_tree.py
+	echo 'G := Group((1, 2, 3), (1, 2)(3, 4)); IsNormal(SymmetricGroup(4), G);' | ./etc/visualize_parse_tree.py -o ./image-example-parse.svg
 
 clean:
 	rm -rf $(EXAMPLES_DIR)/temp_*

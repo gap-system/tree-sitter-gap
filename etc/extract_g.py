@@ -5,6 +5,8 @@ Additionally contains various fixup scripts for converting e.g. .g files that
 are actually .tst files and files that are passed as input to `ReadAsFunction`.
 """
 
+import argparse
+
 
 def is_tst_file(lines: list[str]) -> bool:
     """Check if lines correspond to a `tst` file.
@@ -93,8 +95,6 @@ def extract_g_lines_from_tst_lines(lines: list[str]) -> list[str]:
             result_lines.append(line)
     return result_lines
 
-
-import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
