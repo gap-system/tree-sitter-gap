@@ -5,3 +5,4 @@ build
 temp*/
 log.html
 examples/corpus_*.tar.gz
+*.egg-info

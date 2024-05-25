@@ -4,11 +4,21 @@
 
 [tree-sitter](https://github.com/tree-sitter/tree-sitter) grammar for [GAP system](https://www.gap-system.org/) files.
 
-## Want to help complete this?
+## Example
+
+![Example of a parse tree generated with `tree-sitter-gap`](image-example-parse.svg)
+
+The above is a parse tree generated using the `tree-sitter-gap` grammar for the following code snippet:
+
+```gap
+G := Group((1, 2, 3), (1, 2)(3, 4));
+IsNormal(SymmetricGroup(4), G);
+```
+
+## Want to help improve this?
 
 - Install `tree-sitter` (version >= 0.22.2), [official instructions](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation);
 - Read ["how to create a parser"](https://tree-sitter.github.io/tree-sitter/creating-parsers);
-- Make the existing tests pass;
 - Resolve the TODOs in source and test files;
 - Add more missing language features;
 - Validate by running on the whole `GAP` library and on packages, see [Tests](#tests) section below.
