@@ -176,6 +176,32 @@ od;
 # <- keyword.repeat
 # ^ punctuation.delimiter
 
+foo := function(x, y...)
+#               ^ variable.parameter
+#                  ^ variable.parameter
+#                   ^ operator
+    return x;
+end;
+
+bar := function(arg)
+#               ^ variable.parameter.builtin
+    return arg;
+end;
+
+baz := function(x, arg)
+#               ^ variable.parameter
+#                  ^ variable.parameter
+    return arg;
+end;
+
+foobar := atomic function(readonly arg)
+#                                  ^ variable.parameter.builtin
+    return arg;
+end;
+
+foobaz := {arg} -> arg;
+#          ^ variable.parameter.builtin
+
 BindGlobal("foo", 1);
 # <- function.call
 #         ^ punctuation.bracket
@@ -196,10 +222,10 @@ BIND_GLOBAL("bar", 2);
 r := rec(
 # <- variable
 # ^ operator
-#    ^ keyword
+#    ^ keyword.type
 #       ^ punctuation.bracket
     a := [1.0,2.3e10,3],
-#   ^ property
+#   ^ variable.member
 #     ^ operator
 #        ^ punctuation.bracket
 #         ^ number.float
@@ -210,12 +236,12 @@ r := rec(
 #                     ^ punctuation.bracket
 #                      ^ punctuation.delimiter
     b := true,
-#   ^ property
+#   ^ variable.member
 #     ^ operator
 #        ^ constant.builtin
 #            ^ punctuation.delimiter
     c := fail,
-#   ^ property
+#   ^ variable.member
 #     ^ operator
 #        ^ constant.builtin
 #            ^ punctuation.delimiter
@@ -225,25 +251,25 @@ r := rec(
 r.a;
 # <- variable
 #^ punctuation.delimiter
-# ^ property
+# ^ variable.member
 #  ^ punctuation.delimiter
 
 p := rec(a:=r, b:=~.a, 1 := ~);
 # <- variable
 # ^ operator
-#    ^ keyword
+#    ^ keyword.type
 #       ^ punctuation.bracket
-#        ^ property
+#        ^ variable.member
 #         ^ operator
 #           ^ variable
 #            ^ punctuation.delimiter
-#              ^ property
+#              ^ variable.member
 #               ^ operator
 #                 ^ variable.builtin
 #                  ^ punctuation.delimiter
-#                   ^ property
+#                   ^ variable.member
 #                    ^ punctuation.delimiter
-#                      ^ property
+#                      ^ variable.member
 #                        ^ operator
 #                           ^ variable.builtin
 #                            ^ punctuation.bracket
@@ -252,11 +278,11 @@ p := rec(a:=r, b:=~.a, 1 := ~);
 p.1.a.c;
 # <- variable
 #^ punctuation.delimiter
-# ^ property
+# ^ variable.member
 #  ^ punctuation.delimiter
-#   ^ property
+#   ^ variable.member
 #    ^ punctuation.delimiter
-#     ^ property
+#     ^ variable.member
 #      ^ punctuation.delimiter
 
 InstallImmediateMethod( IsFinitelyGeneratedGroup,
