@@ -1,16 +1,14 @@
-; Constants
-
 ; NOTE: (reiniscirpons) in case multiple queries match, last query wins. So
 ; queries should go from least specific to most specific. (This is the default
 ; behaviour since tree-sitter 0.22.2)
 (identifier) @variable
 
+; Constants
 ; convention: constants are of the form ALL_CAPS_AND_UNDERSCORES and have length at least 2
 ((identifier) @constant
- (#match? @constant "^[A-Z_][A-Z_]+$"))
+  (#match? @constant "^[A-Z_][A-Z_]+$"))
 
 ; Functions
-
 (assignment_statement
   left: (identifier) @function
   right: (function))
@@ -28,9 +26,7 @@
 
 ((call
   function: (identifier) @function.builtin)
- (#match? @function.builtin "^(Assert|Info|IsBound|Unbind|TryNextMethod)$"))
-
-; Function parameters
+  (#any-of? @function.builtin "Assert" "Info" "IsBound" "Unbind" "TryNextMethod"))
 
 (parameters
   (identifier) @variable.parameter)
@@ -45,22 +41,84 @@
 (lambda_parameters
   (identifier) @variable.parameter)
 
+; arg is treated specially when it is the only parameter of a function
+((parameters
+  .
+  (identifier) @variable.parameter.builtin .)
+  (#eq? @variable.parameter.builtin "arg"))
+
+((qualified_parameters
+  .
+  (identifier) @variable.parameter.builtin .)
+  (#eq? @variable.parameter.builtin "arg"))
+
+((qualified_parameters
+  .
+  (qualified_identifier
+    (identifier) @variable.parameter.builtin) .)
+  (#eq? @variable.parameter.builtin "arg"))
+
+((lambda_parameters
+  .
+  (identifier) @variable.parameter.builtin .)
+  (#eq? @variable.parameter.builtin "arg"))
+
 (locals
   (identifier) @variable.parameter)
 
 ; Literals
-
 (bool) @constant.builtin
-(tilde) @variable.builtin
+
 (integer) @number
+
 (float) @number.float
-(comment) @comment @spell
+
 (string) @string
+
 (char) @character
+
 (escape_sequence) @string.escape
-(pragma) @keyword.directive
 
+[
+  (help_topic)
+  (help_book)
+] @string.special
 
+(tilde) @variable.builtin
+
+; Record selectors
+(record_entry
+  left: [
+    (identifier)
+    (integer)
+  ] @variable.member)
+
+(record_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @variable.member)
+
+(component_selector
+  selector: [
+    (identifier)
+    (integer)
+  ] @variable.member)
+
+(function_call_option
+  [
+    (identifier)
+    (record_entry ;Record entries specify global properties in function calls
+      left: [
+        (identifier)
+        (integer)
+      ])
+  ] @property)
+
+(help_statement
+  (help_selector) @property)
+
+; Operators
 [
   "+"
   "-"
@@ -82,16 +140,19 @@
 (help_statement
   (help_operator) @operator)
 
-
+; Keywords
 [
-  "atomic"
   (break_statement)
   (continue_statement)
-  "readonly"
-  "readwrite"
-  "rec"
+  "atomic"
   (quit_statement)
 ] @keyword
+
+[
+  "function"
+  "local"
+  "end"
+] @keyword.function
 
 [
   "and"
@@ -101,11 +162,15 @@
   "or"
 ] @keyword.operator
 
+"rec" @keyword.type
+
 [
-  "function"
-  "local"
-  "end"
-] @keyword.function
+  "readonly"
+  "readwrite"
+] @keyword.modifier
+
+(atomic_function
+  "atomic" @keyword.modifier)
 
 [
   "for"
@@ -126,6 +191,9 @@
 
 "return" @keyword.return
 
+(pragma) @keyword.directive
+
+;Punctuation
 [
   ","
   ";"
@@ -133,13 +201,6 @@
   "!."
   ":"
 ] @punctuation.delimiter
-
-(help_statement "?" @punctuation.special)
-
-[
- (help_topic)
- (help_book)
-] @string.special
 
 [
   "("
@@ -151,29 +212,8 @@
   "}"
 ] @punctuation.bracket
 
-; Record selectors as properties
-
-(record_entry
-  left: [
-    (identifier)
-    (integer)
-  ] @property)
-
-
-(record_selector
-  selector: [
-    (identifier)
-    (integer)
-  ] @property)
-
-(component_selector
-  selector: [
-    (identifier)
-    (integer)
-  ] @property)
-
-(function_call_option
-  (identifier) @property)
-
 (help_statement
-  (help_selector) @property)
+  "?" @punctuation.special)
+
+;Comments
+(comment) @comment @spell

@@ -13,12 +13,26 @@ fi;
 
 atomic readonly x, y, readwrite z do
 # <- keyword
-#      ^ keyword
-#                     ^ keyword
+#      ^ keyword.modifier
+#                     ^ keyword.modifier
 #                                 ^ keyword.repeat
   x := 3;
 od;
 # <- keyword.repeat
+
+atomic function(x)
+# <- keyword.modifier
+#      ^ keyword.function
+#              ^ punctuation.bracket
+#               ^ variable.parameter
+#                ^ punctuation.bracket
+  return x;
+# ^ keyword.return
+#        ^ variable.parameter
+#         ^ punctuation.delimiter
+end;
+# <- keyword.function
+#  ^ punctuation.delimiter
 
 for x in [1..10] do
 # <- keyword.repeat
@@ -45,7 +59,7 @@ until x > 0;
 # <- keyword.repeat
 
 x := rec(1:=3, a:=2);
-#    ^ keyword
+#    ^ keyword.type
 
 fun := function(x)
 #      ^ keyword.function
