@@ -726,7 +726,7 @@ foo().1;
 A.10.0_l;
 A.10.0a;
 
-# Ported from GAP test file: tst/testinstall/kernel/scanner.tst 
+# Ported from GAP test file: tst/testinstall/kernel/scanner.tst
 a:=rec();;
 a.x1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 := 1;
 a.x11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 := 1;
@@ -1183,9 +1183,9 @@ function(a end;;
     (function (parameters (identifier) (identifier) (ellipsis)))
     (function (parameters (identifier) (ellipsis)))
     (function (parameters) (locals (identifier)))
-    (function (parameters) (block (return_statement (integer))))
-    (function (parameters (identifier)) (block (return_statement (identifier))))
-    (function (parameters) (locals (identifier)) (block (return_statement (integer))))
+    (function (parameters) (return_statement (integer)))
+    (function (parameters (identifier)) (return_statement (identifier)))
+    (function (parameters) (locals (identifier)) (return_statement (integer)))
     (comment)
     (comment)
     (function
@@ -1196,7 +1196,7 @@ function(a end;;
         (parameters
             (identifier)
             (MISSING ")")))
-)   
+)
 
 =====================================
 Inline Functions
@@ -1390,24 +1390,21 @@ end;
             (qualified_identifier
                 (qualifier)
                 (identifier)))
-        (block
-            (return_statement
-                (integer))))
+        (return_statement
+            (integer)))
     (atomic_function
         (qualified_parameters
             (qualified_identifier
                 (qualifier)
                 (identifier)))
-        (block
-            (return_statement
-                (identifier))))
+        (return_statement
+            (identifier)))
     (atomic_function
         (qualified_parameters)
         (locals
             (identifier))
-        (block
-            (return_statement
-                (integer))))
+        (return_statement
+            (integer)))
 )
 
 =====================================
@@ -1451,20 +1448,20 @@ function(x, y) return x+y; end(2, 3);
     (call (identifier) (argument_list (integer)))
     (call (identifier) (argument_list (integer) (integer)))
     (call (identifier) (argument_list (call (identifier) (argument_list))))
-    (call 
-        (call (identifier) (argument_list)) 
+    (call
+        (call (identifier) (argument_list))
         (argument_list))
-    (call 
-        (call (identifier) (argument_list (integer))) 
+    (call
+        (call (identifier) (argument_list (integer)))
         (argument_list))
-    (call 
+    (call
         (call (identifier) (argument_list))
         (argument_list (integer)))
-    (call 
-        (call (identifier) (argument_list (integer))) 
+    (call
+        (call (identifier) (argument_list (integer)))
         (argument_list (integer)))
-    (call 
-        (parenthesized_expression (identifier)) 
+    (call
+        (parenthesized_expression (identifier))
         (argument_list))
     (call (identifier) (argument_list))
     (call (identifier) (argument_list))
@@ -1472,21 +1469,19 @@ function(x, y) return x+y; end(2, 3);
     (call
         (function
             (parameters)
-            (block
-                (return_statement
-                    (binary_expression
-                        (bool)
-                        (integer)))))
+            (return_statement
+                (binary_expression
+                    (bool)
+                    (integer))))
         (argument_list))
     (call
         (function
             (parameters
                 (identifier))
-            (block
-                (return_statement
-                    (binary_expression
-                        (identifier)
-                        (integer)))))
+            (return_statement
+                (binary_expression
+                    (identifier)
+                    (integer))))
         (argument_list
             (integer)))
     (call
@@ -1494,11 +1489,10 @@ function(x, y) return x+y; end(2, 3);
             (parameters
                 (identifier)
                 (identifier))
-            (block
-                (return_statement
-                    (binary_expression
-                        (identifier)
-                        (identifier)))))
+            (return_statement
+                (binary_expression
+                    (identifier)
+                    (identifier))))
         (argument_list
             (integer)
             (integer)))

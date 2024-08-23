@@ -56,7 +56,7 @@ module.exports = grammar({
 
   extras: ($) => [$.comment, $.pragma, /\s/, $._line_continuation],
 
-  inline: ($) => [$._expression, $._statement],
+  inline: ($) => [$._expression, $._statement, $._block],
 
   conflicts: ($) => [
     // The parameters of an atomic function do not necessarily have to use the
@@ -79,6 +79,8 @@ module.exports = grammar({
       ),
 
     // Statements
+    _block: ($) => repeat1($._statement),
+
     _statement: ($) =>
       choice(
         seq($._statement_inner, ";"),
@@ -115,7 +117,7 @@ module.exports = grammar({
         "if",
         field("condition", $._expression),
         "then",
-        repeat($._statement),
+        optional(field("body", $._block)),
         repeat($.elif_clause),
         optional($.else_clause),
         "fi",
@@ -126,24 +128,24 @@ module.exports = grammar({
         "elif",
         field("condition", $._expression),
         "then",
-        repeat($._statement),
+        optional(field("body", $._block)),
       ),
 
-    else_clause: ($) => seq("else", repeat($._statement)),
+    else_clause: ($) => seq("else", optional(field("body", $._block))),
 
     while_statement: ($) =>
       seq(
         "while",
         field("condition", $._expression),
         "do",
-        repeat($._statement),
+        optional(field("body", $._block)),
         "od",
       ),
 
     repeat_statement: ($) =>
       seq(
         "repeat",
-        repeat($._statement),
+        optional(field("body", $._block)),
         "until",
         field("condition", $._expression),
       ),
@@ -155,7 +157,7 @@ module.exports = grammar({
         "in",
         field("values", $._expression),
         "do",
-        repeat($._statement),
+        optional(field("body", $._block)),
         "od",
       ),
 
@@ -168,7 +170,7 @@ module.exports = grammar({
           commaSep1(choice($.qualified_expression, $._expression)),
         ),
         "do",
-        repeat($._statement),
+        optional(field("body", $._block)),
         "od",
       ),
 
@@ -231,8 +233,10 @@ module.exports = grammar({
         seq(
           field("variable", $._expression),
           "[",
-          $._expression,
-          optional(seq(",", $._expression)),
+          field(
+            "selector",
+            seq($._expression, optional(seq(",", $._expression))),
+          ),
           "]",
         ),
       ),
@@ -241,14 +245,24 @@ module.exports = grammar({
     sublist_selector: ($) =>
       prec.left(
         PREC.CALL,
-        seq(field("variable", $._expression), "{", $._expression, "}"),
+        seq(
+          field("variable", $._expression),
+          "{",
+          field("selector", $._expression),
+          "}",
+        ),
       ),
 
     // GAP source file location: src/read.c ReadSelector
     positional_selector: ($) =>
       prec.left(
         PREC.CALL,
-        seq(field("variable", $._expression), "![", $._expression, "]"),
+        seq(
+          field("variable", $._expression),
+          "![",
+          field("selector", $._expression),
+          "]",
+        ),
       ),
 
     // GAP source file location: src/read.c ReadSelector
@@ -372,8 +386,8 @@ module.exports = grammar({
       seq(
         "function",
         field("parameters", $.parameters),
-        field("locals", optional($.locals)),
-        field("body", optional($.block)),
+        optional(field("locals", $.locals)),
+        optional(field("body", $._block)),
         "end",
       ),
 
@@ -382,12 +396,10 @@ module.exports = grammar({
         "atomic",
         "function",
         field("parameters", $.qualified_parameters),
-        field("locals", optional($.locals)),
-        field("body", optional($.block)),
+        optional(field("locals", $.locals)),
+        optional(field("body", $._block)),
         "end",
       ),
-
-    block: ($) => repeat1($._statement),
 
     lambda: ($) =>
       prec.right(
@@ -452,13 +464,11 @@ module.exports = grammar({
       ),
 
     argument_list: ($) =>
-      choice(
-        seq(
-          "(",
-          commaSep($._expression),
-          optional(seq(":", commaSep($.function_call_option))),
-          ")",
-        ),
+      seq(
+        "(",
+        commaSep($._expression),
+        optional(seq(":", commaSep($.function_call_option))),
+        ")",
       ),
 
     // GAP source file location: src/read.c ReadFuncCallOption
@@ -524,6 +534,11 @@ module.exports = grammar({
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
+    // TODO: (reiniscirpons): Match the `@` character separately for
+    // identifiers to allow for namespace determination.
+    // See Chapter 4.10 of the GAP reference manual
+    // https://docs.gap-system.org/doc/ref/chap4.html#X7DF8774F7D542298
+    // for more details.
     identifier: (_) =>
       lineContinuation(
         LITERAL_REGEXP.IDENTIFIER,

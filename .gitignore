@@ -2,7 +2,7 @@ package-lock.json
 node_modules
 build
 *.log
-temp*/
+temp_*/
 log.html
 examples/corpus_*.tar.gz
 *.egg-info
