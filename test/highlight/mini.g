@@ -13,14 +13,14 @@ f := function(x,y)
 #            ^ variable.parameter
 #                  ^ punctuation.delimiter
     z := 1 - y;
-#   ^ variable.parameter
+#   ^ variable
 #     ^ operator
 #        ^ number
 #          ^ operator
-#            ^ variable.parameter
+#            ^ variable
 #             ^ punctuation.delimiter
     helper := function(bla)
-#   ^ variable.parameter
+#   ^ function
 #          ^ operator
 #             ^ keyword.function
 #                     ^ punctuation.bracket
@@ -33,14 +33,14 @@ f := function(x,y)
 #                  ^ variable
 #                    ^ variable
 #                      ^ operator
-#                        ^ variable.parameter
+#                        ^ variable
 #                           ^ punctuation.delimiter
     end;
 #   ^ keyword.function
 #      ^ punctuation.delimiter
     return helper;
 #   ^ keyword.return
-#          ^ variable.parameter
+#          ^ variable
 #                ^ punctuation.delimiter
 end;
 # <- keyword.function
@@ -68,7 +68,7 @@ f("abc", 1.100e-20 : a:= 2, beta, 1:=10);
 x -> x + 1;
 # <- variable.parameter
 # ^ operator
-#    ^ variable.parameter
+#    ^ variable
 #      ^ operator
 #        ^ number
 #         ^ punctuation.delimiter
@@ -79,9 +79,9 @@ x -> x + 1;
 #  ^ variable.parameter
 #   ^ punctuation.bracket
 #     ^ operator
-#        ^ variable.parameter
+#        ^ variable
 #          ^ operator
-#            ^ variable.parameter
+#            ^ variable
 #              ^ operator
 #                ^ number
 #                 ^ punctuation.delimiter
@@ -305,7 +305,7 @@ InstallImmediateMethod( IsFinitelyGeneratedGroup,
 #              ^ punctuation.bracket
 #                ^ function.call
 #                                 ^ punctuation.bracket
-#                                   ^ variable.parameter
+#                                   ^ variable
 #                                     ^ punctuation.bracket
 #                                       ^ punctuation.bracket
 #                                         ^ keyword.conditional

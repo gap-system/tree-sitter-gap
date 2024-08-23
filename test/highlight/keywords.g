@@ -7,7 +7,7 @@ elif 1+1 = 2 then
   Print(10);
 else
 # <- keyword.conditional
-  1+1;
+  a := 1+1;
 fi;
 # <- keyword.conditional
 
@@ -28,7 +28,7 @@ atomic function(x)
 #                ^ punctuation.bracket
   return x;
 # ^ keyword.return
-#        ^ variable.parameter
+#        ^ variable
 #         ^ punctuation.delimiter
 end;
 # <- keyword.function
