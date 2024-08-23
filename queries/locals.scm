@@ -20,7 +20,7 @@
   (identifier) @local.definition.parameter)
 
 (locals
-  (identifier) @variable.definition.var)
+  (identifier) @local.definition.var)
 
 (record_entry
   left: [
@@ -32,7 +32,7 @@
   left: (identifier) @local.definition.var)
 
 (for_statement
-  identifier: (identifier) @variable.definition.var)
+  identifier: (identifier) @local.definition.var)
 
 (assignment_statement
   left: (identifier) @local.definition.function
