@@ -17,7 +17,7 @@ f := function(x,y)
 #     ^ operator
 #        ^ number
 #          ^ operator
-#            ^ variable
+#            ^ variable.parameter
 #             ^ punctuation.delimiter
     helper := function(bla)
 #   ^ function
@@ -28,26 +28,26 @@ f := function(x,y)
 #                         ^ punctuation.bracket
         return x + y*z - bla;
 #       ^ keyword.return
-#              ^ variable
+#              ^ variable.parameter
 #                ^ operator
-#                  ^ variable
+#                  ^ variable.parameter
 #                    ^ variable
 #                      ^ operator
-#                        ^ variable
+#                        ^ variable.parameter
 #                           ^ punctuation.delimiter
     end;
 #   ^ keyword.function
 #      ^ punctuation.delimiter
     return helper;
 #   ^ keyword.return
-#          ^ variable
+#          ^ function
 #                ^ punctuation.delimiter
 end;
 # <- keyword.function
 #  ^ punctuation.delimiter
 
 f("abc", 1.100e-20 : a:= 2, beta, 1:=10);
-# <- function.call
+# <- function
 #^ punctuation.bracket
 # ^ string
 #      ^ punctuation.delimiter
@@ -68,7 +68,7 @@ f("abc", 1.100e-20 : a:= 2, beta, 1:=10);
 x -> x + 1;
 # <- variable.parameter
 # ^ operator
-#    ^ variable
+#    ^ variable.parameter
 #      ^ operator
 #        ^ number
 #         ^ punctuation.delimiter
@@ -79,9 +79,9 @@ x -> x + 1;
 #  ^ variable.parameter
 #   ^ punctuation.bracket
 #     ^ operator
-#        ^ variable
+#        ^ variable.parameter
 #          ^ operator
-#            ^ variable
+#            ^ variable.parameter
 #              ^ operator
 #                ^ number
 #                 ^ punctuation.delimiter
@@ -305,7 +305,7 @@ InstallImmediateMethod( IsFinitelyGeneratedGroup,
 #              ^ punctuation.bracket
 #                ^ function.call
 #                                 ^ punctuation.bracket
-#                                   ^ variable
+#                                   ^ variable.parameter
 #                                     ^ punctuation.bracket
 #                                       ^ punctuation.bracket
 #                                         ^ keyword.conditional
