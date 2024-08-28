@@ -28,7 +28,7 @@ atomic function(x)
 #                ^ punctuation.bracket
   return x;
 # ^ keyword.return
-#        ^ variable
+#        ^ variable.parameter
 #         ^ punctuation.delimiter
 end;
 # <- keyword.function
