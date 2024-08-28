@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-gap",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "gap grammar for tree-sitter",
   "keywords": [
     "tree-sitter",
@@ -64,12 +64,9 @@
         "gi",
         "gd"
       ],
-      "highlights": [
-        "queries/highlights.scm"
-      ],
-      "locals": [
-        "queries/locals.scm"
-      ]
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals_ts.scm",
+      "tags": "queries/tags.scm"
     }
   ]
 }
