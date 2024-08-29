@@ -37,7 +37,8 @@
     "test": "tree-sitter test && tree-sitter parse examples/*.g* --quiet --time",
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip",
-    "format": "prettier --write grammar.js"
+    "format": "prettier --write grammar.js",
+    "release": "commit-and-tag-version"
   },
   "dependencies": {
     "node-addon-api": "^8.0.0",
@@ -52,9 +53,10 @@
     }
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.22.6",
+    "commit-and-tag-version": "^12.4.2",
     "prebuildify": "^6.0.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "tree-sitter-cli": "^0.22.6"
   },
   "tree-sitter": [
     {
