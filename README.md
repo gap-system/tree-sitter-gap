@@ -1,6 +1,6 @@
 # tree-sitter-gap
 
-[![Build/test](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml/badge.svg)](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml)
+[![CI][ci]](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml)
 
 [tree-sitter](https://github.com/tree-sitter/tree-sitter) grammar for [GAP system](https://www.gap-system.org/) files.
 
@@ -89,3 +89,5 @@ existing parsers, especially [`tree-sitter-python`](https://github.com/tree-sitt
 and [`tree-sitter-c`](https://github.com/tree-sitter/tree-sitter-c), from which
 certain code snippets have been taken verbatim. We would like to thank the authors and maintainers
 of these packages.
+
+[ci]: https://img.shields.io/github/actions/workflow/status/gap-system/tree-sitter-gap/ci.yml?logo=github&label=CI
