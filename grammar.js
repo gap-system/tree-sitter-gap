@@ -1,13 +1,14 @@
 const PREC = {
-  // in the following, we mention the names of the corresponding
-  // GAP kernel function
+  // GAP source file location: src/expr.c PrintPrecedence
+  // GAP source file location: src/read.c functions given below
   LAMBDA: 0, // ReadFuncExprAbbrevSingle, ReadFuncExprAbbrevMulti => ->
   OR: 1, // ReadExpr => or
   AND: 2, // ReadAnd => and
-  COMPARE: 3, // ReadRel => = <> < > <= >= in
+  NOT: 3, // ReadRel => not
+  COMPARE: 4, // ReadRel => = <> < > <= >= in
   PLUS: 9, // ReadAri => + - (binary)
   MULTI: 10, // ReadTerm => * / mod
-  UNARY: 11, // ReadFactor => not + - (unary)
+  UNARY: 11, // ReadFactor => + - (unary)
   POWER: 12, // ReadFactor => ^
   CALL: 13,
 };
@@ -333,7 +334,10 @@ module.exports = grammar({
       ),
 
     unary_expression: ($) =>
-      prec.left(PREC.UNARY, seq(choice("not", "+", "-"), $._expression)),
+      choice(
+        prec.left(PREC.UNARY, seq(choice("+", "-"), $._expression)),
+        prec.left(PREC.NOT, seq("not", $._expression)),
+      ),
 
     // GAP source file location: src/scanner.c GetNumber
     integer: (_) =>
@@ -464,6 +468,9 @@ module.exports = grammar({
       ),
 
     argument_list: ($) =>
+      // TODO: (reiniscirpons) add fields to separate arguments from call
+      // options. Possibly also remove function_call_option node to decrease
+      // height.
       seq(
         "(",
         commaSep($._expression),

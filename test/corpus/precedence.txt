@@ -1,0 +1,25 @@
+=======================
+not operator precedence
+=======================
+
+not true and false;
+not 1 in [1, 2, 3];
+not true = false;
+
+---
+(source_file
+  (binary_expression
+    (unary_expression (bool))
+    (bool))
+  (unary_expression
+    (binary_expression
+      (integer)
+      (list_expression
+        (integer)
+        (integer)
+        (integer))))
+  (unary_expression
+    (binary_expression
+      (bool)
+      (bool)))
+)
