@@ -1,3 +1,14 @@
+/**
+ * @file gap grammar for tree-sitter
+ * @author Max Horn
+ * @license MIT
+ * @see {@link https://docs.gap-system.org/doc/ref/chap4.html|Overview of the gap language}
+ * @see {@link https://github.com/gap-system/gap|gap source}
+ */
+
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
+
 const PREC = {
   // GAP source file location: src/expr.c PrintPrecedence
   // GAP source file location: src/read.c functions given below
@@ -31,7 +42,7 @@ const LITERAL_REGEXP = {
 };
 
 module.exports = grammar({
-  name: "gap",
+  name: 'gap',
 
   externals: ($) => [
     $.string_start,
@@ -72,9 +83,9 @@ module.exports = grammar({
     source_file: ($) =>
       repeat(
         choice(
-          seq($._expression, ";"),
+          seq($._expression, ';'),
           $._statement,
-          seq($.quit_statement, ";"),
+          seq($.quit_statement, ';'),
           $.help_statement,
         ),
       ),
@@ -84,8 +95,8 @@ module.exports = grammar({
 
     _statement: ($) =>
       choice(
-        seq($._statement_inner, ";"),
-        ";", // empty statement
+        seq($._statement_inner, ';'),
+        ';', // empty statement
       ),
 
     _statement_inner: ($) =>
@@ -111,75 +122,75 @@ module.exports = grammar({
     quit_statement: (_) => /quit|QUIT/,
 
     assignment_statement: ($) =>
-      seq(field("left", $._expression), ":=", field("right", $._expression)),
+      seq(field('left', $._expression), ':=', field('right', $._expression)),
 
     if_statement: ($) =>
       seq(
-        "if",
-        field("condition", $._expression),
-        "then",
-        optional(field("body", $._block)),
+        'if',
+        field('condition', $._expression),
+        'then',
+        optional(field('body', $._block)),
         repeat($.elif_clause),
         optional($.else_clause),
-        "fi",
+        'fi',
       ),
 
     elif_clause: ($) =>
       seq(
-        "elif",
-        field("condition", $._expression),
-        "then",
-        optional(field("body", $._block)),
+        'elif',
+        field('condition', $._expression),
+        'then',
+        optional(field('body', $._block)),
       ),
 
-    else_clause: ($) => seq("else", optional(field("body", $._block))),
+    else_clause: ($) => seq('else', optional(field('body', $._block))),
 
     while_statement: ($) =>
       seq(
-        "while",
-        field("condition", $._expression),
-        "do",
-        optional(field("body", $._block)),
-        "od",
+        'while',
+        field('condition', $._expression),
+        'do',
+        optional(field('body', $._block)),
+        'od',
       ),
 
     repeat_statement: ($) =>
       seq(
-        "repeat",
-        optional(field("body", $._block)),
-        "until",
-        field("condition", $._expression),
+        'repeat',
+        optional(field('body', $._block)),
+        'until',
+        field('condition', $._expression),
       ),
 
     for_statement: ($) =>
       seq(
-        "for",
-        field("identifier", $.identifier),
-        "in",
-        field("values", $._expression),
-        "do",
-        optional(field("body", $._block)),
-        "od",
+        'for',
+        field('identifier', $.identifier),
+        'in',
+        field('values', $._expression),
+        'do',
+        optional(field('body', $._block)),
+        'od',
       ),
 
     // GAP source file location: src/read.c ReadAtomic
     atomic_statement: ($) =>
       seq(
-        "atomic",
+        'atomic',
         field(
-          "qualified_expressions",
+          'qualified_expressions',
           commaSep1(choice($.qualified_expression, $._expression)),
         ),
-        "do",
-        optional(field("body", $._block)),
-        "od",
+        'do',
+        optional(field('body', $._block)),
+        'od',
       ),
 
-    break_statement: (_) => "break",
+    break_statement: (_) => 'break',
 
-    continue_statement: (_) => "continue",
+    continue_statement: (_) => 'continue',
 
-    return_statement: ($) => seq("return", optional($._expression)),
+    return_statement: ($) => seq('return', optional($._expression)),
 
     // Expressions
 
@@ -232,13 +243,13 @@ module.exports = grammar({
       prec.left(
         PREC.CALL,
         seq(
-          field("variable", $._expression),
-          "[",
+          field('variable', $._expression),
+          '[',
           field(
-            "selector",
-            seq($._expression, optional(seq(",", $._expression))),
+            'selector',
+            seq($._expression, optional(seq(',', $._expression))),
           ),
-          "]",
+          ']',
         ),
       ),
 
@@ -247,10 +258,10 @@ module.exports = grammar({
       prec.left(
         PREC.CALL,
         seq(
-          field("variable", $._expression),
-          "{",
-          field("selector", $._expression),
-          "}",
+          field('variable', $._expression),
+          '{',
+          field('selector', $._expression),
+          '}',
         ),
       ),
 
@@ -259,10 +270,10 @@ module.exports = grammar({
       prec.left(
         PREC.CALL,
         seq(
-          field("variable", $._expression),
-          "![",
-          field("selector", $._expression),
-          "]",
+          field('variable', $._expression),
+          '![',
+          field('selector', $._expression),
+          ']',
         ),
       ),
 
@@ -272,7 +283,7 @@ module.exports = grammar({
         PREC.CALL,
         seq(
           field(
-            "variable",
+            'variable',
             // NOTE: (reiniscirpons) We dont use `$._expression` here since it
             // causes a myriad of issues with float parsing. The key problem is
             // that we cannot have a dot following an integer, since that just
@@ -287,9 +298,9 @@ module.exports = grammar({
               $.parenthesized_expression,
             ),
           ),
-          ".",
+          '.',
           field(
-            "selector",
+            'selector',
             choice($.identifier, $.integer, $.parenthesized_expression),
           ),
         ),
@@ -300,10 +311,10 @@ module.exports = grammar({
       prec.left(
         PREC.CALL,
         seq(
-          field("variable", $._expression),
-          "!.",
+          field('variable', $._expression),
+          '!.',
           field(
-            "selector",
+            'selector',
             choice($.identifier, $.integer, $.parenthesized_expression),
           ),
         ),
@@ -312,21 +323,21 @@ module.exports = grammar({
     binary_expression: ($) =>
       choice(
         ...[
-          [prec.left, "or", PREC.OR],
-          [prec.left, "and", PREC.AND],
-          [prec.left, "=", PREC.COMPARE],
-          [prec.left, "<>", PREC.COMPARE],
-          [prec.left, "<", PREC.COMPARE],
-          [prec.left, ">", PREC.COMPARE],
-          [prec.left, "<=", PREC.COMPARE],
-          [prec.left, ">=", PREC.COMPARE],
-          [prec.left, "in", PREC.COMPARE],
-          [prec.left, "+", PREC.PLUS],
-          [prec.left, "-", PREC.PLUS],
-          [prec.left, "*", PREC.MULTI],
-          [prec.left, "/", PREC.MULTI],
-          [prec.left, "mod", PREC.MULTI],
-          [prec.right, "^", PREC.POWER], // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
+          [prec.left, 'or', PREC.OR],
+          [prec.left, 'and', PREC.AND],
+          [prec.left, '=', PREC.COMPARE],
+          [prec.left, '<>', PREC.COMPARE],
+          [prec.left, '<', PREC.COMPARE],
+          [prec.left, '>', PREC.COMPARE],
+          [prec.left, '<=', PREC.COMPARE],
+          [prec.left, '>=', PREC.COMPARE],
+          [prec.left, 'in', PREC.COMPARE],
+          [prec.left, '+', PREC.PLUS],
+          [prec.left, '-', PREC.PLUS],
+          [prec.left, '*', PREC.MULTI],
+          [prec.left, '/', PREC.MULTI],
+          [prec.left, 'mod', PREC.MULTI],
+          [prec.right, '^', PREC.POWER], // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
           //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
         ].map(([fn, operator, precedence]) =>
           fn(precedence, seq($._expression, operator, $._expression)),
@@ -335,8 +346,8 @@ module.exports = grammar({
 
     unary_expression: ($) =>
       choice(
-        prec.left(PREC.UNARY, seq(choice("+", "-"), $._expression)),
-        prec.left(PREC.NOT, seq("not", $._expression)),
+        prec.left(PREC.UNARY, seq(choice('+', '-'), $._expression)),
+        prec.left(PREC.NOT, seq('not', $._expression)),
       ),
 
     // GAP source file location: src/scanner.c GetNumber
@@ -361,13 +372,13 @@ module.exports = grammar({
       ),
 
     // GAP source file location: src/bool.c
-    bool: (_) => choice("true", "false", "fail"),
+    bool: (_) => choice('true', 'false', 'fail'),
 
     char: ($) =>
       seq(
-        "'",
+        '\'',
         choice(token.immediate(prec(1, /[^\\\r\n]/)), $.escape_sequence),
-        "'",
+        '\'',
       ),
 
     string: ($) => seq($.string_start, repeat($.string_content), $.string_end),
@@ -384,76 +395,76 @@ module.exports = grammar({
 
     // TODO: (fingolfin) restrict where tilde can be used, i.e., only "inside" a list or
     // record expression (but at arbitrary depth)
-    tilde: (_) => "~",
+    tilde: (_) => '~',
 
     function: ($) =>
       seq(
-        "function",
-        field("parameters", $.parameters),
-        optional(field("locals", $.locals)),
-        optional(field("body", $._block)),
-        "end",
+        'function',
+        field('parameters', $.parameters),
+        optional(field('locals', $.locals)),
+        optional(field('body', $._block)),
+        'end',
       ),
 
     atomic_function: ($) =>
       seq(
-        "atomic",
-        "function",
-        field("parameters", $.qualified_parameters),
-        optional(field("locals", $.locals)),
-        optional(field("body", $._block)),
-        "end",
+        'atomic',
+        'function',
+        field('parameters', $.qualified_parameters),
+        optional(field('locals', $.locals)),
+        optional(field('body', $._block)),
+        'end',
       ),
 
     lambda: ($) =>
       prec.right(
         PREC.LAMBDA,
         seq(
-          field("parameters", $.lambda_parameters),
-          "->",
-          field("body", $._expression),
+          field('parameters', $.lambda_parameters),
+          '->',
+          field('body', $._expression),
         ),
       ),
 
     parameters: ($) =>
       seq(
-        "(",
+        '(',
         optional(seq(commaSep1($.identifier), optional($.ellipsis))),
-        ")",
+        ')',
       ),
 
     qualified_parameters: ($) =>
       seq(
-        "(",
+        '(',
         optional(
           seq(
             commaSep1(choice($.qualified_identifier, $.identifier)),
             optional($.ellipsis),
           ),
         ),
-        ")",
+        ')',
       ),
 
     lambda_parameters: ($) =>
       choice(
         $.identifier,
         seq(
-          "{",
+          '{',
           optional(seq(commaSep1($.identifier), optional($.ellipsis))),
-          "}",
+          '}',
         ),
       ),
 
-    ellipsis: (_) => "...",
+    ellipsis: (_) => '...',
 
-    locals: ($) => seq("local", commaSep1($.identifier), ";"),
+    locals: ($) => seq('local', commaSep1($.identifier), ';'),
 
     call: ($) =>
       prec(
         PREC.CALL,
         seq(
           field(
-            "function",
+            'function',
             choice(
               $._variable,
               $.parenthesized_expression,
@@ -463,7 +474,7 @@ module.exports = grammar({
               // $.atomic_function
             ),
           ),
-          field("arguments", $.argument_list),
+          field('arguments', $.argument_list),
         ),
       ),
 
@@ -472,10 +483,10 @@ module.exports = grammar({
       // options. Possibly also remove function_call_option node to decrease
       // height.
       seq(
-        "(",
+        '(',
         commaSep($._expression),
-        optional(seq(":", commaSep($.function_call_option))),
-        ")",
+        optional(seq(':', commaSep($.function_call_option))),
+        ')',
       ),
 
     // GAP source file location: src/read.c ReadFuncCallOption
@@ -489,7 +500,7 @@ module.exports = grammar({
     // We can maybe distinguish them in ./queries/highlights.scm as builtin functions. When parsing they should be
     // treated the same as any other function call I think.
 
-    list_expression: ($) => seq("[", commaSep(optional($._expression)), "]"),
+    list_expression: ($) => seq('[', commaSep(optional($._expression)), ']'),
 
     range_expression: ($) => {
       const valid_index_expressions = choice(
@@ -505,41 +516,41 @@ module.exports = grammar({
       );
 
       return seq(
-        "[",
-        field("first", valid_index_expressions),
-        optional(seq(",", field("second", valid_index_expressions))),
-        "..",
-        field("last", valid_index_expressions),
-        "]",
+        '[',
+        field('first', valid_index_expressions),
+        optional(seq(',', field('second', valid_index_expressions))),
+        '..',
+        field('last', valid_index_expressions),
+        ']',
       );
     },
 
     // GAP source file location: src/read.c ReadRec
     record_expression: ($) =>
-      seq("rec", "(", commaSep($.record_entry), optional(","), ")"),
+      seq('rec', '(', commaSep($.record_entry), optional(','), ')'),
 
     record_entry: ($) =>
       seq(
         field(
-          "left",
+          'left',
           choice($.identifier, $.integer, $.parenthesized_expression),
         ),
-        ":=",
-        field("right", $._expression),
+        ':=',
+        field('right', $._expression),
       ),
 
     permutation_expression: ($) =>
       choice(
-        seq("(", ")"),
+        seq('(', ')'),
         prec.right(repeat1($.permutation_cycle_expression)),
       ),
 
     // Does not include trivial cycle because GAP doesn't allow it in a permutation expression,
     // i.e. (1,2)() and ()(1,2) throw a syntax error.
     permutation_cycle_expression: ($) =>
-      seq("(", seq($._expression, ",", commaSep1($._expression)), ")"),
+      seq('(', seq($._expression, ',', commaSep1($._expression)), ')'),
 
-    parenthesized_expression: ($) => seq("(", $._expression, ")"),
+    parenthesized_expression: ($) => seq('(', $._expression, ')'),
 
     // TODO: (reiniscirpons): Match the `@` character separately for
     // identifiers to allow for namespace determination.
@@ -554,11 +565,11 @@ module.exports = grammar({
 
     qualified_identifier: ($) => seq($.qualifier, $.identifier),
 
-    qualifier: (_) => choice("readonly", "readwrite"),
+    qualifier: (_) => choice('readonly', 'readwrite'),
 
-    pragma: (_) => token(seq("#%", /.*/)),
+    pragma: (_) => token(seq('#%', /.*/)),
 
-    comment: (_) => token(seq("#", /.*/)),
+    comment: (_) => token(seq('#', /.*/)),
 
     // GAP source file location: src/io.c GetNextChar
     _line_continuation: (_) => LITERAL_REGEXP.LINE_CONTINUATION,
@@ -568,16 +579,16 @@ module.exports = grammar({
     // GAP source file location: lib/helpbase.gi HELP
     help_statement: ($) =>
       choice(
-        seq("?", /;*\r?\n/),
+        seq('?', /;*\r?\n/),
         seq(
-          "?",
+          '?',
           optional(
             choice(
               alias(LITERAL_REGEXP.HELP_TOPIC_OR_BOOK, $.help_topic),
               seq(
                 alias(LITERAL_REGEXP.HELP_TOPIC_OR_BOOK, $.help_book),
-                ":",
-                optional("?"),
+                ':',
+                optional('?'),
                 optional(
                   alias(/[^?\r\n;]|[^?\r\n][^\r\n]*[^\r\n;]/, $.help_topic),
                 ),
@@ -586,32 +597,56 @@ module.exports = grammar({
               alias(/[0-9]+/, $.help_selector),
             ),
           ),
-          repeat(";"),
+          repeat(';'),
           /\r?\n/,
         ),
       ),
   },
 });
 
+/**
+ * Creates a rule to match zero or more of the rules separated by a comma
+ *
+ * @param {RuleOrLiteral} rule
+ *
+ * @returns {Rule}
+ */
 function commaSep(rule) {
   return optional(commaSep1(rule));
 }
 
+/**
+ * Creates a rule to match one or more of the rules separated by a comma
+ *
+ * @param {RuleOrLiteral} rule
+ *
+ * @returns {SeqRule}
+ */
 function commaSep1(rule) {
-  return seq(rule, repeat(seq(",", rule)));
+  return seq(rule, repeat(seq(',', rule)));
 }
 
-// This function implements a RegExp transformation for matching an
-// arbitrary number of line continuations within the base RegExp.
-// Roughly speaking, if L is the regex matching the line continuation,
-// and T is this function, then
-//   T(x) = (xL*) if x is a character class
-//   T((A)) = (T(A))
-//   T(AB) = T(A)T(B)
-//   T(A | B) = T(A) | T(B)
-//   T(A*) = T(A)*
-// We perform this transformation in a linear pass by essentially detecting
-// occurrences of character classes and performing the transformation on them.
+/**
+ * Creates a line continuation regex.
+ *
+ * This function implements a RegExp transformation for matching an
+ * arbitrary number of line continuations within the base RegExp.
+ *
+ * Roughly speaking, if L is the regex matching the line continuation,
+ * and T is this function, then
+ *   T(x) = (xL*) if x is a character class
+ *   T((A)) = (T(A))
+ *   T(AB) = T(A)T(B)
+ *   T(A | B) = T(A) | T(B)
+ *   T(A*) = T(A)*
+ * We perform this transformation in a linear pass by essentially detecting
+ * occurrences of character classes and performing the transformation on them.
+ *
+ * @param {RegExp} base_regex
+ * @param {RegExp} line_continuation_regex
+ *
+ * @returns {RegExp}
+ */
 function lineContinuation(base_regex, line_continuation_regex) {
   // The irony of writing a custom regex parser within a tree-sitter
   // grammar is not lost, but here we are.
@@ -632,9 +667,9 @@ function lineContinuation(base_regex, line_continuation_regex) {
   //                    | '\\', <AnyLetterToAGoodApproximation>,
   //                    | <AnyNonQuantifierLetterToAGoodApproximation>
   const line_continuation_regex_string =
-    "(" + line_continuation_regex.source + ")*";
-  const special_symbols = new Set(["*", "+", "?", "|", "(", ")"]);
-  let result_regex_string = "";
+    '(' + line_continuation_regex.source + ')*';
+  const special_symbols = new Set(['*', '+', '?', '|', '(', ')']);
+  let result_regex_string = '';
   let escaped = false;
   let square_bracket = false;
   let curly_brace = false;
@@ -646,43 +681,43 @@ function lineContinuation(base_regex, line_continuation_regex) {
       !curly_brace &&
       !square_bracket &&
       !escaped &&
-      (c == "\\" || c == "[" || (c != "{" && !special_symbols.has(c)))
+      (c == '\\' || c == '[' || (c != '{' && !special_symbols.has(c)))
     ) {
-      result_regex_string = result_regex_string.concat("(");
+      result_regex_string = result_regex_string.concat('(');
     }
 
     result_regex_string = result_regex_string.concat(c);
 
     // AFTER
     if (
-      (!curly_brace && !escaped && square_bracket && c == "]") ||
+      (!curly_brace && !escaped && square_bracket && c == ']') ||
       (!square_bracket && escaped) ||
       (!curly_brace &&
         !square_bracket &&
         !escaped &&
-        c != "\\" &&
-        c != "[" &&
-        c != "{" &&
+        c != '\\' &&
+        c != '[' &&
+        c != '{' &&
         !special_symbols.has(c))
     ) {
       result_regex_string = result_regex_string.concat(
         line_continuation_regex_string,
       );
-      result_regex_string = result_regex_string.concat(")");
+      result_regex_string = result_regex_string.concat(')');
     }
 
     // FLAGS
-    if (curly_brace && c == "}") {
+    if (curly_brace && c == '}') {
       curly_brace = false;
     } else if (!curly_brace && escaped) {
       escaped = false;
-    } else if (!curly_brace && !escaped && square_bracket && c == "]") {
+    } else if (!curly_brace && !escaped && square_bracket && c == ']') {
       square_bracket = false;
-    } else if (!curly_brace && !escaped && c == "\\") {
+    } else if (!curly_brace && !escaped && c == '\\') {
       escaped = true;
-    } else if (!curly_brace && !square_bracket && !escaped && c == "[") {
+    } else if (!curly_brace && !square_bracket && !escaped && c == '[') {
       square_bracket = true;
-    } else if (!curly_brace && !square_bracket && !escaped && c == "{") {
+    } else if (!curly_brace && !square_bracket && !escaped && c == '{') {
       curly_brace = true;
     }
   }
