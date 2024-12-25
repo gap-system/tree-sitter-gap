@@ -1,0 +1,44 @@
+{
+  "grammars": [
+    {
+      "name": "gap",
+      "camelcase": "gap",
+      "scope": "source.gap",
+      "path": ".",
+      "file-types": [
+        "g",
+        "gi",
+        "gd"
+      ],
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals_ts.scm",
+      "tags": "queries/tags.scm",
+      "injection-regex": "gap"
+    }
+  ],
+  "metadata": {
+    "version": "0.3.0",
+    "license": "MIT",
+    "description": "gap grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Max Horn"
+      },
+      {
+        "name": "Reinis Cirpons",
+        "email": "rc234@st-andrews.ac.uk"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/gap-system/tree-sitter-gap"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}
