@@ -50,6 +50,8 @@ jobs:
         uses: tree-sitter/parse-action@v4
         with:
           files: |
-            examples/**/*.g*
+            examples/**/*.g
+            examples/**/*.gi
+            examples/**/*.gd
           # invalid-files: |
           # example-invalid-file.g No invalid files yet
