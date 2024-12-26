@@ -15,6 +15,11 @@ G := Group((1, 2, 3), (1, 2)(3, 4));
 IsNormal(SymmetricGroup(4), G);
 ```
 
+## Installing for use with editors
+
+See the [`tree-sitter-gap` wiki](https://github.com/gap-system/tree-sitter-gap/wiki/Using-the-grammar-with-editors)
+page for information on installing the grammar for syntax highlighting in neovim and other editors.
+
 ## Want to help improve this?
 
 - Install `tree-sitter` (version >= 0.22.2), [official instructions](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation);
