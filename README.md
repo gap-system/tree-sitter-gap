@@ -1,6 +1,6 @@
 # tree-sitter-gap
 
-[![CI][ci]](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml)
+![CI](https://github.com/gap-system/tree-sitter-gap/actions/workflows/ci.yml/badge.svg)
 
 [tree-sitter](https://github.com/tree-sitter/tree-sitter) grammar for [GAP system](https://www.gap-system.org/) files.
 
