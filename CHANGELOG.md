@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.1](https://github.com/gap-system/tree-sitter-gap/compare/v0.3.0...v0.3.1) (2024-12-27)
+
+
+### Bug Fixes
+
+* Fix github workflow path error ([caf1f4d](https://github.com/gap-system/tree-sitter-gap/commit/caf1f4d778b82cd6e416ec4e3d38bf90605681af))
+* Fix go binding url for tree-sitter-gap ([549baaf](https://github.com/gap-system/tree-sitter-gap/commit/549baafed43c14d2954643ffb552a59eaa902534))
+* Fix go.mod ([af57594](https://github.com/gap-system/tree-sitter-gap/commit/af575949d8f07b995fe8b8d29f132bff9a72395f))
+* Fix precedence bug and add tests ([acd05b2](https://github.com/gap-system/tree-sitter-gap/commit/acd05b2db7e0e5d83f86db8e63ca93f0b2c5176b))
+
 ## 0.3.0 (2024-08-29)
 
 ### ⚠ BREAKING CHANGES

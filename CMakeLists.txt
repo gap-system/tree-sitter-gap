@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-gap
-        VERSION "0.3.0"
+        VERSION "0.3.1"
         DESCRIPTION "gap grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/gap-system/tree-sitter-gap"
         LANGUAGES C)
