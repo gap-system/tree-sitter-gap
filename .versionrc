@@ -1,0 +1,28 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "tree-sitter.json",
+      "updater": "./etc/version-updater.js"
+    },
+    {
+      "filename": "Makefile",
+      "updater": "./etc/version-updater.js"
+    },
+    {
+      "filename": "CMakeLists.txt",
+      "updater": "./etc/version-updater.js"
+    },
+    {
+      "filename": "Cargo.toml",
+      "updater": "./etc/version-updater.js"
+    },
+    {
+      "filename": "pyproject.toml",
+      "updater": "./etc/version-updater.js"
+    }
+  ]
+}
