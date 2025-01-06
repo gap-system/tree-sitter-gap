@@ -219,7 +219,8 @@ module.exports = grammar({
       ),
 
     // GAP source file location: src/read.c ReadQualifiedExpr
-    qualified_expression: ($) => seq($.qualifier, $._expression),
+    qualified_expression: ($) =>
+      seq(field('qualifier', $.qualifier), field('expression', $._expression)),
 
     // Variables
 
@@ -340,14 +341,30 @@ module.exports = grammar({
           [prec.right, '^', PREC.POWER], // TODO: (fingolfin) actually, ^ is *NOT* associative in GAP at all,
           //  so an expression like `2^2^2` is a syntax error. Not sure how / whether to express that
         ].map(([fn, operator, precedence]) =>
-          fn(precedence, seq($._expression, operator, $._expression)),
+          fn(
+            precedence,
+            seq(
+              field('left', $._expression),
+              field('operator', operator),
+              field('right', $._expression),
+            ),
+          ),
         ),
       ),
 
     unary_expression: ($) =>
       choice(
-        prec.left(PREC.UNARY, seq(choice('+', '-'), $._expression)),
-        prec.left(PREC.NOT, seq('not', $._expression)),
+        prec.left(
+          PREC.UNARY,
+          seq(
+            field('operator', choice('+', '-')),
+            field('expression', $._expression),
+          ),
+        ),
+        prec.left(
+          PREC.NOT,
+          seq(field('operator', 'not'), field('expression', $._expression)),
+        ),
       ),
 
     // GAP source file location: src/scanner.c GetNumber
@@ -401,7 +418,7 @@ module.exports = grammar({
       seq(
         'function',
         field('parameters', $.parameters),
-        optional(field('locals', $.locals)),
+        optional(seq(field('locals', $.locals), ';')),
         optional(field('body', $._block)),
         'end',
       ),
@@ -411,7 +428,7 @@ module.exports = grammar({
         'atomic',
         'function',
         field('parameters', $.qualified_parameters),
-        optional(field('locals', $.locals)),
+        optional(seq(field('locals', $.locals), ';')),
         optional(field('body', $._block)),
         'end',
       ),
@@ -426,38 +443,22 @@ module.exports = grammar({
         ),
       ),
 
-    parameters: ($) =>
-      seq(
-        '(',
-        optional(seq(commaSep1($.identifier), optional($.ellipsis))),
-        ')',
-      ),
+    parameters: ($) => makeParameters('(', ')', $.identifier, $.ellipsis),
 
     qualified_parameters: ($) =>
-      seq(
+      makeParameters(
         '(',
-        optional(
-          seq(
-            commaSep1(choice($.qualified_identifier, $.identifier)),
-            optional($.ellipsis),
-          ),
-        ),
         ')',
+        choice($.qualified_identifier, $.identifier),
+        $.ellipsis,
       ),
 
     lambda_parameters: ($) =>
-      choice(
-        $.identifier,
-        seq(
-          '{',
-          optional(seq(commaSep1($.identifier), optional($.ellipsis))),
-          '}',
-        ),
-      ),
+      choice($.identifier, makeParameters('{', '}', $.identifier, $.ellipsis)),
 
     ellipsis: (_) => '...',
 
-    locals: ($) => seq('local', commaSep1($.identifier), ';'),
+    locals: ($) => seq('local', commaSep1(field('local', $.identifier))),
 
     call: ($) =>
       prec(
@@ -479,17 +480,18 @@ module.exports = grammar({
       ),
 
     argument_list: ($) =>
-      // TODO: (reiniscirpons) add fields to separate arguments from call
-      // options. Possibly also remove function_call_option node to decrease
-      // height.
       seq(
         '(',
-        commaSep($._expression),
-        optional(seq(':', commaSep($.function_call_option))),
+        commaSep(field('argument', $._expression)),
+        optional(
+          seq(':', commaSep(field('call_option', $.function_call_option))),
+        ),
         ')',
       ),
 
     // GAP source file location: src/read.c ReadFuncCallOption
+    // TODO: (reiniscirpons) Remove function_call_option node to decrease
+    // height and use the field selector in queries instead
     function_call_option: ($) =>
       choice($.identifier, $.parenthesized_expression, $.record_entry),
 
@@ -527,7 +529,13 @@ module.exports = grammar({
 
     // GAP source file location: src/read.c ReadRec
     record_expression: ($) =>
-      seq('rec', '(', commaSep($.record_entry), optional(','), ')'),
+      seq(
+        'rec',
+        '(',
+        commaSep(field('record_entry', $.record_entry)),
+        optional(','),
+        ')',
+      ),
 
     record_entry: ($) =>
       seq(
@@ -624,6 +632,33 @@ function commaSep(rule) {
  */
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
+}
+
+/**
+ * Creates a rule to match a parameter list
+ *
+ * @param {string} leftSep
+ * @param {string} rightSep
+ * @param {RuleOrLiteral} parameterRule
+ * @param {RuleOrLiteral} ellipsisRule
+ * @returns {SeqRule}
+ */
+function makeParameters(leftSep, rightSep, parameterRule, ellipsisRule) {
+  return seq(
+    leftSep,
+    optional(
+      choice(
+        field('parameter', commaSep1(parameterRule)),
+        seq(
+          field('parameter', commaSep1(parameterRule)),
+          ',',
+          field('splat_parameter', seq(parameterRule, ellipsisRule)),
+        ),
+        field('splat_parameter', seq(parameterRule, ellipsisRule)),
+      ),
+    ),
+    rightSep,
+  );
 }
 
 /**
