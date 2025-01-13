@@ -2164,17 +2164,16 @@
   {
     "type": "locals",
     "named": true,
-    "fields": {
-      "local": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2751,20 +2750,27 @@
   {
     "type": "qualified_identifier",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "qualifier",
-          "named": true
-        }
-      ]
+    "fields": {
+      "identifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "qualifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "qualifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3107,17 +3113,16 @@
   {
     "type": "record_expression",
     "named": true,
-    "fields": {
-      "record_entry": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "record_entry",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "record_entry",
+          "named": true
+        }
+      ]
     }
   },
   {

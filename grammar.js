@@ -458,7 +458,7 @@ module.exports = grammar({
 
     ellipsis: (_) => '...',
 
-    locals: ($) => seq('local', commaSep1(field('local', $.identifier))),
+    locals: ($) => seq('local', commaSep1($.identifier)),
 
     call: ($) =>
       prec(
@@ -490,8 +490,8 @@ module.exports = grammar({
       ),
 
     // GAP source file location: src/read.c ReadFuncCallOption
-    // TODO: (reiniscirpons) Remove function_call_option node to decrease
-    // height and use the field selector in queries instead
+    // TODO: (reiniscirpons) Maybe remove function_call_option node to decrease
+    // height and use the field selector in queries instead?
     function_call_option: ($) =>
       choice($.identifier, $.parenthesized_expression, $.record_entry),
 
@@ -529,13 +529,7 @@ module.exports = grammar({
 
     // GAP source file location: src/read.c ReadRec
     record_expression: ($) =>
-      seq(
-        'rec',
-        '(',
-        commaSep(field('record_entry', $.record_entry)),
-        optional(','),
-        ')',
-      ),
+      seq('rec', '(', commaSep($.record_entry), optional(','), ')'),
 
     record_entry: ($) =>
       seq(
@@ -571,7 +565,8 @@ module.exports = grammar({
         LITERAL_REGEXP.LINE_CONTINUATION,
       ),
 
-    qualified_identifier: ($) => seq($.qualifier, $.identifier),
+    qualified_identifier: ($) =>
+      seq(field('qualifier', $.qualifier), field('identifier', $.identifier)),
 
     qualifier: (_) => choice('readonly', 'readwrite'),
 
