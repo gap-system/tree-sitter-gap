@@ -3,7 +3,7 @@ GRAMMAR_VERSION=v0.3.1
 EXAMPLES_DIR=./examples
 RELEASE_PREFIX=https://github.com/gap-system/tree-sitter-gap/releases/download
 
-.PHONY: compile format corpus test_quick test_gap test_pkg test_all clean distclean
+.PHONY: compile format corpus test_quick test_gap test_pkg test_all clean distclean benchmark
 
 compile: grammar.js src/scanner.c
 	tree-sitter generate --no-bindings
@@ -41,6 +41,14 @@ test_pkg: $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION) compile
 
 test_all: test_quick $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION) $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
 	tree-sitter parse '$(EXAMPLES_DIR)/temp_corpus_*/*.g*' --quiet --stat
+
+benchmark: compile $(EXAMPLES_DIR)/temp_corpus_gap_$(CORPUS_VERSION) $(EXAMPLES_DIR)/temp_corpus_pkg_$(CORPUS_VERSION)
+	runtimes=$$(tree-sitter parse './examples/temp_corpus_*/*.g*' --quiet --time | pv -s2500k | sort -k2 -n -r --parallel=8 -);\
+	echo "Top 20 slowest runtimes:";\
+	echo "$$runtimes" | head -n20;\
+	echo "$$runtimes" \
+		| awk '{print $$2}' \
+		| gnuplot -p -e 'set logscale xy 10; plot "/dev/stdin" using (column(0)+1):1 title "Runtime"'
 
 image-example-parse.svg: grammar.js src/scanner.c ./etc/visualize_parse_tree.py
 	echo 'G := Group((1, 2, 3), (1, 2)(3, 4)); IsNormal(SymmetricGroup(4), G);' | ./etc/visualize_parse_tree.py -o ./image-example-parse.svg
