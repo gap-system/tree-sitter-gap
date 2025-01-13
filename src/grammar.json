@@ -2177,12 +2177,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "FIELD",
-              "name": "local",
-              "content": {
-                "type": "SYMBOL",
-                "name": "identifier"
-              }
+              "type": "SYMBOL",
+              "name": "identifier"
             },
             {
               "type": "REPEAT",
@@ -2194,12 +2190,8 @@
                     "value": ","
                   },
                   {
-                    "type": "FIELD",
-                    "name": "local",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "identifier"
-                    }
+                    "type": "SYMBOL",
+                    "name": "identifier"
                   }
                 ]
               }
@@ -2588,12 +2580,8 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "FIELD",
-                  "name": "record_entry",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "record_entry"
-                  }
+                  "type": "SYMBOL",
+                  "name": "record_entry"
                 },
                 {
                   "type": "REPEAT",
@@ -2605,12 +2593,8 @@
                         "value": ","
                       },
                       {
-                        "type": "FIELD",
-                        "name": "record_entry",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "record_entry"
-                        }
+                        "type": "SYMBOL",
+                        "name": "record_entry"
                       }
                     ]
                   }
@@ -2783,12 +2767,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "qualifier"
+          "type": "FIELD",
+          "name": "qualifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "qualifier"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         }
       ]
     },
