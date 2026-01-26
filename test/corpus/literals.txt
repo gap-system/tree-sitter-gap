@@ -542,6 +542,9 @@ Line continuations
 123\
 456;
 
+123\
+;
+
 "a split\
 string";
 
@@ -618,6 +621,7 @@ World""";
 ---
 
 (source_file
+  (integer)
   (integer)
   (string
     (string_start)
