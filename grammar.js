@@ -24,21 +24,27 @@ const PREC = {
   CALL: 13,
 };
 
+// NOTE: (reiniscirpons) We write the regexes below so that they match a character as soon as possible to enable
+// us to insert the line continuation regex correctly
 const LITERAL_REGEXP = {
-  IDENTIFIER: /([a-zA-Z_@0-9]|\\.)*([a-zA-Z_@]|\\.)[a-zA-Z_@0-9]*/,
-  INTEGER: /[0-9]+/,
-  ESCAPE_SEQUENCE: /\\([^0-7\r\n]|0x[0-9a-fA-F]{2,2}|[0-7]{3,3})/,
-  LINE_CONTINUATION: /\\\r?\n/,
-  NON_TRAILING_PERIOD_FLOAT: /[0-9]*\.[0-9]+/,
+  // NOTE: (reiniscirpons) Identifiers must contain a non-digit character. Otherwise they can contain any upper or lowercase letter,
+  // any digit, the characters _ and @ and any character that is escaped by a backslash.
+  //          v starts with a non-digit      v starts with an escape v starts with an initial segment of digits followed by a non-digit
+  IDENTIFIER: /[a-zA-Z_@]([a-zA-Z_@0-9]|\\.)*|\\.([a-zA-Z_@0-9]|\\.)*|[0-9][0-9]*([a-zA-Z_@]|\\.)([a-zA-Z_@0-9]|\\.)*/,
+  INTEGER: /[0-9][0-9]*/,
+  ESCAPE_SEQUENCE: /\\([^0-7\r\n]|0x[0-9a-fA-F]{2}|[0-7]{3})/,
+  NON_TRAILING_PERIOD_FLOAT: /[0-9][0-9]*\.[0-9]+|\.[0-9]+/,
   // TODO: (reiniscirpons) Perhaps break this up a bit?
-  // v Basic float selector           v Exponent                    v Conversion marker  v Eager conversion marker
-  //                                                      v Conversion marker
-  EXPONENT_OR_CONVERSION_FLOAT:
-    /([0-9]+\.[0-9]*|[0-9]*\.[0-9]+)(([edqEDQ][\+-]?[0-9]+[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])(_[a-zA-Z]?)?|_[a-zA-Z]?)/,
+  // v Basic selector     v Exponent                    v Conversion marker  v Eager conversion marker
+  EXPONENT_OR_CONVERSION_FLOAT_LEADING_DIGIT:
+    /[0-9][0-9]*\.[0-9]*(([edqEDQ][\+-]?[0-9]+[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])(_[a-zA-Z]?)?|_[a-zA-Z]?)/,
+  EXPONENT_OR_CONVERSION_FLOAT_LEADING_DOT:
+    /\.[0-9]+(([edqEDQ][\+-]?[0-9]+[a-zA-Z]?|[a-cf-pr-zA-CF-PR-Z])(_[a-zA-Z]?)?|_[a-zA-Z]?)/,
+  LINE_CONTINUATION: /\\\r?\n/,
   // Help topic or book must exclude the help operators and selectors, which
   // leads to the following rather complicated regex
   HELP_TOPIC_OR_BOOK:
-    /[^-+&<>0-9:][^\r\n:]*|([-+&]|<<|>>)[^\r\n:]+|[0-9]+[^0-9\r\n:][^\r\n:]/,
+    /[^-+&<>0-9:][^\r\n:]*|([-+&]|<<|>>)[^\r\n:]+|[0-9][0-9]*[^0-9\r\n:][^\r\n:]/,
 };
 
 module.exports = grammar({
@@ -383,7 +389,11 @@ module.exports = grammar({
         ),
         $._trailing_period_float,
         lineContinuation(
-          LITERAL_REGEXP.EXPONENT_OR_CONVERSION_FLOAT,
+          LITERAL_REGEXP.EXPONENT_OR_CONVERSION_FLOAT_LEADING_DIGIT,
+          LITERAL_REGEXP.LINE_CONTINUATION,
+        ),
+        lineContinuation(
+          LITERAL_REGEXP.EXPONENT_OR_CONVERSION_FLOAT_LEADING_DOT,
           LITERAL_REGEXP.LINE_CONTINUATION,
         ),
       ),
@@ -660,17 +670,20 @@ function makeParameters(leftSep, rightSep, parameterRule, ellipsisRule) {
  * Creates a line continuation regex.
  *
  * This function implements a RegExp transformation for matching an
- * arbitrary number of line continuations within the base RegExp.
+ * arbitrary number of line continuations _strictly_ within the base RegExp.
  *
  * Roughly speaking, if L is the regex matching the line continuation,
  * and T is this function, then
- *   T(x) = (xL*) if x is a character class
+ *   T(x) = (L*x) if x is a character class
  *   T((A)) = (T(A))
  *   T(AB) = T(A)T(B)
  *   T(A | B) = T(A) | T(B)
  *   T(A*) = T(A)*
  * We perform this transformation in a linear pass by essentially detecting
  * occurrences of character classes and performing the transformation on them.
+ * Additional care is taken to ensure that L* is only inserted after a
+ * character class is matched. This requires the input regex to have a special
+ * form.
  *
  * @param {RegExp} base_regex
  * @param {RegExp} line_continuation_regex
@@ -703,6 +716,8 @@ function lineContinuation(base_regex, line_continuation_regex) {
   let escaped = false;
   let square_bracket = false;
   let curly_brace = false;
+  let start = true;
+  let level = 0;
   for (const c of base_regex.source) {
     // TODO: (reiniscirpons) Refactor more
 
@@ -710,10 +725,22 @@ function lineContinuation(base_regex, line_continuation_regex) {
     if (
       !curly_brace &&
       !square_bracket &&
-      !escaped &&
-      (c == '\\' || c == '[' || (c != '{' && !special_symbols.has(c)))
+      !escaped
     ) {
-      result_regex_string = result_regex_string.concat('(');
+      if (c == '\\' || c == '[' || (c != '{' && !special_symbols.has(c))) {
+        result_regex_string = result_regex_string.concat('(');
+        if (!start) {
+          result_regex_string = result_regex_string.concat(
+            line_continuation_regex_string,
+          );
+        }
+      } else if (c == '(') {
+        level += 1;
+      } else if (c == '|' && level == 0) {
+        start = true;
+      } else if (c == ')') {
+        level -= 1;
+      }
     }
 
     result_regex_string = result_regex_string.concat(c);
@@ -730,10 +757,8 @@ function lineContinuation(base_regex, line_continuation_regex) {
         c != '{' &&
         !special_symbols.has(c))
     ) {
-      result_regex_string = result_regex_string.concat(
-        line_continuation_regex_string,
-      );
       result_regex_string = result_regex_string.concat(')');
+      start = false;
     }
 
     // FLAGS
