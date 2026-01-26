@@ -28,17 +28,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
-      - name: Set up examples
-        run: |-
-          git clone --single-branch --depth=1 --filter=blob:none https://github.com/gap-system/gap examples/gap
-          git clone --single-branch --depth=1 --filter=blob:none https://github.com/semigroups/Semigroups examples/semigroups
-          git clone --single-branch --depth=1 --filter=blob:none https://github.com/digraphs/Digraphs examples/digraphs
       - name: Run tests
         uses: tree-sitter/parser-test-action@v3
         with:
@@ -48,6 +43,26 @@ jobs:
           test-python: true
           test-go: true
           test-swift: true
+      - name: Clone gap corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/gap
+          repository: gap-system/gap
+          sparse-checkout:
+            lib/
+            grp/
+      - name: Clone semigroups corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/semigroups
+          repository: semigroups/Semigroups
+          sparse-checkout: gap/
+      - name: Clone digraphs corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/digraphs
+          repository: digraphs/Digraphs
+          sparse-checkout: gap/
       - name: Parse examples
         uses: tree-sitter/parse-action@v4
         with:
@@ -55,8 +70,8 @@ jobs:
             examples/**/*.g
             examples/**/*.gi
             examples/**/*.gd
-          # invalid-files: |
-          # example-invalid-file.g No invalid files yet
+          invalid-files: |
+            examples/gap/hpcgap/**/*
   
   query:
     name: Validate queries
