@@ -4246,7 +4246,8 @@
   },
   {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "continue_statement",
@@ -4350,7 +4351,8 @@
   },
   {
     "type": "pragma",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "quit_statement",
