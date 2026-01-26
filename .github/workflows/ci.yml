@@ -31,15 +31,16 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-14]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
       - name: Set up examples
         run: |-
-          git clone -n --depth=1 --filter=tree:0 https://github.com/gap-system/gap examples/gap
-          cd examples/gap && git sparse-checkout set --no-cone /lib && git checkout
+          git clone --single-branch --depth=1 --filter=blob:none https://github.com/gap-system/gap examples/gap
+          git clone --single-branch --depth=1 --filter=blob:none https://github.com/semigroups/Semigroups examples/semigroups
+          git clone --single-branch --depth=1 --filter=blob:none https://github.com/digraphs/Digraphs examples/digraphs
       - name: Run tests
-        uses: tree-sitter/parser-test-action@v2
+        uses: tree-sitter/parser-test-action@v3
         with:
           test-rust: true
           test-node: true
