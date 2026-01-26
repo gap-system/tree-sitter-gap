@@ -734,12 +734,12 @@ function lineContinuation(base_regex, line_continuation_regex) {
             line_continuation_regex_string,
           );
         }
-      } else if (c == "(") {
-        level += 1
-      } else if (c == "|" && level == 0) {
-        start = true
-      } else if (c == ")") {
-        level -= 1
+      } else if (c == '(') {
+        level += 1;
+      } else if (c == '|' && level == 0) {
+        start = true;
+      } else if (c == ')') {
+        level -= 1;
       }
     }
 
