@@ -6,7 +6,7 @@ RELEASE_PREFIX=https://github.com/gap-system/tree-sitter-gap/releases/download
 .PHONY: compile format corpus test_quick test_gap test_pkg test_all clean distclean benchmark
 
 compile: grammar.js src/scanner.c
-	tree-sitter generate --no-bindings
+	tree-sitter generate
 
 format:
 	npm run format

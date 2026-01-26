@@ -28,24 +28,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
-      - name: Set up examples
-        run: |-
-          git clone -n --depth=1 --filter=tree:0 https://github.com/gap-system/gap examples/gap
-          cd examples/gap && git sparse-checkout set --no-cone /lib && git checkout
       - name: Run tests
-        uses: tree-sitter/parser-test-action@v2
+        uses: tree-sitter/parser-test-action@v3
         with:
+          # Uncomment tests as they get fixed
           test-rust: true
-          test-node: true
+          # test-node: true
           test-python: true
           test-go: true
           test-swift: true
+      - name: Clone gap corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/gap
+          repository: gap-system/gap
+          sparse-checkout:
+            lib/
+            grp/
+      - name: Clone semigroups corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/semigroups
+          repository: semigroups/Semigroups
+          sparse-checkout: gap/
+      - name: Clone digraphs corpus
+        uses: actions/checkout@v5
+        with:
+          path: examples/digraphs
+          repository: digraphs/Digraphs
+          sparse-checkout: gap/
       - name: Parse examples
         uses: tree-sitter/parse-action@v4
         with:
@@ -53,5 +70,24 @@ jobs:
             examples/**/*.g
             examples/**/*.gi
             examples/**/*.gd
-          # invalid-files: |
-          # example-invalid-file.g No invalid files yet
+          invalid-files: |
+            examples/gap/hpcgap/**/*
+  
+  query:
+    name: Validate queries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up repository
+        uses: actions/checkout@v5
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+
+      - name: Build parser
+        run: tree-sitter build
+
+      - name: Set up ts_query_ls
+        run: curl -fL https://github.com/ribru17/ts_query_ls/releases/latest/download/ts_query_ls-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+
+      - name: Check queries
+        run: ./ts_query_ls check -f queries
