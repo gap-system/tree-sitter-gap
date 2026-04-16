@@ -2,7 +2,7 @@
 name = "tree-sitter-gap"
 description = "gap grammar for tree-sitter"
 version = "0.3.1"
-authors = ["Max Horn", "Reinis Cirpons <rc234@st-andrews.ac.uk>"]
+authors = ["Max Horn", "Reinis Cirpons <reinis.cirpons@inria.fr>"]
 keywords = ["incremental", "parsing", "gap", "gap-system"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/gap-system/tree-sitter-gap"

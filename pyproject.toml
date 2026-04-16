@@ -16,7 +16,7 @@ classifiers = [
 ]
 authors = [
   { name = "Max Horn" },
-  { name = "Reinis Cirpons", email = "rc234@st-andrews.ac.uk" },
+  { name = "Reinis Cirpons", email = "reinis.cirpons@inria.fr" },
 ]
 requires-python = ">=3.10"
 license.text = "MIT"
